@@ -1,0 +1,118 @@
+initial ui test
+     binding.btnClear.setOnClickListener {
+            binding.clTop.setBackgroundColor(Color.parseColor("#007ac1"))
+            binding.apply {
+                textView.setText("Clear")
+                ivCloud.visibility = View.INVISIBLE
+                ivNight.visibility = View.INVISIBLE
+                textView.visibility = View.VISIBLE
+                ivSun.visibility = View.VISIBLE
+            }
+        }
+
+
+        binding.btnCloudy.setOnClickListener {
+            binding.clTop.setBackgroundColor(Color.parseColor("#62757f"))
+            binding.apply {
+                textView.setText("Cloudy")
+                textView.visibility = View.VISIBLE
+                ivCloud.visibility = View.VISIBLE
+                ivSun.visibility = View.INVISIBLE
+                ivNight.visibility = View.INVISIBLE
+            }
+        }
+
+        binding.btnNight.setOnClickListener {
+            binding.clTop.setBackgroundColor(Color.parseColor("#000051"))
+            binding.apply {
+                textView.setText("Clear")
+                textView.visibility = View.VISIBLE
+                ivCloud.visibility = View.INVISIBLE
+                ivSun.visibility = View.INVISIBLE
+                ivNight.visibility = View.VISIBLE
+            }
+        }
+
+    }
+
+    ---------------- xml for ui test
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/cl_top"
+            android:layout_width="match_parent"
+            android:layout_height="300dp"
+            android:background="@color/black"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:id="@+id/iv_sun"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:visibility="invisible"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/sun" />
+
+            <ImageView
+                android:id="@+id/iv_cloud"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:visibility="invisible"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/cloudy" />
+
+            <ImageView
+                android:id="@+id/iv_night"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:visibility="gone"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/moon" />
+
+            <TextView
+                android:id="@+id/textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Clear"
+                android:visibility="invisible"
+                android:textColor="@color/white"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@id/iv_sun"
+                app:layout_constraintStart_toEndOf="@+id/iv_sun"
+                app:layout_constraintTop_toTopOf="@id/iv_sun" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <Button
+            android:id="@+id/btn_clear"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="clear sky"
+            android:layout_marginTop="36dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/cl_top" />
+
+        <Button
+            android:id="@+id/btn_cloudy"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="cloudy sky"
+            android:layout_marginTop="36dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/btn_clear" />
+
+        <Button
+            android:id="@+id/btn_night"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Night Time"
+            android:layout_marginTop="36dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/btn_cloudy" />
