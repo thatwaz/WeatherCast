@@ -20,20 +20,16 @@ class WeatherRepository {
         weatherService = retrofit.create(WeatherService::class.java)
     }
 
-//    suspend fun getWeatherData(appId: String, latitude: Double, longitude: Double): Response<WeatherResponse> {
-//        return weatherService.getWeatherData(appId, latitude, longitude)
-//    }
 
-    suspend fun getWeatherData(appId: String, latitude: Double, longitude: Double): Response<WeatherResponse> {
+    suspend fun getWeatherData(
+        appId: String,
+        latitude: Double,
+        longitude: Double
+    ): Response<WeatherResponse> {
         return weatherService.getWeatherData(appId, latitude, longitude)
     }
 
 }
-
-
-
-
-
 
 
 //class WeatherRepository {
