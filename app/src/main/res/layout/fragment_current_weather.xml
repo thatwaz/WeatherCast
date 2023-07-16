@@ -6,44 +6,67 @@
     android:layout_height="match_parent"
     tools:context=".view.ui.CurrentWeatherFragment">
 
-    <TextView
-        android:id="@+id/tv_current_weather_description"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="TextView"
-        android:textColor="@color/black"
-        android:textSize="24sp"
-        app:layout_constraintBottom_toBottomOf="parent"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/cl_top"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:background="@color/sky_blue"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/lbl_currently"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Currently"
+            android:layout_marginTop="20dp"
+            android:layout_marginStart="16dp"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tv_current_temperature"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="71"
+            android:layout_marginTop="6dp"
+            android:textColor="@color/white"
+            android:textSize="40sp"
+            app:layout_constraintStart_toStartOf="@id/lbl_currently"
+            app:layout_constraintTop_toBottomOf="@id/lbl_currently"
+            app:layout_constraintEnd_toEndOf="@id/lbl_currently"/>
+
+        <TextView
+            android:id="@+id/unicode_temperature_symbol"
+            app:layout_constraintTop_toTopOf="@id/tv_current_temperature"
+            app:layout_constraintStart_toStartOf="@id/tv_current_temperature"
+            android:layout_marginStart="35dp"
+            android:textSize="40sp"
+            android:text=" \u00B0"
+            android:textColor="@color/white"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
 
     <TextView
-        android:id="@+id/tvCurrentLocation"
+        android:id="@+id/lbl_fahrenheit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="TextView"
-        android:textColor="@color/black"
-        android:textSize="24sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_current_weather_description" />
+        android:textStyle="bold"
+        app:layout_constraintBaseline_toBaselineOf="@id/tv_current_temperature"
+        app:layout_constraintStart_toEndOf="@id/tv_current_temperature"
+        android:textSize="16sp"
+        android:text="F"
+        android:textColor="@color/white"
+/>
 
-    <TextView
-        android:id="@+id/tv_current_temperature"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="TextView"
-        android:textColor="@color/black"
-        android:textSize="24sp"
-        app:layout_constraintBottom_toTopOf="@+id/tv_current_weather_description"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
 
 

@@ -14,6 +14,7 @@ interface WeatherService {
         @Query("lat") latitude: Double,
         @Query("lon") longitude: Double,
 
+
         ): Response<WeatherResponse>
 
 }

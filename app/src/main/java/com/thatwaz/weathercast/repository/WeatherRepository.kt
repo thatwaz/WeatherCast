@@ -24,10 +24,18 @@ class WeatherRepository {
     suspend fun getWeatherData(
         appId: String,
         latitude: Double,
-        longitude: Double
+        longitude: Double,
     ): Response<WeatherResponse> {
         return weatherService.getWeatherData(appId, latitude, longitude)
     }
+
+//    suspend fun getCityData(
+//        appId: String,
+//        latitude: Double,
+//        longitude: Double
+//    ): Response<City> {
+//        return weatherService.getWeatherData(appId, latitude, longitude)
+//    }
 
 }
 

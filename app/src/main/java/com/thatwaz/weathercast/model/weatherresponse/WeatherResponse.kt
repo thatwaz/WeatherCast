@@ -2,35 +2,32 @@ package com.thatwaz.weathercast.model.weatherresponse
 
 
 import com.google.gson.annotations.SerializedName
-import java.io.Serializable
 
 data class WeatherResponse(
-    val coord: Coord,
-    val weather: List<Weather>,
+    @SerializedName("base")
     val base: String,
-    val main: Main,
-    val temp: Main,
-    val visibility: Int,
-    val wind: Wind,
+    @SerializedName("clouds")
     val clouds: Clouds,
-    val city: City,
+    @SerializedName("cod")
+    val cod: Int,
+    @SerializedName("coord")
+    val coord: Coord,
+    @SerializedName("dt")
     val dt: Int,
-    val sys: Sys,
+    @SerializedName("id")
     val id: Int,
+    @SerializedName("main")
+    val main: Main,
+    @SerializedName("name")
     val name: String,
-    val cod: Int
-) : Serializable
-//data class WeatherResponse(
-//    @SerializedName("coord")
-//    val coord: Coord,
-//    @SerializedName("city")
-//    val city: City,
-//    @SerializedName("cnt")
-//    val cnt: Int,
-//    @SerializedName("cod")
-//    val cod: String,
-//    @SerializedName("list")
-//    val list: List<Weather>,
-//    @SerializedName("message")
-//    val message: Int,
-//    ) : List<WeatherResponse>
+    @SerializedName("sys")
+    val sys: Sys,
+    @SerializedName("timezone")
+    val timezone: Int,
+    @SerializedName("visibility")
+    val visibility: Int,
+    @SerializedName("weather")
+    val weather: List<Weather>,
+    @SerializedName("wind")
+    val wind: Wind
+)

@@ -5,7 +5,6 @@ import android.annotation.SuppressLint
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
-import android.icu.text.SimpleDateFormat
 import android.location.Location
 import android.location.LocationManager
 import android.net.Uri
@@ -19,8 +18,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
-import androidx.core.content.ContentProviderCompat.requireContext
-import androidx.core.content.ContextCompat.startActivity
 import androidx.fragment.app.viewModels
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
@@ -38,7 +35,6 @@ import com.thatwaz.weathercast.databinding.FragmentCurrentWeatherBinding
 
 
 import com.google.android.gms.location.*
-import com.thatwaz.weathercast.model.weatherresponse.WeatherResponse
 import com.thatwaz.weathercast.viewmodel.WeatherViewModel
 import java.util.*
 
@@ -64,13 +60,17 @@ class CurrentWeatherFragment : Fragment() {
         viewModel.weatherData.observe(viewLifecycleOwner) { weatherData ->
             // Update the UI with the weather data
             // Use binding to access the views in your fragment layout
-            binding.tvCurrentLocation.text = weatherData?.name
-            binding.tvCurrentWeatherDescription.text = weatherData?.weather?.get(0)?.description
-            val kelvinTemp = weatherData?.main!!.temp
-            val fahrenheitTemp = kelvinTemp.let { (it - 273.15) * 9/5 + 32 }
-            binding.tvCurrentTemperature.text = fahrenheitTemp.toInt().toString() + " \u00B0"
+//            binding.tvCurrentLocation.text = weatherData?.name
+//            binding.tvCurrentWeatherDescription.text = weatherData?.weather?.get(0)?.description
+//            val kelvinTemp = weatherData?.main!!.temp
+//            val fahrenheitTemp = kelvinTemp.let { (it - 273.15) * 9/5 + 32 }
+//            binding.tvCurrentTemperature.text = fahrenheitTemp.toInt().toString() + " \u00B0"
             // ... update other views ...
         }
+
+//        viewModel.sunriseTime.observe(viewLifecycleOwner) { sunriseTime ->
+//            Log.i("DOH!", "Sunrise Time: $sunriseTime")
+//        }
 
 //        viewModel.weatherData.observe(viewLifecycleOwner) { weatherResponse ->
 //            if (weatherResponse != null) {
