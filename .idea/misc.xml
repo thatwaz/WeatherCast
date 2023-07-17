@@ -5,7 +5,8 @@
       <map>
         <entry key="..\:/Toolkit/WeatherCast/app/src/main/res/layout/activity_main.xml" value="0.18802083333333333" />
         <entry key="..\:/Toolkit/WeatherCast/app/src/main/res/layout/fragment_current_weather.xml" value="0.18" />
-        <entry key="..\:/Toolkit/weathercast-priv-/app/src/main/res/layout/fragment_current_weather.xml" value="0.1" />
+        <entry key="..\:/Toolkit/weathercast-priv-/app/src/main/res/layout/activity_main.xml" value="0.1" />
+        <entry key="..\:/Toolkit/weathercast-priv-/app/src/main/res/layout/fragment_current_weather.xml" value="0.33" />
       </map>
     </option>
   </component>

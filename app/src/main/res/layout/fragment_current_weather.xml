@@ -12,60 +12,104 @@
         android:layout_height="300dp"
         android:background="@color/sky_blue"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <TextView
-            android:id="@+id/lbl_currently"
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/cl_temperature"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Currently"
-            android:layout_marginTop="20dp"
             android:layout_marginStart="16dp"
+            android:layout_marginTop="20dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:id="@+id/lbl_currently"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="3dp"
+                android:text="CURRENTLY"
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/tv_current_temperature"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text=" 93"
+                android:textColor="@color/white"
+                android:textSize="45sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/lbl_currently" />
+
+            <TextView
+                android:id="@+id/unicode_temperature_symbol"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:text="\u00B0"
+                android:textColor="@color/white"
+                android:textSize="40sp"
+                app:layout_constraintEnd_toEndOf="@id/lbl_fahrenheit"
+                app:layout_constraintStart_toStartOf="@id/lbl_fahrenheit"
+                app:layout_constraintTop_toTopOf="@id/tv_current_temperature" />
+
+
+            <TextView
+                android:id="@+id/lbl_fahrenheit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="6dp"
+                android:text="F"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+
+                app:layout_constraintBaseline_toBaselineOf="@id/tv_current_temperature"
+                app:layout_constraintStart_toEndOf="@id/tv_current_temperature" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <TextView
+            android:id="@+id/tv_current_conditions"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:textColor="@color/white"
             android:textSize="16sp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:layout_marginStart="12dp"
+            android:text="Clear"
+            app:layout_constraintTop_toTopOf="@id/cl_temperature"
+            app:layout_constraintStart_toEndOf="@+id/cl_temperature"
+            app:layout_constraintBottom_toBottomOf="@id/cl_temperature"/>
+
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="125dp"
+            android:layout_height="125dp"
+
+            android:layout_marginEnd="16dp"
+            android:src="@drawable/sun"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="@id/cl_temperature"
+            app:layout_constraintTop_toTopOf="@id/cl_temperature" />
 
         <TextView
-            android:id="@+id/tv_current_temperature"
+            android:id="@+id/tv_feels_like"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="71"
-            android:layout_marginTop="6dp"
             android:textColor="@color/white"
-            android:textSize="40sp"
-            app:layout_constraintStart_toStartOf="@id/lbl_currently"
-            app:layout_constraintTop_toBottomOf="@id/lbl_currently"
-            app:layout_constraintEnd_toEndOf="@id/lbl_currently"/>
-
-        <TextView
-            android:id="@+id/unicode_temperature_symbol"
-            app:layout_constraintTop_toTopOf="@id/tv_current_temperature"
-            app:layout_constraintStart_toStartOf="@id/tv_current_temperature"
-            android:layout_marginStart="35dp"
-            android:textSize="40sp"
-            android:text=" \u00B0"
-            android:textColor="@color/white"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:textSize="16sp"
+            android:text="Feels Like 102\u00B0"
+            app:layout_constraintStart_toStartOf="@+id/tv_current_conditions"
+            app:layout_constraintTop_toBottomOf="@id/tv_current_conditions" />
 
 
-    <TextView
-        android:id="@+id/lbl_fahrenheit"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textStyle="bold"
-        app:layout_constraintBaseline_toBaselineOf="@id/tv_current_temperature"
-        app:layout_constraintStart_toEndOf="@id/tv_current_temperature"
-        android:textSize="16sp"
-        android:text="F"
-        android:textColor="@color/white"
-/>
-
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 
