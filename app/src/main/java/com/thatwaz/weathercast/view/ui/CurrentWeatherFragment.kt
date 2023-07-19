@@ -29,16 +29,21 @@ import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.thatwaz.weathercast.databinding.FragmentCurrentWeatherBinding
+import com.thatwaz.weathercast.R
 
 
 
 
 
 import com.google.android.gms.location.*
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.thatwaz.weathercast.viewmodel.WeatherViewModel
 import java.util.*
 
 class CurrentWeatherFragment : Fragment() {
+
+    private lateinit var bottomNavView: BottomNavigationView
+
     private val viewModel: WeatherViewModel by viewModels()
     private var _binding: FragmentCurrentWeatherBinding? = null
     private val binding get() = _binding!!
@@ -50,6 +55,8 @@ class CurrentWeatherFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        bottomNavView = activity?.findViewById(R.id.bnv_weather_cast) ?: return binding.root
+        bottomNavView.visibility = View.VISIBLE
         _binding = FragmentCurrentWeatherBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -60,7 +67,9 @@ class CurrentWeatherFragment : Fragment() {
         viewModel.weatherData.observe(viewLifecycleOwner) { weatherData ->
             // Update the UI with the weather data
             // Use binding to access the views in your fragment layout
-//            binding.tvCurrentLocation.text = weatherData?.name
+            binding.tvLocation.text = weatherData?.name
+            binding.tvLat.text = "Lat = " +weatherData?.coord!!.lat.toString()
+            binding.tvLon.text = "Lon = " +weatherData.coord.lon.toString()
 //            binding.tvCurrentWeatherDescription.text = weatherData?.weather?.get(0)?.description
 //            val kelvinTemp = weatherData?.main!!.temp
 //            val fahrenheitTemp = kelvinTemp.let { (it - 273.15) * 9/5 + 32 }
