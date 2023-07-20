@@ -35,10 +35,6 @@ class WeatherViewModel : ViewModel() {
                 Log.i("DOH!", "Temp is ${fahrenheitTemp!!.toInt()}")
                 Log.i("DOH!", "clouds: ${weatherResponse.clouds.all}")
                 Log.i("DOH!", "sunrise: ${weatherResponse.sys.sunrise}")
-
-//                val sunriseTime = weatherResponse?.city?.sunrise
-//                Log.i("DOH!", "Sunrise time is $sunriseTime")
-
                 Log.i("DOH!", "Response body: ${response.body().toString()}")
 
             } else {

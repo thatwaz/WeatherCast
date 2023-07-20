@@ -22,9 +22,9 @@
         android:id="@+id/bnv_weather_cast"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:itemTextColor="@color/blue_700"
-        app:itemIconTint="@color/blue_700"
-        android:background="@color/white"
+        app:itemIconTint="@drawable/bottom_navigation_colors"
+        app:itemTextColor="@drawable/bottom_navigation_colors"
+        android:background="@color/off_white"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:menu="@menu/bottom_nav_menu" />

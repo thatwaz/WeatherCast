@@ -116,3 +116,11 @@ initial ui test
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/btn_cloudy" />
+
+
+            kinda cool transparent background
+            <?xml version="1.0" encoding="utf-8"?>
+            <shape xmlns:android="http://schemas.android.com/apk/res/android">
+                <solid android:color="#80000000" /> <!-- 80% black with some transparency (adjust as needed) -->
+                <corners android:radius="4dp" /> <!-- Add rounded corners if you prefer -->
+            </shape>

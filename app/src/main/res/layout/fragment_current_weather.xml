@@ -10,18 +10,17 @@
         android:id="@+id/cl_top"
         android:layout_width="match_parent"
         android:layout_height="300dp"
-
         app:layout_constraintEnd_toEndOf="parent"
-
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:background="@color/white"
             android:scaleType="fitXY"
-
             android:src="@drawable/img_partly_cloudy" />
+        <!--            android:src="@drawable/img_partly_cloudy"-->
 
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -38,9 +37,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="3dp"
+                android:shadowColor="@color/black"
+                android:shadowDx="@dimen/shadow_dx"
+                android:shadowDy="@dimen/shadow_dy"
+                android:shadowRadius="@dimen/shadow_radius"
                 android:text="CURRENTLY"
                 android:textColor="@color/white"
                 android:textSize="14sp"
+                android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -49,9 +53,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
+                android:shadowColor="@color/black"
+                android:shadowDx="@dimen/shadow_dx"
+                android:shadowDy="@dimen/shadow_dy"
+                android:shadowRadius="@dimen/shadow_radius"
                 android:text=" 93"
                 android:textColor="@color/white"
                 android:textSize="45sp"
+                android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/lbl_currently" />
 
@@ -60,9 +69,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="3dp"
+                android:shadowColor="@color/black"
+                android:shadowDx="@dimen/shadow_dx"
+                android:shadowDy="@dimen/shadow_dy"
+                android:shadowRadius="@dimen/shadow_radius"
                 android:text="\u00B0"
                 android:textColor="@color/white"
                 android:textSize="40sp"
+                android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="@id/lbl_fahrenheit"
                 app:layout_constraintStart_toStartOf="@id/lbl_fahrenheit"
                 app:layout_constraintTop_toTopOf="@id/tv_current_temperature" />
@@ -73,10 +87,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="6dp"
+                android:shadowColor="@color/black"
+                android:shadowDx="@dimen/shadow_dx"
+                android:shadowDy="@dimen/shadow_dy"
+                android:shadowRadius="@dimen/shadow_radius"
                 android:text="F"
                 android:textColor="@color/white"
                 android:textSize="16sp"
-
+                android:textStyle="bold"
                 app:layout_constraintBaseline_toBaselineOf="@id/tv_current_temperature"
                 app:layout_constraintStart_toEndOf="@id/tv_current_temperature" />
 
@@ -87,12 +105,18 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="12dp"
+            android:shadowColor="@color/black"
+            android:shadowDx="@dimen/shadow_dx"
+            android:shadowDy="@dimen/shadow_dy"
+            android:shadowRadius="@dimen/shadow_radius"
             android:text="Partly Cloudy"
             android:textColor="@color/white"
             android:textSize="16sp"
+            android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="@id/cl_temperature"
             app:layout_constraintStart_toEndOf="@+id/cl_temperature"
             app:layout_constraintTop_toTopOf="@id/cl_temperature" />
+
 
         <ImageView
             android:id="@+id/imageView"
@@ -108,9 +132,14 @@
             android:id="@+id/tv_feels_like"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:shadowColor="@color/black"
+            android:shadowDx="@dimen/shadow_dx"
+            android:shadowDy="@dimen/shadow_dy"
+            android:shadowRadius="@dimen/shadow_radius"
             android:text="Feels Like 102\u00B0"
             android:textColor="@color/white"
             android:textSize="16sp"
+            android:textStyle="bold"
             app:layout_constraintStart_toStartOf="@+id/tv_current_conditions"
             app:layout_constraintTop_toBottomOf="@id/tv_current_conditions" />
     </androidx.constraintlayout.widget.ConstraintLayout>
@@ -126,7 +155,9 @@
             android:id="@+id/tv_location"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Tacoma"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:text="Bellair-Meadowbrook Terrace Abba Dabba Slappa Jamma"
             android:textColor="@color/white"
             android:textSize="24sp"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -135,29 +166,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:id="@+id/tv_lat"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="30dp"
-            android:text="Latitude"
-            android:textColor="@color/white"
-            android:textSize="12sp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:id="@+id/tv_lon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="30dp"
-            android:text="Longitude"
-            android:textColor="@color/white"
-            android:textSize="12sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -260,7 +269,7 @@
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="50dp"
+            android:layout_marginTop="30dp"
             android:layout_marginEnd="16dp"
             android:background="@color/black"
             app:layout_constraintTop_toBottomOf="@id/iv_visibility" />
@@ -287,8 +296,8 @@
                 android:id="@+id/iv_sunset"
                 android:layout_width="75dp"
                 android:layout_height="75dp"
-                android:src="@drawable/iv_sunset"
                 android:layout_marginTop="6dp"
+                android:src="@drawable/iv_sunset"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -296,50 +305,49 @@
                 android:id="@+id/lbl_sunrise"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:text="Sunrise"
+                android:textColor="@color/black"
                 android:textSize="12sp"
                 android:textStyle="bold"
-                android:textColor="@color/black"
-                android:text="Sunrise"
-                app:layout_constraintStart_toStartOf="@id/iv_sunrise"
                 app:layout_constraintEnd_toEndOf="@id/iv_sunrise"
+                app:layout_constraintStart_toStartOf="@id/iv_sunrise"
                 app:layout_constraintTop_toBottomOf="@+id/iv_sunrise" />
 
             <TextView
                 android:id="@+id/tv_sunrise"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="12sp"
-                android:textColor="@color/black"
                 android:text="6:36 AM"
-                app:layout_constraintStart_toStartOf="@id/lbl_sunrise"
+                android:textColor="@color/black"
+                android:textSize="12sp"
                 app:layout_constraintEnd_toEndOf="@id/lbl_sunrise"
+                app:layout_constraintStart_toStartOf="@id/lbl_sunrise"
                 app:layout_constraintTop_toBottomOf="@+id/lbl_sunrise" />
 
             <TextView
                 android:id="@+id/lbl_sunset"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:text="Sunset"
+                android:textColor="@color/black"
                 android:textSize="12sp"
                 android:textStyle="bold"
-                android:textColor="@color/black"
-                android:text="Sunset"
-                app:layout_constraintStart_toStartOf="@id/iv_sunset"
                 app:layout_constraintEnd_toEndOf="@id/iv_sunset"
+                app:layout_constraintStart_toStartOf="@id/iv_sunset"
                 app:layout_constraintTop_toBottomOf="@+id/iv_sunset" />
 
             <TextView
                 android:id="@+id/tv_sunset"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="12sp"
-                android:textColor="@color/black"
                 android:text="8:28 PM"
-                app:layout_constraintStart_toStartOf="@id/lbl_sunset"
+                android:textColor="@color/black"
+                android:textSize="12sp"
                 app:layout_constraintEnd_toEndOf="@id/lbl_sunset"
+                app:layout_constraintStart_toStartOf="@id/lbl_sunset"
                 app:layout_constraintTop_toBottomOf="@+id/lbl_sunset" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
-
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

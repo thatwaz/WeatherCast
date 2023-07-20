@@ -1,5 +1,6 @@
 package com.thatwaz.weathercast.view.ui
 
+
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.ActivityNotFoundException
@@ -12,31 +13,22 @@ import android.os.Bundle
 import android.os.Looper
 import android.provider.Settings
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationCallback
-import com.google.android.gms.location.LocationResult
-import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.*
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
-import com.thatwaz.weathercast.databinding.FragmentCurrentWeatherBinding
 import com.thatwaz.weathercast.R
-
-
-
-
-
-import com.google.android.gms.location.*
-import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.thatwaz.weathercast.databinding.FragmentCurrentWeatherBinding
 import com.thatwaz.weathercast.viewmodel.WeatherViewModel
 import java.util.*
 
@@ -64,18 +56,57 @@ class CurrentWeatherFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+//            Toast.makeText(requireContext(), "Lat = ${lat.toString()}", Toast.LENGTH_SHORT).show()
+
+
         viewModel.weatherData.observe(viewLifecycleOwner) { weatherData ->
             // Update the UI with the weather data
             // Use binding to access the views in your fragment layout
             binding.tvLocation.text = weatherData?.name
-            binding.tvLat.text = "Lat = " +weatherData?.coord!!.lat.toString()
-            binding.tvLon.text = "Lon = " +weatherData.coord.lon.toString()
+            binding.tvCurrentTemperature
+            binding.clLocation.setOnClickListener {
+                Toast.makeText(
+                    requireContext(),
+                    "Latitude " + weatherData?.coord!!.lat.toString()
+                            + "\nLongitude " + weatherData.coord.lon.toString(), Toast.LENGTH_SHORT
+                ).show()
+            }
+            binding.tvCurrentConditions.text =
+                weatherData?.weather?.get(0)?.description?.capitalizeWords()
+            val kelvinTemp = weatherData?.main!!.temp
+            val fahrenheitTemp = kelvinTemp.let { (it - 273.15) * 9 / 5 + 32 }
+            binding.tvCurrentTemperature.text = fahrenheitTemp.toInt().toString()
+
 //            binding.tvCurrentWeatherDescription.text = weatherData?.weather?.get(0)?.description
 //            val kelvinTemp = weatherData?.main!!.temp
 //            val fahrenheitTemp = kelvinTemp.let { (it - 273.15) * 9/5 + 32 }
 //            binding.tvCurrentTemperature.text = fahrenheitTemp.toInt().toString() + " \u00B0"
             // ... update other views ...
         }
+
+        fun String.capitalizeWords(): String = split(" ")
+            .joinToString(" ") {
+                it.replaceFirstChar {
+                    if (it.isLowerCase()) it.titlecase(
+                        Locale.getDefault()
+                    ) else it.toString()
+                }
+            }
+
+
+//            // Update the UI with the weather data
+//            // Use binding to access the views in your fragment layout
+//            binding.tvLocation.text = weatherData?.name
+//            binding.tvLat.text = "Lat = " +weatherData?.coord!!.lat.toString()
+//            binding.tvLon.text = "Lon = " +weatherData.coord.lon.toString()
+//
+//        }
+
+        //            binding.tvCurrentWeatherDescription.text = weatherData?.weather?.get(0)?.description
+//            val kelvinTemp = weatherData?.main!!.temp
+//            val fahrenheitTemp = kelvinTemp.let { (it - 273.15) * 9/5 + 32 }
+//            binding.tvCurrentTemperature.text = fahrenheitTemp.toInt().toString() + " \u00B0"
+        // ... update other views ...
 
 //        viewModel.sunriseTime.observe(viewLifecycleOwner) { sunriseTime ->
 //            Log.i("DOH!", "Sunrise Time: $sunriseTime")
@@ -88,7 +119,6 @@ class CurrentWeatherFragment : Fragment() {
 //                Log.i("DOH!", "Failed to receive weather data or empty response")
 //            }
 //        }
-
 
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext())
@@ -205,6 +235,15 @@ class CurrentWeatherFragment : Fragment() {
         _binding = null
     }
 }
+
+private fun String.capitalizeWords(): String = split(" ")
+    .joinToString(" ") {
+        it.replaceFirstChar {
+            if (it.isLowerCase()) it.titlecase(
+                Locale.getDefault()
+            ) else it.toString()
+        }
+    }
 
 
 

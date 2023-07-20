@@ -10,9 +10,12 @@
     <color name="blue_200">#9FA8DA</color>
     <color name="blue_500">#3F51B5</color>
     <color name="blue_700">#303F9F</color>
+    <color name="off_white">#F2F4F8</color>
     <color name="dark_blue">#002171</color>
     <color name="sky_blue">#007ac1</color>
     <color name="sky_blue2">#03A9F4</color>
     <color name="sky_grey">#62757f</color>
     <color name="sky_night">#000051</color>
+    <color name="inactive_grey">#8A8A8A</color>
+    <color name="clickable_light_blue">#3498db</color>
 </resources>
