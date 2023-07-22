@@ -1,47 +1,32 @@
 package com.thatwaz.weathercast.view.ui
 
 
-import android.Manifest
-import android.annotation.SuppressLint
-import android.content.ActivityNotFoundException
-import android.content.Context
-import android.content.Intent
-import android.location.Location
-import android.location.LocationManager
-import android.net.Uri
+
 import android.os.Bundle
-import android.os.Looper
-import android.provider.Settings
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.google.android.gms.location.*
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.karumi.dexter.Dexter
-import com.karumi.dexter.MultiplePermissionsReport
-import com.karumi.dexter.PermissionToken
-import com.karumi.dexter.listener.PermissionRequest
-import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.thatwaz.weathercast.R
 import com.thatwaz.weathercast.databinding.FragmentCurrentWeatherBinding
+import com.thatwaz.weathercast.model.location.LocationRepository
+import com.thatwaz.weathercast.model.util.PermissionUtils
 import com.thatwaz.weathercast.viewmodel.WeatherViewModel
 import java.util.*
 
 class CurrentWeatherFragment : Fragment() {
 
     private lateinit var bottomNavView: BottomNavigationView
-
     private val viewModel: WeatherViewModel by viewModels()
     private var _binding: FragmentCurrentWeatherBinding? = null
     private val binding get() = _binding!!
 
     private lateinit var fusedLocationClient: FusedLocationProviderClient
-    private lateinit var locationCallback: LocationCallback
+    private lateinit var locationRepository: LocationRepository
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -56,186 +41,83 @@ class CurrentWeatherFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-//            Toast.makeText(requireContext(), "Lat = ${lat.toString()}", Toast.LENGTH_SHORT).show()
-
-
-        viewModel.weatherData.observe(viewLifecycleOwner) { weatherData ->
-            // Update the UI with the weather data
-            // Use binding to access the views in your fragment layout
-            binding.tvLocation.text = weatherData?.name
-            binding.tvCurrentTemperature
-            binding.clLocation.setOnClickListener {
-                Toast.makeText(
-                    requireContext(),
-                    "Latitude " + weatherData?.coord!!.lat.toString()
-                            + "\nLongitude " + weatherData.coord.lon.toString(), Toast.LENGTH_SHORT
-                ).show()
-            }
-            binding.tvCurrentConditions.text =
-                weatherData?.weather?.get(0)?.description?.capitalizeWords()
-            val kelvinTemp = weatherData?.main!!.temp
-            val fahrenheitTemp = kelvinTemp.let { (it - 273.15) * 9 / 5 + 32 }
-            binding.tvCurrentTemperature.text = fahrenheitTemp.toInt().toString()
-
-//            binding.tvCurrentWeatherDescription.text = weatherData?.weather?.get(0)?.description
-//            val kelvinTemp = weatherData?.main!!.temp
-//            val fahrenheitTemp = kelvinTemp.let { (it - 273.15) * 9/5 + 32 }
-//            binding.tvCurrentTemperature.text = fahrenheitTemp.toInt().toString() + " \u00B0"
-            // ... update other views ...
-        }
-
-        fun String.capitalizeWords(): String = split(" ")
-            .joinToString(" ") {
-                it.replaceFirstChar {
-                    if (it.isLowerCase()) it.titlecase(
-                        Locale.getDefault()
-                    ) else it.toString()
-                }
-            }
-
-
-//            // Update the UI with the weather data
-//            // Use binding to access the views in your fragment layout
-//            binding.tvLocation.text = weatherData?.name
-//            binding.tvLat.text = "Lat = " +weatherData?.coord!!.lat.toString()
-//            binding.tvLon.text = "Lon = " +weatherData.coord.lon.toString()
-//
-//        }
-
-        //            binding.tvCurrentWeatherDescription.text = weatherData?.weather?.get(0)?.description
-//            val kelvinTemp = weatherData?.main!!.temp
-//            val fahrenheitTemp = kelvinTemp.let { (it - 273.15) * 9/5 + 32 }
-//            binding.tvCurrentTemperature.text = fahrenheitTemp.toInt().toString() + " \u00B0"
-        // ... update other views ...
-
-//        viewModel.sunriseTime.observe(viewLifecycleOwner) { sunriseTime ->
-//            Log.i("DOH!", "Sunrise Time: $sunriseTime")
-//        }
-
-//        viewModel.weatherData.observe(viewLifecycleOwner) { weatherResponse ->
-//            if (weatherResponse != null) {
-//                Log.i("DOH!", "Output is $weatherResponse")
-//            } else {
-//                Log.i("DOH!", "Failed to receive weather data or empty response")
-//            }
-//        }
-
-
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext())
-        locationCallback = object : LocationCallback() {
-            override fun onLocationResult(locationResult: LocationResult) {
-                val lastLocation: Location = locationResult.lastLocation
-                val latitude = lastLocation.latitude
+        locationRepository = LocationRepository(fusedLocationClient)
 
-                Log.i("Current Latitude", "$latitude")
-                val longitude = lastLocation.longitude
-                Log.i("Current Longitude", "$longitude")
-                getLocationWeatherDetails(latitude, longitude)
-            }
-        }
-        checkLocationPermissionsAndStartUpdates()
+        // Check location permissions and start updates
+        checkLocationPermissions()
     }
 
     private fun showToast(message: String) {
         Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
     }
 
-    private fun openLocationSettings() {
-        val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
-        startActivity(intent)
-    }
-
-    private fun requestLocationPermissions() {
-        Dexter.withContext(requireContext())
-            .withPermissions(
-                Manifest.permission.ACCESS_FINE_LOCATION,
-                Manifest.permission.ACCESS_COARSE_LOCATION
-            )
-            .withListener(object : MultiplePermissionsListener {
-                override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
-                    if (report?.areAllPermissionsGranted() == true) {
-                        requestLocationData()
-                    }
-                    if (report?.isAnyPermissionPermanentlyDenied == true) {
-                        showToast("You have denied permission")
-                    }
-                }
-
-                override fun onPermissionRationaleShouldBeShown(
-                    permissions: MutableList<PermissionRequest>?,
-                    token: PermissionToken?
-                ) {
-                    showRationalDialogForPermission()
-                }
-            })
-            .onSameThread()
-            .check()
-    }
-
-    private fun showRationalDialogForPermission() {
-        AlertDialog.Builder(requireContext())
-            .setMessage("It looks like you have turned off permissions")
-            .setPositiveButton("Go To Settings") { _, _ ->
-                openAppSettings()
+    private fun checkLocationPermissions() {
+        PermissionUtils.requestLocationPermissions(
+            requireContext(),
+            { // On permission granted
+                requestLocationData()
+            },
+            { // On permission denied
+                showToast("You have denied permission")
             }
-            .setNegativeButton("Cancel") { dialog, _ ->
-                dialog.dismiss()
-            }
-            .show()
-    }
-
-    private fun openAppSettings() {
-        try {
-            val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
-            val uri = Uri.fromParts("package", requireContext().packageName, null)
-            intent.data = uri
-            startActivity(intent)
-        } catch (e: ActivityNotFoundException) {
-            e.printStackTrace()
-        }
-    }
-
-    @SuppressLint("MissingPermission")
-    private fun requestLocationData() {
-        val locationRequest = LocationRequest.create().apply {
-            priority = LocationRequest.PRIORITY_HIGH_ACCURACY
-            interval = 100000
-        }
-        fusedLocationClient.requestLocationUpdates(
-            locationRequest,
-            locationCallback,
-            Looper.myLooper()
         )
     }
 
-    private fun isLocationEnabled(): Boolean {
-        val locationManager: LocationManager =
-            requireContext().getSystemService(Context.LOCATION_SERVICE) as LocationManager
-        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
-                || locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
+    private fun requestLocationData() {
+        // Get the current location using the LocationRepository
+        locationRepository.getCurrentLocation { latitude, longitude ->
+            // Use the latitude and longitude to fetch the weather data
+            getLocationWeatherDetails(latitude, longitude)
+        }
     }
 
-    private fun checkLocationPermissionsAndStartUpdates() {
-        if (!isLocationEnabled()) {
-            showToast("Your location provider is turned off, please turn it on")
-            openLocationSettings()
-        } else {
-            requestLocationPermissions()
-        }
+    private fun kelvinToFahrenheit(kelvinTemp: Double): Int {
+        return ((kelvinTemp - 273.15) * 9 / 5 + 32).toInt()
     }
 
     private fun getLocationWeatherDetails(latitude: Double, longitude: Double) {
         viewModel.fetchWeatherData(latitude, longitude)
-        // TODO: Implement fetching weather details using the provided latitude and longitude
+
+        viewModel.weatherData.observe(viewLifecycleOwner) { weatherData ->
+            if (weatherData != null) {
+                val currentConditions = weatherData.weather[0].description.capitalizeWords()
+                val kelvinTemp = weatherData.main.temp
+                val fahrenheitTemp = kelvinToFahrenheit(kelvinTemp)
+                val humidityValue = weatherData.main.humidity
+                val formattedHumidity = "$humidityValue%"
+                val kelvinFeelsLikeTemp = weatherData.main.feelsLike
+                val fahrenheitFeelsLikeTemp = kelvinToFahrenheit(kelvinFeelsLikeTemp).toString()
+                val formattedFeelsLike = "$fahrenheitFeelsLikeTemp\u00B0"
+
+                binding.apply {
+                    tvLocation.text = weatherData.name
+                    tvCurrentConditions.text = currentConditions
+                    tvFeelsLike.text = formattedFeelsLike
+                    tvCurrentTemperature.text = fahrenheitTemp.toInt().toString()
+                    tvHumidity.text = formattedHumidity
+                }
+
+                binding.clLocation.setOnClickListener {
+                    Toast.makeText(
+                        requireContext(),
+                        "Latitude " + weatherData.coord.lat.toString()
+                                + "\nLongitude " + weatherData.coord.lon.toString(),
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            } else {
+                showToast("No Internet Connection")
+            }
+        }
     }
+
 
     override fun onDestroyView() {
         super.onDestroyView()
-        fusedLocationClient.removeLocationUpdates(locationCallback)
         _binding = null
     }
 }
-
 private fun String.capitalizeWords(): String = split(" ")
     .joinToString(" ") {
         it.replaceFirstChar {

@@ -118,6 +118,84 @@ initial ui test
             app:layout_constraintTop_toBottomOf="@+id/btn_cloudy" />
 
 
+            -- fragment code --
+            //            // Update the UI with the weather data
+            //            // Use binding to access the views in your fragment layout
+            //            binding.tvLocation.text = weatherData?.name
+            //            binding.tvLat.text = "Lat = " +weatherData?.coord!!.lat.toString()
+            //            binding.tvLon.text = "Lon = " +weatherData.coord.lon.toString()
+            //
+            //        }
+
+                    //            binding.tvCurrentWeatherDescription.text = weatherData?.weather?.get(0)?.description
+            //            val kelvinTemp = weatherData?.main!!.temp
+            //            val fahrenheitTemp = kelvinTemp.let { (it - 273.15) * 9/5 + 32 }
+            //            binding.tvCurrentTemperature.text = fahrenheitTemp.toInt().toString() + " \u00B0"
+                    // ... update other views ...
+
+            //        viewModel.sunriseTime.observe(viewLifecycleOwner) { sunriseTime ->
+            //            Log.i("DOH!", "Sunrise Time: $sunriseTime")
+            //        }
+
+            //        viewModel.weatherData.observe(viewLifecycleOwner) { weatherResponse ->
+            //            if (weatherResponse != null) {
+            //                Log.i("DOH!", "Output is $weatherResponse")
+            //            } else {
+            //                Log.i("DOH!", "Failed to receive weather data or empty response")
+            //            }
+            //        }
+
+            //            binding.tvCurrentWeatherDescription.text = weatherData?.weather?.get(0)?.description
+            //            val kelvinTemp = weatherData?.main!!.temp
+            //            val fahrenheitTemp = kelvinTemp.let { (it - 273.15) * 9/5 + 32 }
+            //            binding.tvCurrentTemperature.text = fahrenheitTemp.toInt().toString() + " \u00B0"
+                            // ... update other views ...
+
+
+
+           //    private fun checkLocationPermissionsAndStartUpdates() {
+           //        if (!isLocationEnabled()) {
+           //            showToast("Your location provider is turned off, please turn it on")
+           //            openLocationSettings()
+           //        } else {
+           //            requestLocationPermissions()
+           //        }
+           //    }
+
+           //    private fun requestLocationPermissions() {
+           //        Dexter.withContext(requireContext())
+           //            .withPermissions(
+           //                Manifest.permission.ACCESS_FINE_LOCATION,
+           //                Manifest.permission.ACCESS_COARSE_LOCATION
+           //            )
+           //            .withListener(object : MultiplePermissionsListener {
+           //                // Handle permissions callback as before
+           //                // ...
+           //                override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
+           //                    if (report?.areAllPermissionsGranted() == true) {
+           //                        // Get the current location using the LocationRepository
+           //                        locationRepository.getCurrentLocation { latitude, longitude ->
+           //                            // Use the latitude and longitude to fetch the weather data
+           //                            getLocationWeatherDetails(latitude, longitude)
+           //                        }
+           //                    }
+           //                }
+           //            })
+           //            .onSameThread()
+           //            .check()
+           //    }
+
+               private fun getLocationWeatherDetails(latitude: Double, longitude: Double) {
+                   viewModel.fetchWeatherData(latitude, longitude)
+                   // TODO: Implement fetching weather details using the provided latitude and longitude
+               }
+
+
+
+
+            ----------------------------------------
+
+
             kinda cool transparent background
             <?xml version="1.0" encoding="utf-8"?>
             <shape xmlns:android="http://schemas.android.com/apk/res/android">

@@ -20,7 +20,7 @@
             android:background="@color/white"
             android:scaleType="fitXY"
             android:src="@drawable/img_partly_cloudy" />
-        <!--            android:src="@drawable/img_partly_cloudy"-->
+
 
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -109,7 +109,7 @@
             android:shadowDx="@dimen/shadow_dx"
             android:shadowDy="@dimen/shadow_dy"
             android:shadowRadius="@dimen/shadow_radius"
-            android:text="Partly Cloudy"
+            android:text="N/A"
             android:textColor="@color/white"
             android:textSize="16sp"
             android:textStyle="bold"
@@ -129,6 +129,22 @@
             app:layout_constraintTop_toTopOf="@id/cl_temperature" />
 
         <TextView
+            android:id="@+id/lbl_feels_like"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:shadowColor="@color/black"
+            android:shadowDx="@dimen/shadow_dx"
+            android:shadowDy="@dimen/shadow_dy"
+            android:shadowRadius="@dimen/shadow_radius"
+            android:text="Feels Like "
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="@+id/tv_current_conditions"
+            app:layout_constraintTop_toBottomOf="@id/tv_current_conditions" />
+
+
+        <TextView
             android:id="@+id/tv_feels_like"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -136,12 +152,12 @@
             android:shadowDx="@dimen/shadow_dx"
             android:shadowDy="@dimen/shadow_dy"
             android:shadowRadius="@dimen/shadow_radius"
-            android:text="Feels Like 102\u00B0"
+            android:text="N/A"
             android:textColor="@color/white"
             android:textSize="16sp"
             android:textStyle="bold"
-            app:layout_constraintStart_toStartOf="@+id/tv_current_conditions"
-            app:layout_constraintTop_toBottomOf="@id/tv_current_conditions" />
+            app:layout_constraintStart_toEndOf="@+id/lbl_feels_like"
+            app:layout_constraintTop_toTopOf="@id/lbl_feels_like" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -190,16 +206,27 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/tv_humidity"
+            android:id="@+id/lbl_humidity"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="4dp"
-            android:text="Humidity 96%"
+            android:text="Humidity "
             android:textColor="@color/black"
             android:textSize="@dimen/weather_details_text_size"
             app:layout_constraintBottom_toBottomOf="@id/iv_humidity"
             app:layout_constraintStart_toEndOf="@id/iv_humidity"
             app:layout_constraintTop_toTopOf="@id/iv_humidity" />
+
+        <TextView
+            android:id="@+id/tv_humidity"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:textColor="@color/black"
+            android:textSize="@dimen/weather_details_text_size"
+            app:layout_constraintBottom_toBottomOf="@id/lbl_humidity"
+            app:layout_constraintStart_toEndOf="@id/lbl_humidity"
+            app:layout_constraintTop_toTopOf="@id/lbl_humidity" />
 
         <ImageView
             android:id="@+id/iv_wind"
