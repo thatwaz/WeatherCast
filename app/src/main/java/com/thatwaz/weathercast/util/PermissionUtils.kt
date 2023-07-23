@@ -1,4 +1,4 @@
-package com.thatwaz.weathercast.model.util
+package com.thatwaz.weathercast.util
 
 import android.Manifest
 import android.content.ActivityNotFoundException

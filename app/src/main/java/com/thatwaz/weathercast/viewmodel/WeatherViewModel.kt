@@ -5,7 +5,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.thatwaz.weathercast.config.ApiConfig
+import com.thatwaz.weathercast.model.forecastresponse.Forecast
 import com.thatwaz.weathercast.model.weatherresponse.WeatherResponse
+
 import com.thatwaz.weathercast.repository.WeatherRepository
 import kotlinx.coroutines.launch
 
@@ -14,9 +16,13 @@ import kotlinx.coroutines.launch
 class WeatherViewModel : ViewModel() {
 
     private val repository = WeatherRepository()
+//    private val forecastRepository = ForecastRepository()
 
     private val _weatherData = MutableLiveData<WeatherResponse>()
     val weatherData: MutableLiveData<WeatherResponse> = _weatherData
+
+//    private val _forecastData = MutableLiveData<Forecast>()
+//    val forecastData: MutableLiveData<Forecast> = _forecastData
 
     private val _sunriseTime = MutableLiveData<Int>()
     val sunriseTime: MutableLiveData<Int> get() = _sunriseTime
@@ -25,6 +31,8 @@ class WeatherViewModel : ViewModel() {
         try {
 
             viewModelScope.launch {
+
+
                 val response = repository.getWeatherData(ApiConfig.APP_ID, latitude, longitude)
                 if (response.isSuccessful) {
                     _weatherData.value = response.body()
