@@ -15,11 +15,12 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
+            android:id="@+id/iv_current_weather_image"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@color/white"
             android:scaleType="fitXY"
-            android:src="@drawable/img_partly_cloudy" />
+            android:src="@drawable/img_night_clear" />
 
 
 
@@ -119,7 +120,7 @@
 
 
         <ImageView
-            android:id="@+id/imageView"
+            android:id="@+id/iv_current_weather_icon"
             android:layout_width="125dp"
             android:layout_height="125dp"
             android:layout_marginEnd="16dp"
@@ -238,16 +239,27 @@
             app:layout_constraintTop_toBottomOf="@id/iv_humidity" />
 
         <TextView
-            android:id="@+id/tv_wind"
+            android:id="@+id/lbl_wind"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="4dp"
-            android:text="Wind 2mph"
+            android:text="Wind "
             android:textColor="@color/black"
             android:textSize="@dimen/weather_details_text_size"
             app:layout_constraintBottom_toBottomOf="@id/iv_wind"
             app:layout_constraintStart_toEndOf="@id/iv_wind"
             app:layout_constraintTop_toTopOf="@id/iv_wind" />
+
+        <TextView
+            android:id="@+id/tv_wind"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="N/A"
+            android:textColor="@color/black"
+            android:textSize="@dimen/weather_details_text_size"
+            app:layout_constraintBottom_toBottomOf="@id/lbl_wind"
+            app:layout_constraintStart_toEndOf="@id/lbl_wind"
+            app:layout_constraintTop_toTopOf="@id/lbl_wind" />
 
         <ImageView
             android:id="@+id/iv_air_pressure"
@@ -259,16 +271,27 @@
             app:layout_constraintTop_toBottomOf="@id/iv_wind" />
 
         <TextView
-            android:id="@+id/tv_air_pressure"
+            android:id="@+id/lbl_air_pressure"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="4dp"
-            android:text="Air Pressure 30.05 in"
+            android:text="Air Pressure "
             android:textColor="@color/black"
             android:textSize="@dimen/weather_details_text_size"
             app:layout_constraintBottom_toBottomOf="@id/iv_air_pressure"
             app:layout_constraintStart_toEndOf="@id/iv_air_pressure"
             app:layout_constraintTop_toTopOf="@id/iv_air_pressure" />
+
+        <TextView
+            android:id="@+id/tv_air_pressure"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="N/A"
+            android:textColor="@color/black"
+            android:textSize="@dimen/weather_details_text_size"
+            app:layout_constraintBottom_toBottomOf="@id/lbl_air_pressure"
+            app:layout_constraintStart_toEndOf="@id/lbl_air_pressure"
+            app:layout_constraintTop_toTopOf="@id/lbl_air_pressure" />
 
         <ImageView
             android:id="@+id/iv_visibility"
@@ -280,16 +303,27 @@
             app:layout_constraintTop_toBottomOf="@id/iv_air_pressure" />
 
         <TextView
-            android:id="@+id/tv_visibility"
+            android:id="@+id/lbl_visibility"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="4dp"
-            android:text="Visibility 6 mi"
+            android:text="Visibility "
             android:textColor="@color/black"
             android:textSize="@dimen/weather_details_text_size"
             app:layout_constraintBottom_toBottomOf="@id/iv_visibility"
             app:layout_constraintStart_toEndOf="@id/iv_visibility"
             app:layout_constraintTop_toTopOf="@id/iv_visibility" />
+
+        <TextView
+            android:id="@+id/tv_visibility"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="N/A"
+            android:textColor="@color/black"
+            android:textSize="@dimen/weather_details_text_size"
+            app:layout_constraintBottom_toBottomOf="@id/lbl_visibility"
+            app:layout_constraintStart_toEndOf="@id/lbl_visibility"
+            app:layout_constraintTop_toTopOf="@id/lbl_visibility" />
 
         <com.google.android.material.divider.MaterialDivider
             android:id="@+id/divider"
