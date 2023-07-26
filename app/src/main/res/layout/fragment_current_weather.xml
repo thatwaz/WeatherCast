@@ -6,6 +6,9 @@
     android:layout_height="match_parent"
     tools:context=".view.ui.CurrentWeatherFragment">
 
+
+
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/cl_top"
         android:layout_width="match_parent"
@@ -20,7 +23,7 @@
             android:layout_height="match_parent"
             android:background="@color/white"
             android:scaleType="fitXY"
-            android:src="@drawable/img_night_clear" />
+            android:src="@drawable/img_partly_cloudy" />
 
 
 
@@ -195,6 +198,16 @@
         app:layout_constraintTop_toBottomOf="@id/cl_location"
         app:layout_constraintVertical_bias="1.0"
         tools:layout_editor_absoluteX="68dp">
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            style="?android:attr/progressBarStyle"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:visibility="gone"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_width="50dp"
+            android:layout_height="50dp" />
 
         <ImageView
             android:id="@+id/iv_humidity"

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="36dp"
+    android:layout_marginTop="50dp"
+    tools:context=".view.ui.BarometricPressureDialogFragment">
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingStart="25dp"
+        android:paddingEnd="25dp"
+        android:paddingBottom="50dp"
+        android:paddingTop="24dp"
+        android:background="@color/white">
+    <TextView
+        android:id="@+id/lbl_barometric_pressure"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="24sp"
+        android:textColor="@color/blue_500"
+        android:gravity="center"
+        android:textStyle="bold"
+        android:text="Barometric Pressure"/>
+
+        <TextView
+            android:id="@+id/first"
+            android:layout_marginTop="6dp"
+            android:layout_below="@id/lbl_barometric_pressure"
+            android:textSize="18sp"
+
+            android:gravity="center"
+            android:textColor="@color/black"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="(at sea level)"/>
+
+        <TextView
+            android:id="@+id/second"
+            android:layout_marginTop="6dp"
+            android:layout_below="@id/first"
+
+            android:textSize="14sp"
+            android:gravity="center"
+            android:textColor="@color/black"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="28.0 - 31.0 inHg = Typical"/>
+
+    </RelativeLayout>
+
+</androidx.cardview.widget.CardView>

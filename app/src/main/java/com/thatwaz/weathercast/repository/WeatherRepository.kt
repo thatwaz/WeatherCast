@@ -1,6 +1,7 @@
 package com.thatwaz.weathercast.repository
 
 import com.thatwaz.weathercast.config.ApiConfig
+import com.thatwaz.weathercast.model.forecastresponse.ForecastResponse
 import com.thatwaz.weathercast.model.weatherresponse.WeatherResponse
 import com.thatwaz.weathercast.network.WeatherService
 import retrofit2.Response
@@ -20,7 +21,6 @@ class WeatherRepository {
         weatherService = retrofit.create(WeatherService::class.java)
     }
 
-
     suspend fun getWeatherData(
         appId: String,
         latitude: Double,
@@ -29,28 +29,13 @@ class WeatherRepository {
         return weatherService.getWeatherData(appId, latitude, longitude)
     }
 
-//    suspend fun getCityData(
-//        appId: String,
-//        latitude: Double,
-//        longitude: Double
-//    ): Response<City> {
-//        return weatherService.getWeatherData(appId, latitude, longitude)
-//    }
-
+    suspend fun getForecastData(
+        appId: String,
+        latitude: Double,
+        longitude: Double
+    ): Response<ForecastResponse> {
+        return weatherService.getForecastData(appId, latitude, longitude)
+    }
 }
 
 
-//class WeatherRepository {
-//    private val retrofit = Retrofit.Builder()
-//        .baseUrl(BASE_URL)
-//        .addConverterFactory(GsonConverterFactory.create())
-//        .build()
-//
-//    private val apiService = retrofit.create(ApiService::class.java)
-//
-//    suspend fun getWeatherData(apiConfig: String,latitude: Double, longitude: Double): Response<WeatherResponse> {
-//        return apiService.getWeatherData(latitude, longitude)
-//
-//
-//    }
-//}

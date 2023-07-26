@@ -9,5 +9,33 @@
         android:id="@+id/currentWeatherFragment"
         android:name="com.thatwaz.weathercast.view.ui.CurrentWeatherFragment"
         android:label="fragment_current_weather"
-        tools:layout="@layout/fragment_current_weather" />
+        tools:layout="@layout/fragment_current_weather" >
+        <action
+            android:id="@+id/action_currentWeatherFragment_to_hourlyFragment"
+            app:destination="@id/hourlyFragment" />
+        <action
+            android:id="@+id/action_currentWeatherFragment_to_barometricPressureDialogFragment"
+            app:destination="@id/barometricPressureDialogFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/hourlyFragment"
+        android:name="com.thatwaz.weathercast.view.ui.HourlyFragment"
+        android:label="fragment_hourly"
+        tools:layout="@layout/fragment_hourly" >
+        <action
+            android:id="@+id/action_hourlyFragment_to_currentWeatherFragment"
+            app:destination="@id/currentWeatherFragment" />
+    </fragment>
+
+        <dialog
+            android:id="@+id/barometricPressureDialogFragment"
+            android:name="com.thatwaz.weathercast.view.ui.BarometricPressureDialogFragment"
+            android:label="fragment_barometric_pressure_dialog"
+            tools:layout="@layout/fragment_barometric_pressure_dialog" >
+            <action
+                android:id="@+id/action_barometricPressureDialogFragment_to_currentWeatherFragment"
+                app:destination="@id/currentWeatherFragment" />
+        </dialog>
+
 </navigation>

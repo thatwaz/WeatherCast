@@ -15,6 +15,8 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import com.google.android.gms.location.*
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.thatwaz.weathercast.R
@@ -28,6 +30,7 @@ import com.thatwaz.weathercast.viewmodel.WeatherViewModel
 import java.util.*
 
 class CurrentWeatherFragment : Fragment() {
+
 
     private lateinit var bottomNavView: BottomNavigationView
     private val viewModel: WeatherViewModel by viewModels()
@@ -55,6 +58,7 @@ class CurrentWeatherFragment : Fragment() {
 
         // Check location permissions and start updates
         checkLocationPermissions()
+
     }
 
     private fun showToast(message: String) {
@@ -75,6 +79,7 @@ class CurrentWeatherFragment : Fragment() {
 
     private fun requestLocationData() {
         // Get the current location using the LocationRepository
+        binding.progressBar.visibility = View.VISIBLE
         locationRepository.getCurrentLocation { latitude, longitude ->
             // Use the latitude and longitude to fetch the weather data
             getLocationWeatherDetails(latitude, longitude)
@@ -101,10 +106,9 @@ class CurrentWeatherFragment : Fragment() {
         R.drawable.img_isolated_clouds,
         R.drawable.img_partly_cloudy,
         R.drawable.img_broken_clouds,
-        R.drawable.img_moon,
-        R.drawable.img_full_moon,
-        R.drawable.img_blood_moon,
-        R.drawable.img_full_moon,
+        R.drawable.img_thunderstorm,
+        R.drawable.img_mostly_cloudy,
+        R.drawable.img_mist,
         R.drawable.img_night_clear
     )
 
@@ -131,6 +135,7 @@ class CurrentWeatherFragment : Fragment() {
         }
 
         viewModel.weatherData.observe(viewLifecycleOwner) { weatherData ->
+            binding.progressBar.visibility = View.GONE
             if (weatherData != null) {
                 try {
                     handleWeatherData(weatherData)
@@ -178,7 +183,9 @@ class CurrentWeatherFragment : Fragment() {
             binding.tvAirPressure.paint?.isUnderlineText = true
             binding.tvAirPressure.setTextColor(pressureColor)
             binding.tvAirPressure.setOnClickListener {
-                showToast("Mornin!")
+                val action = CurrentWeatherFragmentDirections
+                    .actionCurrentWeatherFragmentToBarometricPressureDialogFragment()
+                findNavController().navigate(action)
             }
             tvVisibility.text = String.format("%.2f miles", visibilityInMiles)
             tvSunrise.text = sunriseTime
