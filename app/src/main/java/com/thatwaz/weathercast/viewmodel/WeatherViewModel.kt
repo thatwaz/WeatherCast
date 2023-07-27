@@ -5,7 +5,11 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.gson.Gson
 import com.thatwaz.weathercast.config.ApiConfig
+import com.thatwaz.weathercast.model.application.WeatherCastApplication
+import com.thatwaz.weathercast.model.database.WeatherDataEntity
+import com.thatwaz.weathercast.model.database.WeatherDatabase
 import com.thatwaz.weathercast.model.forecastresponse.ForecastResponse
 import com.thatwaz.weathercast.model.weatherresponse.WeatherResponse
 
@@ -22,27 +26,36 @@ class WeatherViewModel : ViewModel() {
     private val _forecastData = MutableLiveData<ForecastResponse>()
     val forecastData: LiveData<ForecastResponse> get() = _forecastData
 
+    private val weatherDatabase: WeatherDatabase by lazy {
+        WeatherDatabase.getInstance(WeatherCastApplication.instance)
+    }
 
 
-    fun fetchWeatherData(latitude: Double, longitude: Double) {
+
+
+    suspend fun fetchWeatherData(latitude: Double, longitude: Double) {
         try {
-            viewModelScope.launch {
+            // Check if cached data exists in the Room database
+            val cachedWeatherData = weatherDatabase.weatherDataDao().getWeatherData(latitude, longitude)
+            if (cachedWeatherData != null) {
+                // Cached data found, use it directly
+                _weatherData.value = Gson().fromJson(cachedWeatherData.weatherJson, WeatherResponse::class.java)
+            } else {
+                // No cached data found, fetch data from the API
                 val weatherResponse = repository.getWeatherData(ApiConfig.APP_ID, latitude, longitude)
                 if (weatherResponse.isSuccessful) {
-                    _weatherData.value = weatherResponse.body()
-                    // You can update other properties based on the weatherResponse if needed
                     Log.i("DOH!","Current Weather Response is ${_weatherData.value}")
+                    _weatherData.value = weatherResponse.body()
 
-                    val forecastResponse = repository.getForecastData(ApiConfig.APP_ID, latitude, longitude)
-                    if (forecastResponse.isSuccessful) {
-                        _forecastData.value = forecastResponse.body()
-                        Log.i("DOH!","Forecast is ${_forecastData.value}")
-                        // Handle forecast data as needed
-                    } else {
-                        // Handle forecast data error
-                        Log.e("WeatherViewModel", "Error fetching forecast data: ${forecastResponse.code()}")
+                    // Cache the API response in the Room database
+                    _weatherData.value?.let {
+                        val weatherDataEntity = WeatherDataEntity(
+                            latitude = latitude,
+                            longitude = longitude,
+                            weatherJson = Gson().toJson(it)
+                        )
+                        weatherDatabase.weatherDataDao().insertWeatherData(weatherDataEntity)
                     }
-
                 } else {
                     // Handle current weather data error
                     Log.e("WeatherViewModel", "Error fetching weather data: ${weatherResponse.code()}")
@@ -51,10 +64,12 @@ class WeatherViewModel : ViewModel() {
         } catch (e: Exception) {
             // Handle any other exceptions that might occur during the network request
             Log.e("WeatherViewModel", "Error fetching data: ${e.message}")
-            // Handle the error in a similar way as shown in the else blocks above
         }
     }
 }
+
+
+
 
 
 //class WeatherViewModel : ViewModel() {

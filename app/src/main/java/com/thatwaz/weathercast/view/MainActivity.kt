@@ -35,7 +35,6 @@ import com.thatwaz.weathercast.view.ui.HourlyFragmentDirections
             binding.bnvWeatherCast.setOnItemSelectedListener { item ->
                 val currentDestination = navController.currentDestination?.id
                 val selectedDestination = item.itemId
-                Log.i("MOH!","You have pressed ${item.itemId}")
 
                 if (currentDestination == selectedDestination) {
                     return@setOnItemSelectedListener true

@@ -288,7 +288,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="4dp"
-            android:text="Air Pressure "
+            android:text="Air Pressure (inHg) "
             android:textColor="@color/black"
             android:textSize="@dimen/weather_details_text_size"
             app:layout_constraintBottom_toBottomOf="@id/iv_air_pressure"

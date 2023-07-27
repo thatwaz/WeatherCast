@@ -21,4 +21,18 @@ object ConversionUtility {
         val date = Date(unixTimestamp * 1000)
         return dateFormat.format(date)
     }
+
+    fun getWindDirection(degrees: Int): String {
+        val directions = arrayOf(
+            "N", "NNE", "NE", "ENE",
+            "E", "ESE", "SE", "SSE",
+            "S", "SSW", "SW", "WSW",
+            "W", "WNW", "NW", "NNW"
+        )
+
+        val index = ((degrees + 11.25) / 22.5).toInt() % 16
+        return directions[index]
+    }
+
+
 }

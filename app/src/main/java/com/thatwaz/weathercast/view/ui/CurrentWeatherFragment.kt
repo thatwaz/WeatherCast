@@ -1,7 +1,6 @@
 package com.thatwaz.weathercast.view.ui
 
 
-
 import android.content.ContentValues.TAG
 import android.content.Context
 import android.net.ConnectivityManager
@@ -15,18 +14,28 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.fragment.navArgs
-import com.google.android.gms.location.*
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationCallback
+import com.google.android.gms.location.LocationResult
+import com.google.android.gms.location.LocationServices
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.thatwaz.weathercast.R
 import com.thatwaz.weathercast.databinding.FragmentCurrentWeatherBinding
 import com.thatwaz.weathercast.model.location.LocationRepository
 import com.thatwaz.weathercast.model.weatherresponse.WeatherResponse
 import com.thatwaz.weathercast.util.BarometricPressureColorUtility
+import com.thatwaz.weathercast.util.BarometricPressureColorUtility.getPressureColor
 import com.thatwaz.weathercast.util.ConversionUtility
+import com.thatwaz.weathercast.util.ConversionUtility.convertMetersToMiles
+import com.thatwaz.weathercast.util.ConversionUtility.convertUnixTimestampToTime
+import com.thatwaz.weathercast.util.ConversionUtility.getWindDirection
+import com.thatwaz.weathercast.util.ConversionUtility.hPaToInHg
+import com.thatwaz.weathercast.util.ConversionUtility.kelvinToFahrenheit
 import com.thatwaz.weathercast.util.PermissionUtils
 import com.thatwaz.weathercast.viewmodel.WeatherViewModel
+import kotlinx.coroutines.launch
 import java.util.*
 
 class CurrentWeatherFragment : Fragment() {
@@ -40,6 +49,8 @@ class CurrentWeatherFragment : Fragment() {
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var locationRepository: LocationRepository
 
+    private var isErrorOccurred = false
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -47,11 +58,35 @@ class CurrentWeatherFragment : Fragment() {
         bottomNavView = activity?.findViewById(R.id.bnv_weather_cast) ?: return binding.root
         bottomNavView.visibility = View.VISIBLE
         _binding = FragmentCurrentWeatherBinding.inflate(inflater, container, false)
+
+        viewModel.weatherData.removeObservers(viewLifecycleOwner)
+        viewModel.weatherData.observe(viewLifecycleOwner) { weatherData ->
+            binding.progressBar.visibility = View.GONE
+            if (weatherData != null) {
+                try {
+                    handleWeatherData(weatherData)
+                } catch (e: Exception) {
+                    // Handle any exception that occurs during data processing
+                    isErrorOccurred = true
+                    Log.e(TAG, "Error processing weather data: ${e.message}")
+                }
+            } else {
+                isErrorOccurred = true
+            }
+
+            // Show the toast here outside of the check
+            if (isErrorOccurred) {
+                showToast("An error has occurred")
+            }
+        }
+
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        Log.i("MOH!","On view created")
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext())
         locationRepository = LocationRepository(fusedLocationClient)
@@ -86,18 +121,6 @@ class CurrentWeatherFragment : Fragment() {
         }
     }
 
-    private fun getWindDirection(degrees: Int): String {
-        val directions = arrayOf(
-            "N", "NNE", "NE", "ENE",
-            "E", "ESE", "SE", "SSE",
-            "S", "SSW", "SW", "WSW",
-            "W", "WNW", "NW", "NNW"
-        )
-
-        val index = ((degrees + 11.25) / 22.5).toInt() % 16
-        return directions[index]
-    }
-
     //TEMP
     private val imageResources = intArrayOf(
         R.drawable.img_clear_sky,
@@ -116,14 +139,21 @@ class CurrentWeatherFragment : Fragment() {
     private var currentImageIndex = 0
 
     private fun getLocationWeatherDetails(latitude: Double, longitude: Double) {
+        if (_binding == null) {
+            return
+        }
         val connectivityManager =
             requireContext().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         val networkInfo = connectivityManager.activeNetworkInfo
         val isConnected =
-            networkInfo != null && networkInfo.isConnected && isInternetAvailable(connectivityManager)
+            networkInfo != null && networkInfo.isConnected && isInternetAvailable(
+                connectivityManager
+            )
 
         if (isConnected) {
-            viewModel.fetchWeatherData(latitude, longitude)
+            viewModel.viewModelScope.launch {
+                viewModel.fetchWeatherData(latitude, longitude)
+            }
         } else {
             showToast("No Internet Connection")
         }
@@ -134,43 +164,27 @@ class CurrentWeatherFragment : Fragment() {
             binding.ivCurrentWeatherImage.setImageResource(imageResources[currentImageIndex])
         }
 
-        viewModel.weatherData.observe(viewLifecycleOwner) { weatherData ->
-            binding.progressBar.visibility = View.GONE
-            if (weatherData != null) {
-                try {
-                    handleWeatherData(weatherData)
-                } catch (e: Exception) {
-                    // Handle any exception that occurs during data processing
-                    showToast("An error occurred while processing weather data.")
-                    Log.e(TAG, "Error processing weather data: ${e.message}")
-                }
-            } else {
-                showToast("No Internet Connection")
-            }
-        }
+
     }
 
     private fun handleWeatherData(weatherData: WeatherResponse) {
         val pressureInhPa = weatherData.main.pressure
-        val pressureInInHg = ConversionUtility.hPaToInHg(pressureInhPa)
-        val pressureColor = BarometricPressureColorUtility.getPressureColor(pressureInhPa)
+        val pressureInInHg = hPaToInHg(pressureInhPa)
+        val pressureColor = getPressureColor(pressureInhPa)
         val currentConditions = weatherData.weather[0].description.capitalizeWords()
         val kelvinTemp = weatherData.main.temp
-        val fahrenheitTemp = ConversionUtility.kelvinToFahrenheit(kelvinTemp)
+        val fahrenheitTemp = kelvinToFahrenheit(kelvinTemp)
         val humidityValue = weatherData.main.humidity
         val formattedHumidity = "$humidityValue%"
         val kelvinFeelsLikeTemp = weatherData.main.feelsLike
-        val fahrenheitFeelsLikeTemp =
-            ConversionUtility.kelvinToFahrenheit(kelvinFeelsLikeTemp).toString()
+        val fahrenheitFeelsLikeTemp = kelvinToFahrenheit(kelvinFeelsLikeTemp).toString()
         val formattedFeelsLike = "$fahrenheitFeelsLikeTemp\u00B0"
         val windDirectionDegrees = weatherData.wind.deg
         val formattedWindDirection = getWindDirection(windDirectionDegrees)
         val visibilityInMeters = weatherData.visibility
-        val visibilityInMiles = ConversionUtility.convertMetersToMiles(visibilityInMeters)
-        val sunriseTime =
-            ConversionUtility.convertUnixTimestampToTime(weatherData.sys.sunrise.toLong())
-        val sunsetTime =
-            ConversionUtility.convertUnixTimestampToTime(weatherData.sys.sunset.toLong())
+        val visibilityInMiles = convertMetersToMiles(visibilityInMeters)
+        val sunriseTime = convertUnixTimestampToTime(weatherData.sys.sunrise.toLong())
+        val sunsetTime = convertUnixTimestampToTime(weatherData.sys.sunset.toLong())
 
         binding.apply {
             tvLocation.text = weatherData.name
@@ -179,7 +193,7 @@ class CurrentWeatherFragment : Fragment() {
             tvCurrentTemperature.text = fahrenheitTemp.toString()
             tvHumidity.text = formattedHumidity
             tvWind.text = "$formattedWindDirection ${weatherData.wind.speed} mph "
-            tvAirPressure.text = String.format("%.2f inHg", pressureInInHg.toDouble())
+            tvAirPressure.text = String.format("%.2f", pressureInInHg.toDouble())
             binding.tvAirPressure.paint?.isUnderlineText = true
             binding.tvAirPressure.setTextColor(pressureColor)
             binding.tvAirPressure.setOnClickListener {
@@ -215,11 +229,26 @@ class CurrentWeatherFragment : Fragment() {
         }
     }
 
+    private val locationCallback = object : LocationCallback() {
+        override fun onLocationResult(locationResult: LocationResult) {
+            val lastLocation = locationResult.lastLocation
+            getLocationWeatherDetails(lastLocation.latitude, lastLocation.longitude)
+        }
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
-        _binding = null
+        // Check if _binding is not null before setting it to null
+        Log.i("MOH!","View destroyed")
+        fusedLocationClient.removeLocationUpdates(locationCallback)
+//        viewModel.weatherData.removeObservers(viewLifecycleOwner)
+        if (_binding != null) {
+            _binding = null
+        }
+
     }
 }
+
 
 private fun String.capitalizeWords(): String = split(" ")
     .joinToString(" ") {
