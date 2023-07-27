@@ -2,4 +2,22 @@
     <string name="app_name">WeatherCast</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="u00b0">°</string>
+    <string name="fahrenheit">F</string>
+    <string name="feels_like">Feels Like\u00A0</string>
+    <string name="humidity">Humidity\u00A0</string>
+    <string name="wind">Wind\u00A0</string>
+    <string name="air_pressure_inhg">Air Pressure (inHg)\u00A0</string>
+    <string name="visibility">Visibility\u00A0</string>
+    <string name="sunrise">Sunrise</string>
+    <string name="sunset">Sunset</string>
+    <string name="currently">CURRENTLY</string>
+    <string name="current_weather_image_description">current weather image description</string>
+    <string name="current_weather_icon_description">current_weather_icon_description</string>
+    <string name="humidity_icon_description">humidity_icon_description</string>
+    <string name="wind_icon_description">wind_icon_description</string>
+    <string name="air_pressure_icon_description">air_pressure_icon_description</string>
+    <string name="visibility_icon_description">visibility_icon_description</string>
+    <string name="sunrise_icon_description">sunrise_icon_description</string>
+    <string name="sunset_icon_description">sunset_icon_description</string>
 </resources>

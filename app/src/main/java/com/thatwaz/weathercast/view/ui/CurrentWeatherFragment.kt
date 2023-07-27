@@ -12,6 +12,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.viewModelScope
@@ -59,7 +60,16 @@ class CurrentWeatherFragment : Fragment() {
 
         viewModel.weatherData.removeObservers(viewLifecycleOwner)
         viewModel.weatherData.observe(viewLifecycleOwner) { weatherData ->
-            binding.progressBar.visibility = View.GONE
+            setWeatherDataVisibility(true)
+//            binding.progressBar.visibility = View.GONE
+//            binding.clLoading.visibility = View.INVISIBLE
+//            binding.clCurrentWeatherDetails.visibility = View.VISIBLE
+//            binding.clLocation.visibility = View.VISIBLE
+//            binding.clTop.visibility = View.VISIBLE
+//            binding.clLoadingData.visibility = View.GONE
+//            binding.clDataRetrieved.visibility = View.VISIBLE
+//            binding.clLoadingData.visibility = View.INVISIBLE
+
             if (weatherData != null) {
                 try {
                     handleWeatherData(weatherData)
@@ -81,10 +91,17 @@ class CurrentWeatherFragment : Fragment() {
         return binding.root
     }
 
+
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         Log.i("MOH!", "On view created")
+        setWeatherDataVisibility(false)
+//        binding.clCurrentWeatherDetails.visibility = View.INVISIBLE
+//        binding.clLocation.visibility = View.INVISIBLE
+//        binding.clTop.visibility = View.INVISIBLE
+//        binding.clLoading.visibility = View.VISIBLE
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext())
         locationRepository = LocationRepository(fusedLocationClient)
@@ -112,7 +129,7 @@ class CurrentWeatherFragment : Fragment() {
 
     private fun requestLocationData() {
         // Get the current location using the LocationRepository
-        binding.progressBar.visibility = View.VISIBLE
+//        binding.progressBar.visibility = View.VISIBLE
         locationRepository.getCurrentLocation { latitude, longitude ->
             // Use the latitude and longitude to fetch the weather data
             getLocationWeatherDetails(latitude, longitude)
@@ -154,6 +171,14 @@ class CurrentWeatherFragment : Fragment() {
     )
     //TEMP
     private var currentIconIndex = 0
+
+    private fun setWeatherDataVisibility(isVisible: Boolean) {
+        binding.clLoading.visibility = if (isVisible) View.INVISIBLE else View.VISIBLE
+        binding.clCurrentWeatherDetails.visibility = if (isVisible) View.VISIBLE else View.GONE
+        binding.clLocation.visibility = if (isVisible) View.VISIBLE else View.GONE
+        binding.clTop.visibility = if (isVisible) View.VISIBLE else View.GONE
+    }
+
 
     private fun getLocationWeatherDetails(latitude: Double, longitude: Double) {
         if (_binding == null) {
