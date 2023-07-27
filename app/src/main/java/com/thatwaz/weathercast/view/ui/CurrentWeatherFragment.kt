@@ -25,9 +25,7 @@ import com.thatwaz.weathercast.R
 import com.thatwaz.weathercast.databinding.FragmentCurrentWeatherBinding
 import com.thatwaz.weathercast.model.location.LocationRepository
 import com.thatwaz.weathercast.model.weatherresponse.WeatherResponse
-import com.thatwaz.weathercast.util.BarometricPressureColorUtility
 import com.thatwaz.weathercast.util.BarometricPressureColorUtility.getPressureColor
-import com.thatwaz.weathercast.util.ConversionUtility
 import com.thatwaz.weathercast.util.ConversionUtility.convertMetersToMiles
 import com.thatwaz.weathercast.util.ConversionUtility.convertUnixTimestampToTime
 import com.thatwaz.weathercast.util.ConversionUtility.getWindDirection
@@ -86,7 +84,7 @@ class CurrentWeatherFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        Log.i("MOH!","On view created")
+        Log.i("MOH!", "On view created")
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext())
         locationRepository = LocationRepository(fusedLocationClient)
@@ -138,6 +136,25 @@ class CurrentWeatherFragment : Fragment() {
     //TEMP
     private var currentImageIndex = 0
 
+
+    //TEMP
+    private val iconResources = intArrayOf(
+        R.drawable.day_partly_cloudy,
+        R.drawable.day_rain,
+        R.drawable.day_showers,
+        R.drawable.day_sunny,
+        R.drawable.day_thunderstorm,
+        R.drawable.day_snow,
+        R.drawable.night_clear,
+        R.drawable.night_cloudy,
+        R.drawable.night_rain,
+        R.drawable.night_showers,
+        R.drawable.night_thunderstorm,
+        R.drawable.night_snow,
+    )
+    //TEMP
+    private var currentIconIndex = 0
+
     private fun getLocationWeatherDetails(latitude: Double, longitude: Double) {
         if (_binding == null) {
             return
@@ -162,6 +179,11 @@ class CurrentWeatherFragment : Fragment() {
         binding.lblSunrise.setOnClickListener {
             currentImageIndex = (currentImageIndex + 1) % imageResources.size
             binding.ivCurrentWeatherImage.setImageResource(imageResources[currentImageIndex])
+        }
+        //TEMP
+        binding.lblSunset.setOnClickListener {
+            currentIconIndex = (currentIconIndex + 1) % iconResources.size
+            binding.ivCurrentWeatherIcon.setImageResource(iconResources[currentIconIndex])
         }
 
 
@@ -239,7 +261,7 @@ class CurrentWeatherFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         // Check if _binding is not null before setting it to null
-        Log.i("MOH!","View destroyed")
+        Log.i("MOH!", "View destroyed")
         fusedLocationClient.removeLocationUpdates(locationCallback)
 //        viewModel.weatherData.removeObservers(viewLifecycleOwner)
         if (_binding != null) {

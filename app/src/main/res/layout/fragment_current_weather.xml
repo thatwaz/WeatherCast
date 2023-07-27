@@ -127,7 +127,7 @@
             android:layout_width="125dp"
             android:layout_height="125dp"
             android:layout_marginEnd="16dp"
-            android:src="@drawable/ic_partly_cloudy"
+            android:src="@drawable/day_partly_cloudy"
             app:layout_constraintBottom_toBottomOf="@id/cl_temperature"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@id/cl_temperature" />
@@ -215,7 +215,7 @@
             android:layout_height="24dp"
             android:layout_marginStart="16dp"
             android:layout_marginTop="30dp"
-            android:src="@drawable/humidity"
+            android:src="@drawable/iv_humidity"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -247,7 +247,7 @@
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:layout_marginTop="24dp"
-            android:src="@drawable/wind"
+            android:src="@drawable/iv_wind"
             app:layout_constraintStart_toStartOf="@id/iv_humidity"
             app:layout_constraintTop_toBottomOf="@id/iv_humidity" />
 
@@ -279,7 +279,7 @@
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:layout_marginTop="24dp"
-            android:src="@drawable/ic_air_pressure"
+            android:src="@drawable/iv_air_pressure"
             app:layout_constraintStart_toStartOf="@id/iv_wind"
             app:layout_constraintTop_toBottomOf="@id/iv_wind" />
 
@@ -311,7 +311,7 @@
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:layout_marginTop="24dp"
-            android:src="@drawable/ic_visibility"
+            android:src="@drawable/iv_visibility"
             app:layout_constraintStart_toStartOf="@id/iv_air_pressure"
             app:layout_constraintTop_toBottomOf="@id/iv_air_pressure" />
 
