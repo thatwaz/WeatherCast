@@ -7,7 +7,7 @@
     <string name="feels_like">Feels Like\u00A0</string>
     <string name="humidity">Humidity\u00A0</string>
     <string name="wind">Wind\u00A0</string>
-    <string name="air_pressure_inhg">Air Pressure (inHg)\u00A0</string>
+    <string name="air_pressure_inhg">Air Pressure\u00A0</string>
     <string name="visibility">Visibility\u00A0</string>
     <string name="sunrise">Sunrise</string>
     <string name="sunset">Sunset</string>

@@ -12,7 +12,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.viewModelScope
@@ -61,28 +60,16 @@ class CurrentWeatherFragment : Fragment() {
         viewModel.weatherData.removeObservers(viewLifecycleOwner)
         viewModel.weatherData.observe(viewLifecycleOwner) { weatherData ->
             setWeatherDataVisibility(true)
-//            binding.progressBar.visibility = View.GONE
-//            binding.clLoading.visibility = View.INVISIBLE
-//            binding.clCurrentWeatherDetails.visibility = View.VISIBLE
-//            binding.clLocation.visibility = View.VISIBLE
-//            binding.clTop.visibility = View.VISIBLE
-//            binding.clLoadingData.visibility = View.GONE
-//            binding.clDataRetrieved.visibility = View.VISIBLE
-//            binding.clLoadingData.visibility = View.INVISIBLE
-
             if (weatherData != null) {
                 try {
                     handleWeatherData(weatherData)
                 } catch (e: Exception) {
-                    // Handle any exception that occurs during data processing
                     isErrorOccurred = true
                     Log.e(TAG, "Error processing weather data: ${e.message}")
                 }
             } else {
                 isErrorOccurred = true
             }
-
-            // Show the toast here outside of the check
             if (isErrorOccurred) {
                 showToast("An error has occurred")
             }
@@ -92,17 +79,10 @@ class CurrentWeatherFragment : Fragment() {
     }
 
 
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         Log.i("MOH!", "On view created")
         setWeatherDataVisibility(false)
-//        binding.clCurrentWeatherDetails.visibility = View.INVISIBLE
-//        binding.clLocation.visibility = View.INVISIBLE
-//        binding.clTop.visibility = View.INVISIBLE
-//        binding.clLoading.visibility = View.VISIBLE
-
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext())
         locationRepository = LocationRepository(fusedLocationClient)
 
@@ -128,13 +108,45 @@ class CurrentWeatherFragment : Fragment() {
     }
 
     private fun requestLocationData() {
-        // Get the current location using the LocationRepository
-//        binding.progressBar.visibility = View.VISIBLE
         locationRepository.getCurrentLocation { latitude, longitude ->
-            // Use the latitude and longitude to fetch the weather data
             getLocationWeatherDetails(latitude, longitude)
         }
     }
+
+    private fun setCurrentWeatherImage(iconId: String) {
+        val resourceId = when (iconId) {
+            "01d" -> R.drawable.img_clear_sky
+            "02d" -> R.drawable.img_isolated_clouds
+            "03d" -> R.drawable.img_partly_cloudy
+            "04d" -> R.drawable.img_broken_clouds
+            "09d", "10d", "13d" -> R.drawable.img_mostly_cloudy
+            "11d" -> R.drawable.img_thunderstorm
+            "50d" -> R.drawable.img_mist
+            "01n","02n","03n","04n","09n","10n","13n","11n","50n" -> R.drawable.img_night_clear
+            else -> R.drawable.aaa_error_image_homer
+        }
+        binding.ivCurrentWeatherImage.setImageResource(resourceId)
+    }
+
+    private fun setCurrentWeatherIcon(iconId: String) {
+        val resourceId = when (iconId) {
+            "01d" -> R.drawable.day_clear_sky
+            "02d", "03d", "04d", "50d" -> R.drawable.day_partly_cloudy
+            "09d" -> R.drawable.day_showers
+            "10d" -> R.drawable.day_rain
+            "11d" -> R.drawable.day_thunderstorm
+            "13d" -> R.drawable.day_snow
+            "01n" -> R.drawable.night_clear
+            "02n", "03n", "04n", "50n" -> R.drawable.night_cloudy
+            "09n" -> R.drawable.night_showers
+            "10n" -> R.drawable.night_rain
+            "11n" -> R.drawable.night_thunderstorm
+            "13n" -> R.drawable.night_snow
+            else -> R.drawable.aaa_error_icon_doh
+        }
+        binding.ivCurrentWeatherIcon.setImageResource(resourceId)
+    }
+
 
     //TEMP
     private val imageResources = intArrayOf(
@@ -147,7 +159,8 @@ class CurrentWeatherFragment : Fragment() {
         R.drawable.img_thunderstorm,
         R.drawable.img_mostly_cloudy,
         R.drawable.img_mist,
-        R.drawable.img_night_clear
+        R.drawable.img_night_clear,
+        R.drawable.aaa_error_image_homer
     )
 
     //TEMP
@@ -159,7 +172,7 @@ class CurrentWeatherFragment : Fragment() {
         R.drawable.day_partly_cloudy,
         R.drawable.day_rain,
         R.drawable.day_showers,
-        R.drawable.day_sunny,
+        R.drawable.day_clear_sky,
         R.drawable.day_thunderstorm,
         R.drawable.day_snow,
         R.drawable.night_clear,
@@ -168,7 +181,9 @@ class CurrentWeatherFragment : Fragment() {
         R.drawable.night_showers,
         R.drawable.night_thunderstorm,
         R.drawable.night_snow,
+        R.drawable.aaa_error_icon_doh
     )
+
     //TEMP
     private var currentIconIndex = 0
 
@@ -232,6 +247,10 @@ class CurrentWeatherFragment : Fragment() {
         val visibilityInMiles = convertMetersToMiles(visibilityInMeters)
         val sunriseTime = convertUnixTimestampToTime(weatherData.sys.sunrise.toLong())
         val sunsetTime = convertUnixTimestampToTime(weatherData.sys.sunset.toLong())
+        val imageIcon = weatherData.weather[0].icon
+
+        setCurrentWeatherImage(imageIcon)
+        setCurrentWeatherIcon(imageIcon)
 
         binding.apply {
             tvLocation.text = weatherData.name
@@ -285,10 +304,8 @@ class CurrentWeatherFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        // Check if _binding is not null before setting it to null
         Log.i("MOH!", "View destroyed")
         fusedLocationClient.removeLocationUpdates(locationCallback)
-//        viewModel.weatherData.removeObservers(viewLifecycleOwner)
         if (_binding != null) {
             _binding = null
         }

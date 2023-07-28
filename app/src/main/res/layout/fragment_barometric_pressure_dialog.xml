@@ -8,9 +8,9 @@
     android:layout_marginTop="50dp"
     tools:context=".view.ui.BarometricPressureDialogFragment">
 
-    <RelativeLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:paddingStart="25dp"
         android:paddingEnd="25dp"
         android:paddingBottom="50dp"
@@ -20,9 +20,11 @@
         android:id="@+id/lbl_barometric_pressure"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="24sp"
+        android:textSize="20sp"
         android:textColor="@color/blue_500"
-        android:gravity="center"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         android:textStyle="bold"
         android:text="Barometric Pressure"/>
 
@@ -32,7 +34,9 @@
             android:layout_below="@id/lbl_barometric_pressure"
             android:textSize="18sp"
 
-            android:gravity="center"
+            app:layout_constraintTop_toBottomOf="@+id/lbl_barometric_pressure"
+            app:layout_constraintStart_toStartOf="@id/lbl_barometric_pressure"
+            app:layout_constraintEnd_toEndOf="@id/lbl_barometric_pressure"
             android:textColor="@color/black"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -42,7 +46,9 @@
             android:id="@+id/second"
             android:layout_marginTop="6dp"
             android:layout_below="@id/first"
-
+            app:layout_constraintTop_toBottomOf="@id/first"
+            app:layout_constraintStart_toStartOf="@id/first"
+            app:layout_constraintEnd_toEndOf="@id/first"
             android:textSize="14sp"
             android:gravity="center"
             android:textColor="@color/black"
@@ -50,6 +56,6 @@
             android:layout_height="wrap_content"
             android:text="28.0 - 31.0 inHg = Typical"/>
 
-    </RelativeLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.cardview.widget.CardView>
