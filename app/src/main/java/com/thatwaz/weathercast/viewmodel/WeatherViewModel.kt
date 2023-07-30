@@ -4,7 +4,6 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.google.gson.Gson
 import com.thatwaz.weathercast.config.ApiConfig
 import com.thatwaz.weathercast.model.application.WeatherCastApplication
@@ -14,7 +13,7 @@ import com.thatwaz.weathercast.model.forecastresponse.ForecastResponse
 import com.thatwaz.weathercast.model.weatherresponse.WeatherResponse
 
 import com.thatwaz.weathercast.repository.WeatherRepository
-import kotlinx.coroutines.launch
+
 
 class WeatherViewModel : ViewModel() {
 
@@ -29,9 +28,6 @@ class WeatherViewModel : ViewModel() {
     private val weatherDatabase: WeatherDatabase by lazy {
         WeatherDatabase.getInstance(WeatherCastApplication.instance)
     }
-
-
-
 
     suspend fun fetchWeatherData(latitude: Double, longitude: Double) {
         try {

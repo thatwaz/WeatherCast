@@ -25,16 +25,20 @@ import com.thatwaz.weathercast.R
 import com.thatwaz.weathercast.databinding.FragmentCurrentWeatherBinding
 import com.thatwaz.weathercast.model.location.LocationRepository
 import com.thatwaz.weathercast.model.weatherresponse.WeatherResponse
-import com.thatwaz.weathercast.util.BarometricPressureColorUtility.getPressureColor
-import com.thatwaz.weathercast.util.ConversionUtility.convertMetersToMiles
-import com.thatwaz.weathercast.util.ConversionUtility.convertUnixTimestampToTime
-import com.thatwaz.weathercast.util.ConversionUtility.getWindDirection
-import com.thatwaz.weathercast.util.ConversionUtility.hPaToInHg
-import com.thatwaz.weathercast.util.ConversionUtility.kelvinToFahrenheit
-import com.thatwaz.weathercast.util.PermissionUtils
+import com.thatwaz.weathercast.utils.BarometricPressureColorUtil.getPressureColor
+import com.thatwaz.weathercast.utils.ConversionUtil.breakTextIntoLines
+import com.thatwaz.weathercast.utils.ConversionUtil.capitalizeWords
+import com.thatwaz.weathercast.utils.ConversionUtil.convertMetersToMiles
+import com.thatwaz.weathercast.utils.ConversionUtil.convertUnixTimestampToTime
+import com.thatwaz.weathercast.utils.ConversionUtil.getWindDirection
+import com.thatwaz.weathercast.utils.ConversionUtil.hPaToInHg
+import com.thatwaz.weathercast.utils.ConversionUtil.kelvinToFahrenheit
+import com.thatwaz.weathercast.utils.NetworkUtil
+import com.thatwaz.weathercast.utils.PermissionUtil
+import com.thatwaz.weathercast.utils.WeatherIconUtil
+import com.thatwaz.weathercast.utils.WeatherTempUtils
 import com.thatwaz.weathercast.viewmodel.WeatherViewModel
 import kotlinx.coroutines.launch
-import java.util.*
 
 class CurrentWeatherFragment : Fragment() {
 
@@ -43,6 +47,7 @@ class CurrentWeatherFragment : Fragment() {
     private val viewModel: WeatherViewModel by viewModels()
     private var _binding: FragmentCurrentWeatherBinding? = null
     private val binding get() = _binding!!
+
 
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var locationRepository: LocationRepository
@@ -86,6 +91,7 @@ class CurrentWeatherFragment : Fragment() {
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext())
         locationRepository = LocationRepository(fusedLocationClient)
 
+
         // Check location permissions and start updates
         checkLocationPermissions()
 
@@ -96,7 +102,7 @@ class CurrentWeatherFragment : Fragment() {
     }
 
     private fun checkLocationPermissions() {
-        PermissionUtils.requestLocationPermissions(
+        PermissionUtil.requestLocationPermissions(
             requireContext(),
             { // On permission granted
                 requestLocationData()
@@ -114,78 +120,14 @@ class CurrentWeatherFragment : Fragment() {
     }
 
     private fun setCurrentWeatherImage(iconId: String) {
-        val resourceId = when (iconId) {
-            "01d" -> R.drawable.img_clear_sky
-            "02d" -> R.drawable.img_isolated_clouds
-            "03d" -> R.drawable.img_partly_cloudy
-            "04d" -> R.drawable.img_broken_clouds
-            "09d", "10d", "13d" -> R.drawable.img_mostly_cloudy
-            "11d" -> R.drawable.img_thunderstorm
-            "50d" -> R.drawable.img_mist
-            "01n","02n","03n","04n","09n","10n","13n","11n","50n" -> R.drawable.img_night_clear
-            else -> R.drawable.aaa_error_image_homer
-        }
+        val resourceId = WeatherIconUtil.getWeatherImageResource(iconId)
         binding.ivCurrentWeatherImage.setImageResource(resourceId)
     }
 
     private fun setCurrentWeatherIcon(iconId: String) {
-        val resourceId = when (iconId) {
-            "01d" -> R.drawable.day_clear_sky
-            "02d", "03d", "04d", "50d" -> R.drawable.day_partly_cloudy
-            "09d" -> R.drawable.day_showers
-            "10d" -> R.drawable.day_rain
-            "11d" -> R.drawable.day_thunderstorm
-            "13d" -> R.drawable.day_snow
-            "01n" -> R.drawable.night_clear
-            "02n", "03n", "04n", "50n" -> R.drawable.night_cloudy
-            "09n" -> R.drawable.night_showers
-            "10n" -> R.drawable.night_rain
-            "11n" -> R.drawable.night_thunderstorm
-            "13n" -> R.drawable.night_snow
-            else -> R.drawable.aaa_error_icon_doh
-        }
+        val resourceId = WeatherIconUtil.getWeatherIconResource(iconId)
         binding.ivCurrentWeatherIcon.setImageResource(resourceId)
     }
-
-
-    //TEMP
-    private val imageResources = intArrayOf(
-        R.drawable.img_clear_sky,
-        R.drawable.img_cloudy,
-        R.drawable.img_haze,
-        R.drawable.img_isolated_clouds,
-        R.drawable.img_partly_cloudy,
-        R.drawable.img_broken_clouds,
-        R.drawable.img_thunderstorm,
-        R.drawable.img_mostly_cloudy,
-        R.drawable.img_mist,
-        R.drawable.img_night_clear,
-        R.drawable.aaa_error_image_homer
-    )
-
-    //TEMP
-    private var currentImageIndex = 0
-
-
-    //TEMP
-    private val iconResources = intArrayOf(
-        R.drawable.day_partly_cloudy,
-        R.drawable.day_rain,
-        R.drawable.day_showers,
-        R.drawable.day_clear_sky,
-        R.drawable.day_thunderstorm,
-        R.drawable.day_snow,
-        R.drawable.night_clear,
-        R.drawable.night_cloudy,
-        R.drawable.night_rain,
-        R.drawable.night_showers,
-        R.drawable.night_thunderstorm,
-        R.drawable.night_snow,
-        R.drawable.aaa_error_icon_doh
-    )
-
-    //TEMP
-    private var currentIconIndex = 0
 
     private fun setWeatherDataVisibility(isVisible: Boolean) {
         binding.clLoading.visibility = if (isVisible) View.INVISIBLE else View.VISIBLE
@@ -203,7 +145,7 @@ class CurrentWeatherFragment : Fragment() {
             requireContext().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         val networkInfo = connectivityManager.activeNetworkInfo
         val isConnected =
-            networkInfo != null && networkInfo.isConnected && isInternetAvailable(
+            networkInfo != null && networkInfo.isConnected && NetworkUtil.isInternetAvailable(
                 connectivityManager
             )
 
@@ -215,15 +157,12 @@ class CurrentWeatherFragment : Fragment() {
             showToast("No Internet Connection")
         }
 
-        //TEMP
         binding.lblSunrise.setOnClickListener {
-            currentImageIndex = (currentImageIndex + 1) % imageResources.size
-            binding.ivCurrentWeatherImage.setImageResource(imageResources[currentImageIndex])
+            binding.ivCurrentWeatherImage.setImageResource(WeatherTempUtils.getNextImageResource())
         }
-        //TEMP
+        //TEMP - Temporary testing for icons
         binding.lblSunset.setOnClickListener {
-            currentIconIndex = (currentIconIndex + 1) % iconResources.size
-            binding.ivCurrentWeatherIcon.setImageResource(iconResources[currentIconIndex])
+            binding.ivCurrentWeatherIcon.setImageResource(WeatherTempUtils.getNextIconResource())
         }
 
 
@@ -254,7 +193,7 @@ class CurrentWeatherFragment : Fragment() {
 
         binding.apply {
             tvLocation.text = weatherData.name
-            tvCurrentConditions.text = currentConditions
+            tvCurrentConditions.text = breakTextIntoLines(currentConditions,18)
             tvFeelsLike.text = formattedFeelsLike
             tvCurrentTemperature.text = fahrenheitTemp.toString()
             tvHumidity.text = formattedHumidity
@@ -282,19 +221,6 @@ class CurrentWeatherFragment : Fragment() {
         }
     }
 
-    private fun isInternetAvailable(connectivityManager: ConnectivityManager): Boolean {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            val networkCapabilities = connectivityManager
-                .getNetworkCapabilities(connectivityManager.activeNetwork)
-            networkCapabilities?.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) ?: false
-        } else {
-            // For devices with API level < 23 (M)
-            @Suppress("DEPRECATION")
-            val networkInfo = connectivityManager.activeNetworkInfo
-            networkInfo?.isConnected ?: false
-        }
-    }
-
     private val locationCallback = object : LocationCallback() {
         override fun onLocationResult(locationResult: LocationResult) {
             val lastLocation = locationResult.lastLocation
@@ -314,12 +240,7 @@ class CurrentWeatherFragment : Fragment() {
 }
 
 
-private fun String.capitalizeWords(): String = split(" ")
-    .joinToString(" ") {
-        it.replaceFirstChar {
-            if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString()
-        }
-    }
+
 
 
 

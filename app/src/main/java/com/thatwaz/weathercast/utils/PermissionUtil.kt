@@ -1,4 +1,4 @@
-package com.thatwaz.weathercast.util
+package com.thatwaz.weathercast.utils
 
 import android.Manifest
 import android.content.ActivityNotFoundException
@@ -13,7 +13,7 @@ import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 
-object PermissionUtils {
+object PermissionUtil {
 
     fun requestLocationPermissions(
         context: Context,

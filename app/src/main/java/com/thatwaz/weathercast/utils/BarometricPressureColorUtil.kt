@@ -1,8 +1,8 @@
-package com.thatwaz.weathercast.util
+package com.thatwaz.weathercast.utils
 
 import android.graphics.Color
 
-object BarometricPressureColorUtility {
+object BarometricPressureColorUtil {
     private const val GOOD_PRESSURE_LOWER_BOUND = 980
     private const val GOOD_PRESSURE_UPPER_BOUND = 1030
     private const val BAD_PRESSURE_LOWER_BOUND = 950

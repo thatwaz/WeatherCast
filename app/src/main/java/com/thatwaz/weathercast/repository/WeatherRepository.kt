@@ -26,7 +26,7 @@ class WeatherRepository {
         latitude: Double,
         longitude: Double,
     ): Response<WeatherResponse> {
-        return weatherService.getWeatherData(appId, latitude, longitude)
+        return weatherService.getWeatherData(appId,latitude ,longitude)
     }
 
     suspend fun getForecastData(
@@ -36,6 +36,8 @@ class WeatherRepository {
     ): Response<ForecastResponse> {
         return weatherService.getForecastData(appId, latitude, longitude)
     }
+
+
 }
 
 
