@@ -4,14 +4,13 @@ package com.thatwaz.weathercast.view.ui
 import android.content.ContentValues.TAG
 import android.content.Context
 import android.net.ConnectivityManager
-import android.net.NetworkCapabilities
-import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.viewModelScope
@@ -23,7 +22,8 @@ import com.google.android.gms.location.LocationServices
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.thatwaz.weathercast.R
 import com.thatwaz.weathercast.databinding.FragmentCurrentWeatherBinding
-import com.thatwaz.weathercast.model.location.LocationRepository
+import com.thatwaz.weathercast.model.data.LocationRepository
+import com.thatwaz.weathercast.model.data.WeatherDataHandler
 import com.thatwaz.weathercast.model.weatherresponse.WeatherResponse
 import com.thatwaz.weathercast.utils.BarometricPressureColorUtil.getPressureColor
 import com.thatwaz.weathercast.utils.ConversionUtil.breakTextIntoLines
@@ -42,15 +42,14 @@ import kotlinx.coroutines.launch
 
 class CurrentWeatherFragment : Fragment() {
 
-
     private lateinit var bottomNavView: BottomNavigationView
     private val viewModel: WeatherViewModel by viewModels()
     private var _binding: FragmentCurrentWeatherBinding? = null
     private val binding get() = _binding!!
 
-
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var locationRepository: LocationRepository
+    private lateinit var weatherDataHandler: WeatherDataHandler
 
     private var isErrorOccurred = false
 
@@ -63,23 +62,7 @@ class CurrentWeatherFragment : Fragment() {
         _binding = FragmentCurrentWeatherBinding.inflate(inflater, container, false)
 
         viewModel.weatherData.removeObservers(viewLifecycleOwner)
-        viewModel.weatherData.observe(viewLifecycleOwner) { weatherData ->
-            setWeatherDataVisibility(true)
-            if (weatherData != null) {
-                try {
-                    handleWeatherData(weatherData)
-                } catch (e: Exception) {
-                    isErrorOccurred = true
-                    Log.e(TAG, "Error processing weather data: ${e.message}")
-                }
-            } else {
-                isErrorOccurred = true
-            }
-            if (isErrorOccurred) {
-                showToast("An error has occurred")
-            }
-        }
-
+        observeWeatherData()
         return binding.root
     }
 
@@ -90,85 +73,12 @@ class CurrentWeatherFragment : Fragment() {
         setWeatherDataVisibility(false)
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext())
         locationRepository = LocationRepository(fusedLocationClient)
-
-
+        weatherDataHandler = WeatherDataHandler(requireContext(), viewModel)
         // Check location permissions and start updates
         checkLocationPermissions()
-
     }
 
-    private fun showToast(message: String) {
-        Toast.makeText(requireContext(), message, Toast.LENGTH_LONG).show()
-    }
-
-    private fun checkLocationPermissions() {
-        PermissionUtil.requestLocationPermissions(
-            requireContext(),
-            { // On permission granted
-                requestLocationData()
-            },
-            { // On permission denied
-                showToast("You have denied permission")
-            }
-        )
-    }
-
-    private fun requestLocationData() {
-        locationRepository.getCurrentLocation { latitude, longitude ->
-            getLocationWeatherDetails(latitude, longitude)
-        }
-    }
-
-    private fun setCurrentWeatherImage(iconId: String) {
-        val resourceId = WeatherIconUtil.getWeatherImageResource(iconId)
-        binding.ivCurrentWeatherImage.setImageResource(resourceId)
-    }
-
-    private fun setCurrentWeatherIcon(iconId: String) {
-        val resourceId = WeatherIconUtil.getWeatherIconResource(iconId)
-        binding.ivCurrentWeatherIcon.setImageResource(resourceId)
-    }
-
-    private fun setWeatherDataVisibility(isVisible: Boolean) {
-        binding.clLoading.visibility = if (isVisible) View.INVISIBLE else View.VISIBLE
-        binding.clCurrentWeatherDetails.visibility = if (isVisible) View.VISIBLE else View.GONE
-        binding.clLocation.visibility = if (isVisible) View.VISIBLE else View.GONE
-        binding.clTop.visibility = if (isVisible) View.VISIBLE else View.GONE
-    }
-
-
-    private fun getLocationWeatherDetails(latitude: Double, longitude: Double) {
-        if (_binding == null) {
-            return
-        }
-        val connectivityManager =
-            requireContext().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        val networkInfo = connectivityManager.activeNetworkInfo
-        val isConnected =
-            networkInfo != null && networkInfo.isConnected && NetworkUtil.isInternetAvailable(
-                connectivityManager
-            )
-
-        if (isConnected) {
-            viewModel.viewModelScope.launch {
-                viewModel.fetchWeatherData(latitude, longitude)
-            }
-        } else {
-            showToast("No Internet Connection")
-        }
-
-        binding.lblSunrise.setOnClickListener {
-            binding.ivCurrentWeatherImage.setImageResource(WeatherTempUtils.getNextImageResource())
-        }
-        //TEMP - Temporary testing for icons
-        binding.lblSunset.setOnClickListener {
-            binding.ivCurrentWeatherIcon.setImageResource(WeatherTempUtils.getNextIconResource())
-        }
-
-
-    }
-
-    private fun handleWeatherData(weatherData: WeatherResponse) {
+    private fun updateWeatherUI(weatherData: WeatherResponse) {
         val pressureInhPa = weatherData.main.pressure
         val pressureInInHg = hPaToInHg(pressureInhPa)
         val pressureColor = getPressureColor(pressureInhPa)
@@ -193,7 +103,7 @@ class CurrentWeatherFragment : Fragment() {
 
         binding.apply {
             tvLocation.text = weatherData.name
-            tvCurrentConditions.text = breakTextIntoLines(currentConditions,18)
+            tvCurrentConditions.text = breakTextIntoLines(currentConditions, 18)
             tvFeelsLike.text = formattedFeelsLike
             tvCurrentTemperature.text = fahrenheitTemp.toString()
             tvHumidity.text = formattedHumidity
@@ -210,33 +120,100 @@ class CurrentWeatherFragment : Fragment() {
             tvSunrise.text = sunriseTime
             tvSunset.text = sunsetTime
         }
+    }
 
-        binding.clLocation.setOnClickListener {
-            Toast.makeText(
-                requireContext(),
-                "Latitude " + weatherData.coord.lat.toString()
-                        + "\nLongitude " + weatherData.coord.lon.toString(),
-                Toast.LENGTH_SHORT
-            ).show()
+
+    private fun showToast(message: String) {
+        Toast.makeText(requireContext(), message, Toast.LENGTH_LONG).show()
+    }
+
+    private fun checkLocationPermissions() {
+        PermissionUtil.requestLocationPermissions(
+            requireContext(),
+            { // On permission granted
+                requestLocationData()
+            },
+            { // On permission denied
+                showToast("You have denied permission")
+            }
+        )
+    }
+
+    private fun observeWeatherData() {
+        viewModel.weatherData.observe(viewLifecycleOwner) { weatherData ->
+            setWeatherDataVisibility(true)
+            if (weatherData != null) {
+                try {
+                    handleWeatherData(weatherData)
+                } catch (e: Exception) {
+                    isErrorOccurred = true
+                    Log.e(TAG, "Error processing weather data: ${e.message}")
+                    showErrorToast()
+                }
+            } else {
+                isErrorOccurred = true
+                showErrorToast()
+            }
         }
+    }
+
+    private fun showErrorToast() {
+        showToast("An error has occurred")
+    }
+
+    private fun requestLocationData() {
+        locationRepository.getCurrentLocation { latitude, longitude ->
+            weatherDataHandler.requestLocationData(latitude, longitude)
+        }
+    }
+
+
+    private fun setCurrentWeatherImage(iconId: String) {
+        val resourceId = WeatherIconUtil.getWeatherImageResource(iconId)
+        binding.ivCurrentWeatherImage.setImageResource(resourceId)
+    }
+
+    private fun setCurrentWeatherIcon(iconId: String) {
+        val resourceId = WeatherIconUtil.getWeatherIconResource(iconId)
+        binding.ivCurrentWeatherIcon.setImageResource(resourceId)
+    }
+
+    private fun setWeatherDataVisibility(isVisible: Boolean) {
+        binding.clLoading.visibility = if (isVisible) View.INVISIBLE else View.VISIBLE
+        binding.clCurrentWeatherDetails.visibility = if (isVisible) View.VISIBLE else View.GONE
+        binding.clLocation.visibility = if (isVisible) View.VISIBLE else View.GONE
+        binding.clTop.visibility = if (isVisible) View.VISIBLE else View.GONE
+    }
+
+    private fun handleWeatherData(weatherData: WeatherResponse) {
+        updateWeatherUI(weatherData)
     }
 
     private val locationCallback = object : LocationCallback() {
         override fun onLocationResult(locationResult: LocationResult) {
             val lastLocation = locationResult.lastLocation
-            getLocationWeatherDetails(lastLocation.latitude, lastLocation.longitude)
+            weatherDataHandler.requestLocationData(lastLocation.latitude, lastLocation.longitude)
         }
     }
+
 
     override fun onDestroyView() {
         super.onDestroyView()
-        Log.i("MOH!", "View destroyed")
+        // Remove the location callback when the view is destroyed
         fusedLocationClient.removeLocationUpdates(locationCallback)
-        if (_binding != null) {
-            _binding = null
-        }
-
+        // Nullify the binding to avoid potential memory leaks
+        _binding = null
     }
+
+//    override fun onDestroyView() {
+//        super.onDestroyView()
+//        Log.i("MOH!", "View destroyed")
+//        fusedLocationClient.removeLocationUpdates(locationCallback)
+//        if (_binding != null) {
+//            _binding = null
+//        }
+//
+//    }
 }
 
 

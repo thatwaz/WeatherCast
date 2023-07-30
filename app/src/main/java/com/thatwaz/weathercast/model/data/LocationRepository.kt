@@ -1,4 +1,4 @@
-package com.thatwaz.weathercast.model.location
+package com.thatwaz.weathercast.model.data
 
 import com.google.android.gms.location.FusedLocationProviderClient
 import android.annotation.SuppressLint
