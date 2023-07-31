@@ -24,6 +24,7 @@ import com.thatwaz.weathercast.R
 import com.thatwaz.weathercast.databinding.FragmentCurrentWeatherBinding
 import com.thatwaz.weathercast.model.data.LocationRepository
 import com.thatwaz.weathercast.model.data.WeatherDataHandler
+
 import com.thatwaz.weathercast.model.weatherresponse.WeatherResponse
 import com.thatwaz.weathercast.utils.BarometricPressureColorUtil.getPressureColor
 import com.thatwaz.weathercast.utils.ConversionUtil.breakTextIntoLines
@@ -37,6 +38,7 @@ import com.thatwaz.weathercast.utils.NetworkUtil
 import com.thatwaz.weathercast.utils.PermissionUtil
 import com.thatwaz.weathercast.utils.WeatherIconUtil
 import com.thatwaz.weathercast.utils.WeatherTempUtils
+import com.thatwaz.weathercast.utils.error.Resource
 import com.thatwaz.weathercast.viewmodel.WeatherViewModel
 import kotlinx.coroutines.launch
 
@@ -140,25 +142,26 @@ class CurrentWeatherFragment : Fragment() {
     }
 
     private fun observeWeatherData() {
-        viewModel.weatherData.observe(viewLifecycleOwner) { weatherData ->
-            setWeatherDataVisibility(true)
-            if (weatherData != null) {
-                try {
-                    handleWeatherData(weatherData)
-                } catch (e: Exception) {
-                    isErrorOccurred = true
-                    Log.e(TAG, "Error processing weather data: ${e.message}")
-                    showErrorToast()
+        viewModel.weatherData.observe(viewLifecycleOwner) { resource ->
+            when (resource) {
+                is Resource.Success -> {
+                    setWeatherDataVisibility(true)
+                    handleWeatherData(resource.data!!)
                 }
-            } else {
-                isErrorOccurred = true
-                showErrorToast()
+                is Resource.Error -> {
+                    isErrorOccurred = true
+                    setWeatherDataVisibility(false)
+                    resource.errorMessage?.let { showErrorToast(it) } // Show the error message
+                }
+                is Resource.Loading -> {
+                    setWeatherDataVisibility(false)
+                }
             }
         }
     }
 
-    private fun showErrorToast() {
-        showToast("An error has occurred")
+    private fun showErrorToast(errorMessage: String) {
+        showToast(errorMessage)
     }
 
     private fun requestLocationData() {
@@ -166,7 +169,6 @@ class CurrentWeatherFragment : Fragment() {
             weatherDataHandler.requestLocationData(latitude, longitude)
         }
     }
-
 
     private fun setCurrentWeatherImage(iconId: String) {
         val resourceId = WeatherIconUtil.getWeatherImageResource(iconId)
@@ -204,16 +206,6 @@ class CurrentWeatherFragment : Fragment() {
         // Nullify the binding to avoid potential memory leaks
         _binding = null
     }
-
-//    override fun onDestroyView() {
-//        super.onDestroyView()
-//        Log.i("MOH!", "View destroyed")
-//        fusedLocationClient.removeLocationUpdates(locationCallback)
-//        if (_binding != null) {
-//            _binding = null
-//        }
-//
-//    }
 }
 
 

@@ -39,7 +39,7 @@ object ConversionUtil {
         var startIndex = 0
 
         while (startIndex < text.length) {
-            var endIndex = startIndex + maxCharsPerLine
+            val endIndex = startIndex + maxCharsPerLine
 
             // If endIndex goes beyond the length of the text, break the loop
             if (endIndex >= text.length) {
