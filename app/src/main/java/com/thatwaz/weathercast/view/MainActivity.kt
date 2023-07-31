@@ -2,6 +2,8 @@ package com.thatwaz.weathercast.view
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import androidx.core.view.MenuHost
+import androidx.core.view.MenuProvider
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
@@ -45,7 +47,8 @@ import com.thatwaz.weathercast.view.ui.HourlyFragmentDirections
                         if (currentDestination == R.id.hourlyFragment) {
                             return@setOnItemSelectedListener true
                         }
-                        val action = CurrentWeatherFragmentDirections.actionCurrentWeatherFragmentToHourlyFragment()
+                        val action =
+                            CurrentWeatherFragmentDirections.actionCurrentWeatherFragmentToHourlyFragment()
                         navController.navigate(action)
                     }
                     R.id.currentWeatherFragment -> {
@@ -61,6 +64,8 @@ import com.thatwaz.weathercast.view.ui.HourlyFragmentDirections
             }
         }
     }
+
+
 
 
 

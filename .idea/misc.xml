@@ -10,12 +10,14 @@
         <entry key="..\:/Toolkit/weathercast-priv-/app/src/main/res/drawable/ic_air_pressure.xml" value="0.1" />
         <entry key="..\:/Toolkit/weathercast-priv-/app/src/main/res/drawable/ic_calendar.xml" value="0.1" />
         <entry key="..\:/Toolkit/weathercast-priv-/app/src/main/res/drawable/ic_hourglass.xml" value="0.1" />
+        <entry key="..\:/Toolkit/weathercast-priv-/app/src/main/res/drawable/ic_refresh.xml" value="0.1" />
         <entry key="..\:/Toolkit/weathercast-priv-/app/src/main/res/drawable/semi_transparent_black_background.xml" value="0.1" />
         <entry key="..\:/Toolkit/weathercast-priv-/app/src/main/res/layout/activity_main.xml" value="0.1" />
         <entry key="..\:/Toolkit/weathercast-priv-/app/src/main/res/layout/fragment_barometric_pressure_dialog.xml" value="0.21" />
         <entry key="..\:/Toolkit/weathercast-priv-/app/src/main/res/layout/fragment_current_weather.xml" value="0.1" />
         <entry key="..\:/Toolkit/weathercast-priv-/app/src/main/res/layout/fragment_hourly.xml" value="0.1" />
         <entry key="..\:/Toolkit/weathercast-priv-/app/src/main/res/menu/bottom_nav_menu.xml" value="0.1" />
+        <entry key="..\:/Toolkit/weathercast-priv-/app/src/main/res/menu/menu_main.xml" value="0.18385416666666668" />
       </map>
     </option>
   </component>

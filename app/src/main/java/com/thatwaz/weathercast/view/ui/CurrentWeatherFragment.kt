@@ -1,19 +1,14 @@
 package com.thatwaz.weathercast.view.ui
 
 
-import android.content.ContentValues.TAG
-import android.content.Context
-import android.net.ConnectivityManager
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.Toast
 import androidx.core.content.ContentProviderCompat.requireContext
+import androidx.core.view.MenuHost
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.viewModelScope
 import androidx.navigation.fragment.findNavController
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
@@ -24,7 +19,6 @@ import com.thatwaz.weathercast.R
 import com.thatwaz.weathercast.databinding.FragmentCurrentWeatherBinding
 import com.thatwaz.weathercast.model.data.LocationRepository
 import com.thatwaz.weathercast.model.data.WeatherDataHandler
-
 import com.thatwaz.weathercast.model.weatherresponse.WeatherResponse
 import com.thatwaz.weathercast.utils.BarometricPressureColorUtil.getPressureColor
 import com.thatwaz.weathercast.utils.ConversionUtil.breakTextIntoLines
@@ -34,13 +28,10 @@ import com.thatwaz.weathercast.utils.ConversionUtil.convertUnixTimestampToTime
 import com.thatwaz.weathercast.utils.ConversionUtil.getWindDirection
 import com.thatwaz.weathercast.utils.ConversionUtil.hPaToInHg
 import com.thatwaz.weathercast.utils.ConversionUtil.kelvinToFahrenheit
-import com.thatwaz.weathercast.utils.NetworkUtil
 import com.thatwaz.weathercast.utils.PermissionUtil
 import com.thatwaz.weathercast.utils.WeatherIconUtil
-import com.thatwaz.weathercast.utils.WeatherTempUtils
 import com.thatwaz.weathercast.utils.error.Resource
 import com.thatwaz.weathercast.viewmodel.WeatherViewModel
-import kotlinx.coroutines.launch
 
 class CurrentWeatherFragment : Fragment() {
 
@@ -54,6 +45,30 @@ class CurrentWeatherFragment : Fragment() {
     private lateinit var weatherDataHandler: WeatherDataHandler
 
     private var isErrorOccurred = false
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.action_refresh -> {
+                // Call the function to manually request weather data
+                requestWeatherDataManually()
+                return true
+            }
+            else -> return super.onOptionsItemSelected(item)
+        }
+    }
+
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.menu_main, menu)
+        super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
+        // Register this fragment as the MenuProvider
+
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -190,6 +205,16 @@ class CurrentWeatherFragment : Fragment() {
     private fun handleWeatherData(weatherData: WeatherResponse) {
         updateWeatherUI(weatherData)
     }
+
+    private fun requestWeatherDataManually() {
+        // Show the loading state (optional, if you want to indicate that data is being fetched)
+        setWeatherDataVisibility(false)
+//        binding.progressBar.visibility = View.VISIBLE
+
+        // Request the weather data
+        requestLocationData()
+    }
+
 
     private val locationCallback = object : LocationCallback() {
         override fun onLocationResult(locationResult: LocationResult) {
