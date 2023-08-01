@@ -11,14 +11,14 @@ class LocationRepository(private val fusedLocationClient: FusedLocationProviderC
 
     @SuppressLint("MissingPermission")
     fun getCurrentLocation(callback: (latitude: Double, longitude: Double) -> Unit) {
-        val locationRequest = LocationRequest.create().apply {
-            priority = LocationRequest.PRIORITY_HIGH_ACCURACY
-            smallestDisplacement = 1000f // Set the minimum displacement (in meters) for updates
-        }
 //        val locationRequest = LocationRequest.create().apply {
 //            priority = LocationRequest.PRIORITY_HIGH_ACCURACY
-//            interval = 100000
+//            smallestDisplacement = 1000f // Set the minimum displacement (in meters) for updates
 //        }
+        val locationRequest = LocationRequest.create().apply {
+            priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+            interval = 100000
+        }
 
         val locationCallback = object : LocationCallback() {
             override fun onLocationResult(locationResult: LocationResult) {

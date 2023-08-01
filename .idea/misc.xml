@@ -15,7 +15,8 @@
         <entry key="..\:/Toolkit/weathercast-priv-/app/src/main/res/layout/activity_main.xml" value="0.1" />
         <entry key="..\:/Toolkit/weathercast-priv-/app/src/main/res/layout/fragment_barometric_pressure_dialog.xml" value="0.21" />
         <entry key="..\:/Toolkit/weathercast-priv-/app/src/main/res/layout/fragment_current_weather.xml" value="0.1" />
-        <entry key="..\:/Toolkit/weathercast-priv-/app/src/main/res/layout/fragment_hourly.xml" value="0.1" />
+        <entry key="..\:/Toolkit/weathercast-priv-/app/src/main/res/layout/fragment_hourly.xml" value="0.22120658135283364" />
+        <entry key="..\:/Toolkit/weathercast-priv-/app/src/main/res/layout/item_forecast.xml" value="0.22" />
         <entry key="..\:/Toolkit/weathercast-priv-/app/src/main/res/menu/bottom_nav_menu.xml" value="0.1" />
         <entry key="..\:/Toolkit/weathercast-priv-/app/src/main/res/menu/menu_main.xml" value="0.18385416666666668" />
       </map>

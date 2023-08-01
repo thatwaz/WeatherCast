@@ -1,15 +1,11 @@
 package com.thatwaz.weathercast.view
-import androidx.appcompat.app.AppCompatActivity
+
 import android.os.Bundle
-import android.util.Log
-import androidx.core.view.MenuHost
-import androidx.core.view.MenuProvider
+import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import com.thatwaz.weathercast.R
 import com.thatwaz.weathercast.databinding.ActivityMainBinding
-import com.thatwaz.weathercast.view.ui.CurrentWeatherFragment
 import com.thatwaz.weathercast.view.ui.CurrentWeatherFragmentDirections
 import com.thatwaz.weathercast.view.ui.HourlyFragmentDirections
 
@@ -19,101 +15,51 @@ import com.thatwaz.weathercast.view.ui.HourlyFragmentDirections
 // start date 07/10/2023
 
 
+class MainActivity : AppCompatActivity() {
 
-    class MainActivity : AppCompatActivity() {
+    private lateinit var binding: ActivityMainBinding
+    private lateinit var navController: NavController
 
-        private lateinit var binding: ActivityMainBinding
-        private lateinit var navController: NavController
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        override fun onCreate(savedInstanceState: Bundle?) {
-            super.onCreate(savedInstanceState)
-            binding = ActivityMainBinding.inflate(layoutInflater)
-            setContentView(binding.root)
+        val navHostFragment = supportFragmentManager
+            .findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+        navController = navHostFragment.navController
 
-            val navHostFragment = supportFragmentManager
-                .findFragmentById(R.id.nav_host_fragment) as NavHostFragment
-            navController = navHostFragment.navController
+        binding.bnvWeatherCast.setOnItemSelectedListener { item ->
+            val currentDestination = navController.currentDestination?.id
+            val selectedDestination = item.itemId
 
-            binding.bnvWeatherCast.setOnItemSelectedListener { item ->
-                val currentDestination = navController.currentDestination?.id
-                val selectedDestination = item.itemId
-
-                if (currentDestination == selectedDestination) {
-                    return@setOnItemSelectedListener true
-                }
-
-                when (selectedDestination) {
-                    R.id.hourlyFragment -> {
-                        if (currentDestination == R.id.hourlyFragment) {
-                            return@setOnItemSelectedListener true
-                        }
-                        val action =
-                            CurrentWeatherFragmentDirections.actionCurrentWeatherFragmentToHourlyFragment()
-                        navController.navigate(action)
-                    }
-                    R.id.currentWeatherFragment -> {
-                        if (currentDestination == R.id.currentWeatherFragment) {
-                            return@setOnItemSelectedListener true
-                        }
-                        val action = HourlyFragmentDirections
-                            .actionHourlyFragmentToCurrentWeatherFragment()
-                        navController.navigate(action)
-                    }
-                }
-                true
+            if (currentDestination == selectedDestination) {
+                return@setOnItemSelectedListener true
             }
+
+            when (selectedDestination) {
+                R.id.hourlyFragment -> {
+                    if (currentDestination == R.id.hourlyFragment) {
+                        return@setOnItemSelectedListener true
+                    }
+                    val action =
+                        CurrentWeatherFragmentDirections.actionCurrentWeatherFragmentToHourlyFragment()
+                    navController.navigate(action)
+                }
+                R.id.currentWeatherFragment -> {
+                    if (currentDestination == R.id.currentWeatherFragment) {
+                        return@setOnItemSelectedListener true
+                    }
+                    val action = HourlyFragmentDirections
+                        .actionHourlyFragmentToCurrentWeatherFragment()
+                    navController.navigate(action)
+                }
+            }
+            true
         }
     }
+}
 
 
-
-
-
-
-//    override fun onCreate(savedInstanceState: Bundle?) {
-//        super.onCreate(savedInstanceState)
-//        binding = ActivityMainBinding.inflate(layoutInflater)
-//        setContentView(binding.root)
-//
-////        val navHostFragment = supportFragmentManager
-////            .findFragmentById(R.id.nav_host_fragment) as NavHostFragment
-////        navController = navHostFragment.navController
-//
-//        val navHostFragment = supportFragmentManager
-//            .findFragmentById(R.id.nav_host_fragment) as NavHostFragment
-//        navController = navHostFragment.navController
-//
-//        binding.bnvWeatherCast.setOnItemSelectedListener { item ->
-//            val currentDestination = navController.currentDestination?.id
-//            val selectedDestination = item.itemId
-//
-//            if (currentDestination == selectedDestination) {
-//                return@setOnItemSelectedListener true
-//            }
-//
-//            when (selectedDestination) {
-//                R.id.currentWeatherFragment -> {
-//                    if (currentDestination == R.id.hourlyFragment) {
-//                        return@setOnItemSelectedListener true
-//                    }
-//                    val action = CurrentWeatherFragmentDirections
-//                        .actionCurrentWeatherFragmentToHourlyFragment()
-//                    navHostFragment.navigate(action)
-//                }
-//                R.id.unloadFragment -> {
-//                    if (currentDestination == R.id.unloadFragment) {
-//                        return@setOnItemSelectedListener true
-//                    }
-//                    val action = CurrentStatsFragmentDirections.actionCurrentStatsFragmentToUnloadFragment()
-//                    navController.navigate(action)
-//                }
-//            }
-//            true
-//        }
-//
-//        }
-//
-//
-//    }
 
 

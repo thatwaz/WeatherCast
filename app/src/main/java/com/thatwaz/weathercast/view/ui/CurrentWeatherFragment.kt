@@ -139,7 +139,6 @@ class CurrentWeatherFragment : Fragment() {
         }
     }
 
-
     private fun showToast(message: String) {
         Toast.makeText(requireContext(), message, Toast.LENGTH_LONG).show()
     }
