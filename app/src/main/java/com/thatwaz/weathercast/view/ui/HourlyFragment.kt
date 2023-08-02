@@ -13,6 +13,7 @@ import com.google.android.gms.location.LocationServices
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.thatwaz.weathercast.R
 import com.thatwaz.weathercast.databinding.FragmentHourlyBinding
+import com.thatwaz.weathercast.model.application.WeatherCastApplication
 import com.thatwaz.weathercast.model.data.LocationRepository
 import com.thatwaz.weathercast.model.data.WeatherDataHandler
 import com.thatwaz.weathercast.model.forecastresponse.WeatherItem
@@ -21,16 +22,20 @@ import com.thatwaz.weathercast.view.ui.adapters.HourlyForecastAdapter
 import com.thatwaz.weathercast.viewmodel.WeatherViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 
 // HourlyFragment.kt
 class HourlyFragment : Fragment() {
 
+    @Inject
+    lateinit var viewModel: WeatherViewModel
+
     private lateinit var bottomNavView: BottomNavigationView
     private lateinit var weatherDataHandler: WeatherDataHandler
     private lateinit var locationRepository: LocationRepository
 
-    private val viewModel: WeatherViewModel by viewModels()
+//    private val viewModel: WeatherViewModel by viewModels()
     private var _binding: FragmentHourlyBinding? = null
     private val binding get() = _binding!!
 
@@ -42,6 +47,7 @@ class HourlyFragment : Fragment() {
     ): View? {
         bottomNavView = activity?.findViewById(R.id.bnv_weather_cast) ?: return binding.root
         // Inflate the layout for this fragment
+        (activity?.application as WeatherCastApplication).appComponent.inject(this)
         _binding = FragmentHourlyBinding.inflate(inflater, container, false)
         return binding.root
     }

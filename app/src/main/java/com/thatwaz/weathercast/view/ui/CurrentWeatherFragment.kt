@@ -17,6 +17,7 @@ import com.google.android.gms.location.LocationServices
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.thatwaz.weathercast.R
 import com.thatwaz.weathercast.databinding.FragmentCurrentWeatherBinding
+import com.thatwaz.weathercast.model.application.WeatherCastApplication
 import com.thatwaz.weathercast.model.data.LocationRepository
 import com.thatwaz.weathercast.model.data.WeatherDataHandler
 import com.thatwaz.weathercast.model.weatherresponse.WeatherResponse
@@ -32,11 +33,15 @@ import com.thatwaz.weathercast.utils.PermissionUtil
 import com.thatwaz.weathercast.utils.WeatherIconUtil
 import com.thatwaz.weathercast.utils.error.Resource
 import com.thatwaz.weathercast.viewmodel.WeatherViewModel
+import javax.inject.Inject
 
 class CurrentWeatherFragment : Fragment() {
 
+    @Inject
+    lateinit var viewModel: WeatherViewModel
+
     private lateinit var bottomNavView: BottomNavigationView
-    private val viewModel: WeatherViewModel by viewModels()
+//    private val viewModel: WeatherViewModel by viewModels()
     private var _binding: FragmentCurrentWeatherBinding? = null
     private val binding get() = _binding!!
 
@@ -77,7 +82,7 @@ class CurrentWeatherFragment : Fragment() {
         bottomNavView = activity?.findViewById(R.id.bnv_weather_cast) ?: return binding.root
         bottomNavView.visibility = View.VISIBLE
         _binding = FragmentCurrentWeatherBinding.inflate(inflater, container, false)
-
+        (activity?.application as WeatherCastApplication).appComponent.inject(this)
         viewModel.weatherData.removeObservers(viewLifecycleOwner)
         observeWeatherData()
         return binding.root

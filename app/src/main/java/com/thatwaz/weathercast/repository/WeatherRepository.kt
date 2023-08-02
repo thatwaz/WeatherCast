@@ -7,19 +7,20 @@ import com.thatwaz.weathercast.network.WeatherService
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import javax.inject.Inject
 
-class WeatherRepository {
+class WeatherRepository@Inject constructor(private val weatherService: WeatherService) {
 
-    private val weatherService: WeatherService
+//    private val weatherService: WeatherService
 
-    init {
-        val retrofit = Retrofit.Builder()
-            .baseUrl(ApiConfig.BASE_URL)
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-
-        weatherService = retrofit.create(WeatherService::class.java)
-    }
+//    init {
+//        val retrofit = Retrofit.Builder()
+//            .baseUrl(ApiConfig.BASE_URL)
+//            .addConverterFactory(GsonConverterFactory.create())
+//            .build()
+//
+//        weatherService = retrofit.create(WeatherService::class.java)
+//    }
 
     suspend fun getWeatherData(
         appId: String,

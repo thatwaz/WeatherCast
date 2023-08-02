@@ -36,7 +36,8 @@ class HourlyForecastAdapter :
         fun bind(weatherItem: WeatherItem) {
             Log.i("POOP", "bind - weatherItem: $weatherItem")
             binding.apply {
-                tvTime.text = "${weatherItem.dtTxt}"
+//                tvTime.text = "${weatherItem.dtTxt}"
+                tvTime.text = ConversionUtil.convertGMTtoLocal(weatherItem.dt)
                 tvWeatherCondition.text = "Condition: ${weatherItem.weather[0].description}"
                 val temperatureInFahrenheit = ConversionUtil.kelvinToFahrenheit(weatherItem.main.temp)
                 tvTemperature.text = "${temperatureInFahrenheit}°F"

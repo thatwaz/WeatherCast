@@ -14,11 +14,15 @@ import com.thatwaz.weathercast.model.weatherresponse.WeatherResponse
 
 import com.thatwaz.weathercast.repository.WeatherRepository
 import com.thatwaz.weathercast.utils.error.Resource
+import javax.inject.Inject
 
 
-class WeatherViewModel : ViewModel() {
+class WeatherViewModel @Inject constructor(
+    private val repository: WeatherRepository,
+    private val weatherDatabase: WeatherDatabase
+) : ViewModel() {
 
-    private val repository = WeatherRepository()
+//    private val repository = WeatherRepository()
 
 //    private val _weatherData = MutableLiveData<WeatherResponse>()
 //    val weatherData: LiveData<WeatherResponse> get() = _weatherData
@@ -30,9 +34,9 @@ class WeatherViewModel : ViewModel() {
     val forecastData: LiveData<Resource<ForecastResponse>> get() = _forecastData
 
 
-    private val weatherDatabase: WeatherDatabase by lazy {
-        WeatherDatabase.getInstance(WeatherCastApplication.instance)
-    }
+//    private val weatherDatabase: WeatherDatabase by lazy {
+//        WeatherDatabase.getInstance(WeatherCastApplication.instance)
+//    }
 
     private fun handleError(errorMsg: String) {
         _weatherData.value = Resource.Error(errorMsg)

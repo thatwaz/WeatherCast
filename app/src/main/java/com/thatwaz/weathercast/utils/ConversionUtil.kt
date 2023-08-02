@@ -1,7 +1,13 @@
 package com.thatwaz.weathercast.utils
 
 import android.icu.text.SimpleDateFormat
-import java.util.*
+import java.time.Instant
+import java.time.LocalDateTime
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
+import java.util.Date
+import java.util.Locale
+
 
 object ConversionUtil {
     fun kelvinToFahrenheit(kelvinTemp: Double): Int {
@@ -17,7 +23,7 @@ object ConversionUtil {
     }
 
     fun convertUnixTimestampToTime(unixTimestamp: Long): String {
-        val dateFormat = SimpleDateFormat("h:mm a", Locale.getDefault())
+        val dateFormat = SimpleDateFormat("hh:mm a ", Locale.getDefault())
         val date = Date(unixTimestamp * 1000)
         return dateFormat.format(date)
     }
@@ -63,6 +69,15 @@ object ConversionUtil {
         }
 
         return builder.toString()
+    }
+
+
+    fun convertGMTtoLocal(gmtTime: Long): String {
+        val instant = Instant.ofEpochSecond(gmtTime)
+        val localDateTime = LocalDateTime.ofInstant(instant, ZoneId.systemDefault())
+
+        val dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+        return localDateTime.format(dateFormat)
     }
 
     fun String.capitalizeWords(): String = split(" ")
