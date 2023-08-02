@@ -2,6 +2,7 @@ package com.thatwaz.weathercast.view.ui.adapters
 
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
@@ -9,9 +10,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.thatwaz.weathercast.databinding.ItemForecastBinding
 import com.thatwaz.weathercast.model.forecastresponse.WeatherItem
 import com.thatwaz.weathercast.utils.ConversionUtil
+import com.thatwaz.weathercast.utils.ConversionUtil.convertUnixTimestampToTimeWithAMPM
 
 class HourlyForecastAdapter :
     ListAdapter<WeatherItem, HourlyForecastAdapter.HourlyForecastViewHolder>(DiffCallback) {
+
+
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HourlyForecastViewHolder {
         Log.i("POOP", "onCreateViewHolder")
@@ -32,17 +36,40 @@ class HourlyForecastAdapter :
 
     class HourlyForecastViewHolder(private val binding: ItemForecastBinding) :
         RecyclerView.ViewHolder(binding.root) {
+        private var lastDisplayedDate: String? = null
 
         fun bind(weatherItem: WeatherItem) {
             Log.i("POOP", "bind - weatherItem: $weatherItem")
+
+            val unixTimestamp = weatherItem.dt // Access the Unix timestamp from the WeatherItem
+            val timeRange = ConversionUtil.convertUnixTimestampToTimeRange(unixTimestamp)
+            val date = ConversionUtil.convertUnixTimestampToDate(unixTimestamp.toLong())
             binding.apply {
-//                tvTime.text = "${weatherItem.dtTxt}"
-                tvTime.text = ConversionUtil.convertGMTtoLocal(weatherItem.dt)
+                if (lastDisplayedDate != date) {
+                    tvDate.visibility = View.VISIBLE
+                    tvDate.text = date
+                } else {
+                    tvDate.visibility = View.GONE
+                }
+
+                tvTime.text = timeRange
                 tvWeatherCondition.text = "Condition: ${weatherItem.weather[0].description}"
-                val temperatureInFahrenheit = ConversionUtil.kelvinToFahrenheit(weatherItem.main.temp)
+                val temperatureInFahrenheit =
+                    ConversionUtil.kelvinToFahrenheit(weatherItem.main.temp)
                 tvTemperature.text = "${temperatureInFahrenheit}°F"
-//                tvTemperature.text = "${weatherItem.main.temp}°C"
+
+                lastDisplayedDate = date
             }
+
+
+//            binding.apply {
+////                tvTime.text = "${weatherItem.dtTxt}"
+//                tvTime.text = timeRange
+//                tvWeatherCondition.text = "Condition: ${weatherItem.weather[0].description}"
+//                val temperatureInFahrenheit = ConversionUtil.kelvinToFahrenheit(weatherItem.main.temp)
+//                tvTemperature.text = "${temperatureInFahrenheit}°F"
+////                tvTemperature.text = "${weatherItem.main.temp}°C"
+//            }
         }
     }
 

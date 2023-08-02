@@ -22,9 +22,22 @@ object ConversionUtil {
         return visibilityInMeters / 1609.34 // 1 mile = 1609.34 meters
     }
 
-    fun convertUnixTimestampToTime(unixTimestamp: Long): String {
-        val dateFormat = SimpleDateFormat("hh:mm a ", Locale.getDefault())
+    fun convertUnixTimestampToTimeWithAMPM(unixTimestamp: Long): String {
+        val dateFormat = SimpleDateFormat("h:mm a", Locale.getDefault())
         val date = Date(unixTimestamp * 1000)
+        return dateFormat.format(date)
+    }
+
+    fun convertUnixTimestampToTimeRange(unixTimestamp: Long): String {
+        val dateFormat = SimpleDateFormat("h:mm a", Locale.getDefault())
+        val startTime = Date(unixTimestamp * 1000)
+        val endTime = Date((unixTimestamp + 3 * 60 * 60) * 1000) // Adding 3 hours to the start time
+        return "${dateFormat.format(startTime)} TO ${dateFormat.format(endTime)}"
+    }
+
+    fun convertUnixTimestampToDate(unixTimestamp: Long): String {
+        val dateFormat = SimpleDateFormat("MMM d", Locale.getDefault())
+        val date = Date(unixTimestamp * 1000) // Convert to milliseconds
         return dateFormat.format(date)
     }
 

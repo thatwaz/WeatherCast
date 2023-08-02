@@ -25,7 +25,7 @@ import com.thatwaz.weathercast.utils.BarometricPressureColorUtil.getPressureColo
 import com.thatwaz.weathercast.utils.ConversionUtil.breakTextIntoLines
 import com.thatwaz.weathercast.utils.ConversionUtil.capitalizeWords
 import com.thatwaz.weathercast.utils.ConversionUtil.convertMetersToMiles
-import com.thatwaz.weathercast.utils.ConversionUtil.convertUnixTimestampToTime
+import com.thatwaz.weathercast.utils.ConversionUtil.convertUnixTimestampToTimeWithAMPM
 import com.thatwaz.weathercast.utils.ConversionUtil.getWindDirection
 import com.thatwaz.weathercast.utils.ConversionUtil.hPaToInHg
 import com.thatwaz.weathercast.utils.ConversionUtil.kelvinToFahrenheit
@@ -116,8 +116,8 @@ class CurrentWeatherFragment : Fragment() {
         val formattedWindDirection = getWindDirection(windDirectionDegrees)
         val visibilityInMeters = weatherData.visibility
         val visibilityInMiles = convertMetersToMiles(visibilityInMeters)
-        val sunriseTime = convertUnixTimestampToTime(weatherData.sys.sunrise.toLong())
-        val sunsetTime = convertUnixTimestampToTime(weatherData.sys.sunset.toLong())
+        val sunriseTime = convertUnixTimestampToTimeWithAMPM(weatherData.sys.sunrise.toLong())
+        val sunsetTime = convertUnixTimestampToTimeWithAMPM(weatherData.sys.sunset.toLong())
         val imageIcon = weatherData.weather[0].icon
 
         setCurrentWeatherImage(imageIcon)
