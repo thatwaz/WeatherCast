@@ -3,19 +3,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
     tools:context=".view.ui.HourlyFragment">
 
 
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvHourlyForecast"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:padding="16dp"
-            tools:listitem="@layout/item_forecast" />
-
-
-
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_hourly_forecast"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="24dp"
+        tools:listitem="@layout/item_forecast" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

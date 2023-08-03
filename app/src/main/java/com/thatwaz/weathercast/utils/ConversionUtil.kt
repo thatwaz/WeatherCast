@@ -29,10 +29,10 @@ object ConversionUtil {
     }
 
     fun convertUnixTimestampToTimeRange(unixTimestamp: Long): String {
-        val dateFormat = SimpleDateFormat("h:mm a", Locale.getDefault())
+        val dateFormat = SimpleDateFormat("h a", Locale.getDefault())
         val startTime = Date(unixTimestamp * 1000)
         val endTime = Date((unixTimestamp + 3 * 60 * 60) * 1000) // Adding 3 hours to the start time
-        return "${dateFormat.format(startTime)} TO ${dateFormat.format(endTime)}"
+        return "${dateFormat.format(startTime)} - ${dateFormat.format(endTime)}"
     }
 
     fun convertUnixTimestampToDate(unixTimestamp: Long): String {

@@ -10,15 +10,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.thatwaz.weathercast.databinding.ItemForecastBinding
 import com.thatwaz.weathercast.model.forecastresponse.WeatherItem
 import com.thatwaz.weathercast.utils.ConversionUtil
-import com.thatwaz.weathercast.utils.ConversionUtil.convertUnixTimestampToTimeWithAMPM
 
 class HourlyForecastAdapter :
     ListAdapter<WeatherItem, HourlyForecastAdapter.HourlyForecastViewHolder>(DiffCallback) {
 
-
+    private var lastDisplayedDate: String? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HourlyForecastViewHolder {
-        Log.i("POOP", "onCreateViewHolder")
         return HourlyForecastViewHolder(
             ItemForecastBinding.inflate(
                 LayoutInflater.from(parent.context),
@@ -30,22 +28,21 @@ class HourlyForecastAdapter :
 
     override fun onBindViewHolder(holder: HourlyForecastViewHolder, position: Int) {
         val current = getItem(position)
-        Log.i("POOP", "onBindViewHolder - position: $position")
-        holder.bind(current)
+        holder.bind(current, lastDisplayedDate)
+        lastDisplayedDate = ConversionUtil.convertUnixTimestampToDate(current.dt.toLong())
     }
 
     class HourlyForecastViewHolder(private val binding: ItemForecastBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        private var lastDisplayedDate: String? = null
 
-        fun bind(weatherItem: WeatherItem) {
+        fun bind(weatherItem: WeatherItem, lastDisplayedDate: String?) {
             Log.i("POOP", "bind - weatherItem: $weatherItem")
 
             val unixTimestamp = weatherItem.dt // Access the Unix timestamp from the WeatherItem
             val timeRange = ConversionUtil.convertUnixTimestampToTimeRange(unixTimestamp)
             val date = ConversionUtil.convertUnixTimestampToDate(unixTimestamp.toLong())
             binding.apply {
-                if (lastDisplayedDate != date) {
+                if (date != lastDisplayedDate) {
                     tvDate.visibility = View.VISIBLE
                     tvDate.text = date
                 } else {
@@ -53,23 +50,11 @@ class HourlyForecastAdapter :
                 }
 
                 tvTime.text = timeRange
-                tvWeatherCondition.text = "Condition: ${weatherItem.weather[0].description}"
+                tvWeatherCondition.text = "${weatherItem.weather[0].description}"
                 val temperatureInFahrenheit =
                     ConversionUtil.kelvinToFahrenheit(weatherItem.main.temp)
                 tvTemperature.text = "${temperatureInFahrenheit}°F"
-
-                lastDisplayedDate = date
             }
-
-
-//            binding.apply {
-////                tvTime.text = "${weatherItem.dtTxt}"
-//                tvTime.text = timeRange
-//                tvWeatherCondition.text = "Condition: ${weatherItem.weather[0].description}"
-//                val temperatureInFahrenheit = ConversionUtil.kelvinToFahrenheit(weatherItem.main.temp)
-//                tvTemperature.text = "${temperatureInFahrenheit}°F"
-////                tvTemperature.text = "${weatherItem.main.temp}°C"
-//            }
         }
     }
 
@@ -85,6 +70,68 @@ class HourlyForecastAdapter :
         }
     }
 }
+
+
+//class HourlyForecastAdapter :
+//    ListAdapter<WeatherItem, HourlyForecastAdapter.HourlyForecastViewHolder>(DiffCallback) {
+//    private var lastDisplayedDate: String? = null
+//
+//
+//    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HourlyForecastViewHolder {
+//        Log.i("POOP", "onCreateViewHolder")
+//        return HourlyForecastViewHolder(
+//            ItemForecastBinding.inflate(
+//                LayoutInflater.from(parent.context),
+//                parent,
+//                false
+//            )
+//        )
+//    }
+//
+//    override fun onBindViewHolder(holder: HourlyForecastViewHolder, position: Int) {
+//        val current = getItem(position)
+//        Log.i("POOP", "onBindViewHolder - position: $position")
+//        holder.bind(current)
+//    }
+//
+//    class HourlyForecastViewHolder(private val binding: ItemForecastBinding) :
+//        RecyclerView.ViewHolder(binding.root) {
+//
+//
+//        fun bind(weatherItem: WeatherItem) {
+//            Log.i("POOP", "bind - weatherItem: $weatherItem")
+//
+//            val unixTimestamp = weatherItem.dt // Access the Unix timestamp from the WeatherItem
+//            val timeRange = ConversionUtil.convertUnixTimestampToTimeRange(unixTimestamp)
+//            val date = ConversionUtil.convertUnixTimestampToDate(unixTimestamp.toLong())
+//            binding.apply {
+//                if (lastDisplayedDate != date) {
+//                    tvDate.visibility = View.VISIBLE
+//                    tvDate.text = date
+//                } else {
+//                    tvDate.visibility = View.GONE
+//                }
+//
+//                tvTime.text = timeRange
+//                tvWeatherCondition.text = "${weatherItem.weather[0].description}"
+//                val temperatureInFahrenheit =
+//                    ConversionUtil.kelvinToFahrenheit(weatherItem.main.temp)
+//                tvTemperature.text = "${temperatureInFahrenheit}°F"
+//
+//                lastDisplayedDate = date
+//            }
+
+
+//            binding.apply {
+////                tvTime.text = "${weatherItem.dtTxt}"
+//                tvTime.text = timeRange
+//                tvWeatherCondition.text = "Condition: ${weatherItem.weather[0].description}"
+//                val temperatureInFahrenheit = ConversionUtil.kelvinToFahrenheit(weatherItem.main.temp)
+//                tvTemperature.text = "${temperatureInFahrenheit}°F"
+////                tvTemperature.text = "${weatherItem.main.temp}°C"
+//            }
+//        }
+//    }
 
 
 //class HourlyForecastAdapter :
