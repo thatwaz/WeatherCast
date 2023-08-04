@@ -1,6 +1,7 @@
 package com.thatwaz.weathercast.model.forecastresponse
 
 import com.google.gson.annotations.SerializedName
+import com.thatwaz.weathercast.model.weatherresponse.Weather
 
 data class ForecastResponse(
     @SerializedName("cod")
@@ -37,6 +38,7 @@ data class WeatherItem(
     @SerializedName("dt_txt")
     val dtTxt: String
 )
+
 
 data class MainWeatherData(
     @SerializedName("temp")
