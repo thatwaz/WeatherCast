@@ -17,8 +17,6 @@ import java.util.*
 class HourlyForecastAdapter :
     ListAdapter<WeatherItem, HourlyForecastAdapter.HourlyForecastViewHolder>(DiffCallback) {
 
-    private var lastDisplayedDate: String? = null
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HourlyForecastViewHolder {
         return HourlyForecastViewHolder(
             ItemForecastBinding.inflate(
@@ -39,28 +37,18 @@ class HourlyForecastAdapter :
         holder.bind(current, showDate)
     }
 
-
-
-//    override fun onBindViewHolder(holder: HourlyForecastViewHolder, position: Int) {
-//        val current = getItem(position)
-//
-//        holder.bind(current, lastDisplayedDate)
-//        lastDisplayedDate = ConversionUtil.convertUnixTimestampToDate(current.dt.toLong())
-//    }
-
     class HourlyForecastViewHolder(private val binding: ItemForecastBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
 
         fun bind(weatherItem: WeatherItem, showDate: Boolean) {
-            Log.i("POOP", "bind - weatherItem: $weatherItem")
-
             val unixTimestamp = weatherItem.dt // Access the Unix timestamp from the WeatherItem
             val timeRange = ConversionUtil.convertUnixTimestampToTimeRange(unixTimestamp)
             val date = ConversionUtil.convertUnixTimestampToDate(unixTimestamp)
             val weatherCondition = weatherItem.weather[0].description
             val weatherIcon = weatherItem.weather[0].icon
             val displayIcon = WeatherIconUtil.getWeatherIconResource(weatherIcon)
+            val chanceOfRainPercentage = ConversionUtil.convertRainToPercentage(weatherItem.rain)
 
             binding.apply {
                 if (showDate) {
@@ -76,42 +64,11 @@ class HourlyForecastAdapter :
                     ConversionUtil.kelvinToFahrenheit(weatherItem.main.temp)
                 tvTemperature.text = "${temperatureInFahrenheit}°F"
                 ivWeatherIcon.setImageResource(displayIcon)
+                binding.tvChanceOfRain.text = "$chanceOfRainPercentage%"
 
             }
         }
-
-
-
-//        fun bind(weatherItem: WeatherItem, lastDisplayedDate: String?) {
-//            Log.i("POOP", "bind - weatherItem: $weatherItem")
-//
-//            val unixTimestamp = weatherItem.dt // Access the Unix timestamp from the WeatherItem
-//            val timeRange = ConversionUtil.convertUnixTimestampToTimeRange(unixTimestamp)
-//            val date = ConversionUtil.convertUnixTimestampToDate(unixTimestamp)
-//            val weatherCondition = weatherItem.weather[0].description
-//            val currentDate = weatherItem.dtTxt
-//
-//            Log.i("POOP","current date is $currentDate")
-//
-//            binding.apply {
-////                if (date != lastDisplayedDate) {
-//                    clDate.visibility = View.VISIBLE
-//                    tvDate.text = currentDate.toString()
-////                } else {
-////                    clDate.visibility = View.GONE
-////                }
-//
-//                tvTime.text = timeRange
-//                tvWeatherCondition.text = ConversionUtil
-//                    .breakTextIntoLines(weatherCondition,18)
-//                val temperatureInFahrenheit =
-//                    ConversionUtil.kelvinToFahrenheit(weatherItem.main.temp)
-//                tvTemperature.text = "${temperatureInFahrenheit}°F"
-//            }
-//        }
     }
-
-
 
     private fun areDatesEqual(timestamp1: Long, timestamp2: Long): Boolean {
         val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())

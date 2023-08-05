@@ -16,9 +16,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Aug 2"
-            android:textStyle="bold"
-            android:textColor="@color/inactive_grey"
-            android:textSize="20sp"
+            android:textColor="@color/blue_500"
+            android:textSize="24sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -31,8 +30,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Time"
-        android:textStyle="bold"
-        android:textColor="@color/inactive_grey"
+        android:layout_marginTop="4dp"
+        android:textColor="@color/black"
         android:textSize="14sp"
         android:layout_marginStart="8dp"
         app:layout_constraintStart_toStartOf="parent"
@@ -43,9 +42,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:cardUseCompatPadding="true"
+        android:outlineSpotShadowColor="@color/blue_500"
         app:cardElevation="4dp"
         app:cardCornerRadius="4dp"
-        android:outlineSpotShadowColor="@color/blue_700"
+
         app:layout_constraintTop_toBottomOf="@id/tv_time">
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -107,7 +107,7 @@
                 app:layout_constraintTop_toTopOf="@id/iv_weather_icon"
                 app:layout_constraintBottom_toBottomOf="@id/tv_weather_condition"
                 app:layout_constraintEnd_toEndOf="parent"
-                android:textColor="@color/amber"
+                android:textColor="@android:color/darker_gray"
                 android:textSize="30sp" />
 
 
