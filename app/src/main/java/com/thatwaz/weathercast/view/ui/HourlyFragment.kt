@@ -6,8 +6,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.gms.location.LocationServices
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -18,10 +16,8 @@ import com.thatwaz.weathercast.model.data.LocationRepository
 import com.thatwaz.weathercast.model.data.WeatherDataHandler
 import com.thatwaz.weathercast.model.forecastresponse.WeatherItem
 import com.thatwaz.weathercast.utils.error.Resource
-import com.thatwaz.weathercast.view.ui.adapters.HourlyForecastAdapter
+import com.thatwaz.weathercast.view.ui.adapters.HourlyAdapter
 import com.thatwaz.weathercast.viewmodel.WeatherViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 
@@ -39,7 +35,7 @@ class HourlyFragment : Fragment() {
     private var _binding: FragmentHourlyBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var hourlyForecastAdapter: HourlyForecastAdapter
+    private lateinit var hourlyAdapter: HourlyAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -101,18 +97,18 @@ class HourlyFragment : Fragment() {
 
     private fun setupRecyclerView() {
         // Create the adapter
-        hourlyForecastAdapter = HourlyForecastAdapter()
+        hourlyAdapter = HourlyAdapter()
 
         // Set up the RecyclerView with the adapter
         binding.rvHourlyForecast.apply {
             layoutManager = LinearLayoutManager(requireContext())
-            adapter = hourlyForecastAdapter
+            adapter = hourlyAdapter
         }
     }
 
     private fun updateRecyclerView(forecastList: List<WeatherItem>) {
         // Update the adapter's data with the new forecast list
-        hourlyForecastAdapter.submitList(forecastList)
+        hourlyAdapter.submitList(forecastList)
         Log.i("MOH!", "list is $forecastList")
     }
 

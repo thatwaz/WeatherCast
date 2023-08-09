@@ -6,12 +6,10 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.gson.Gson
 import com.thatwaz.weathercast.config.ApiConfig
-import com.thatwaz.weathercast.model.application.WeatherCastApplication
 import com.thatwaz.weathercast.model.database.WeatherDataEntity
 import com.thatwaz.weathercast.model.database.WeatherDatabase
 import com.thatwaz.weathercast.model.forecastresponse.ForecastResponse
 import com.thatwaz.weathercast.model.weatherresponse.WeatherResponse
-
 import com.thatwaz.weathercast.repository.WeatherRepository
 import com.thatwaz.weathercast.utils.error.Resource
 import javax.inject.Inject
@@ -21,6 +19,7 @@ class WeatherViewModel @Inject constructor(
     private val repository: WeatherRepository,
     private val weatherDatabase: WeatherDatabase
 ) : ViewModel() {
+
 
 //    private val repository = WeatherRepository()
 
@@ -115,7 +114,8 @@ class WeatherViewModel @Inject constructor(
                 }
             } else {
                 // Handle forecast data error
-                _forecastData.value = Resource.Error("Error fetching forecast data: ${forecastResponse.code()}")
+                _forecastData.value =
+                    Resource.Error("Error fetching forecast data: ${forecastResponse.code()}")
             }
         } catch (e: Exception) {
             // Handle any other exceptions that might occur during the network request

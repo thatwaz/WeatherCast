@@ -1,25 +1,26 @@
 package com.thatwaz.weathercast.view.ui.adapters
 
 import android.icu.text.SimpleDateFormat
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.thatwaz.weathercast.databinding.ItemForecastBinding
+import com.thatwaz.weathercast.databinding.ItemHourlyBinding
+
+
 import com.thatwaz.weathercast.model.forecastresponse.WeatherItem
 import com.thatwaz.weathercast.utils.ConversionUtil
 import com.thatwaz.weathercast.utils.WeatherIconUtil
 import java.util.*
 
-class HourlyForecastAdapter :
-    ListAdapter<WeatherItem, HourlyForecastAdapter.HourlyForecastViewHolder>(DiffCallback) {
+class HourlyAdapter :
+    ListAdapter<WeatherItem, HourlyAdapter.HourlyViewHolder>(DiffCallback) {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HourlyForecastViewHolder {
-        return HourlyForecastViewHolder(
-            ItemForecastBinding.inflate(
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HourlyViewHolder {
+        return HourlyViewHolder(
+            ItemHourlyBinding.inflate(
                 LayoutInflater.from(parent.context),
                 parent,
                 false
@@ -27,7 +28,7 @@ class HourlyForecastAdapter :
         )
     }
 
-    override fun onBindViewHolder(holder: HourlyForecastViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: HourlyViewHolder, position: Int) {
         val current = getItem(position)
         val prevItem = if (position > 0) getItem(position - 1) else null
 
@@ -37,7 +38,7 @@ class HourlyForecastAdapter :
         holder.bind(current, showDate)
     }
 
-    class HourlyForecastViewHolder(private val binding: ItemForecastBinding) :
+    class HourlyViewHolder(private val binding: ItemHourlyBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
 

@@ -12,7 +12,7 @@
         android:title="Hourly" />
 
     <item
-        android:id="@+id/ForecastFragment"
+        android:id="@+id/forecastFragment"
         android:icon="@drawable/ic_calendar"
         android:iconTint="@color/blue_700"
         android:title="5 Day" />

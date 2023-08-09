@@ -6,8 +6,6 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.thatwaz.weathercast.R
 import com.thatwaz.weathercast.databinding.ActivityMainBinding
-import com.thatwaz.weathercast.view.ui.CurrentWeatherFragmentDirections
-import com.thatwaz.weathercast.view.ui.HourlyFragmentDirections
 
 //forecast    https://api.openweathermap.org/data/2.5/forecast?lat=44.34&lon=10.99&appid=2f73f1f2102337b8e6e433e1747d6b4b
 //google api key = AIzaSyCgmAtIPSA1RfsFFk532h0Sl9tald37AIk
@@ -30,28 +28,23 @@ class MainActivity : AppCompatActivity() {
         navController = navHostFragment.navController
 
         binding.bnvWeatherCast.setOnItemSelectedListener { item ->
-            val currentDestination = navController.currentDestination?.id
-            val selectedDestination = item.itemId
+            val destinationId = item.itemId
 
-            if (currentDestination == selectedDestination) {
+            if (destinationId == navController.currentDestination?.id) {
                 return@setOnItemSelectedListener true
             }
 
-            when (selectedDestination) {
+            when (destinationId) {
                 R.id.hourlyFragment -> {
-                    if (currentDestination == R.id.hourlyFragment) {
-                        return@setOnItemSelectedListener true
-                    }
-                    val action =
-                        CurrentWeatherFragmentDirections.actionCurrentWeatherFragmentToHourlyFragment()
+                    val action = R.id.action_shared_to_hourlyFragment
                     navController.navigate(action)
                 }
                 R.id.currentWeatherFragment -> {
-                    if (currentDestination == R.id.currentWeatherFragment) {
-                        return@setOnItemSelectedListener true
-                    }
-                    val action = HourlyFragmentDirections
-                        .actionHourlyFragmentToCurrentWeatherFragment()
+                    val action = R.id.action_shared_to_currentWeatherFragment
+                    navController.navigate(action)
+                }
+                R.id.forecastFragment -> {
+                    val action = R.id.action_shared_to_forecastFragment
                     navController.navigate(action)
                 }
             }
@@ -59,6 +52,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 }
+
 
 
 

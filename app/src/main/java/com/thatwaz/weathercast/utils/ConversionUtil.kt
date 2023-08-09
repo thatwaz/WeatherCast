@@ -86,36 +86,74 @@ object ConversionUtil {
         return builder.toString()
     }
 
-    fun convertRainToPercentage(rainForecast: RainForecast?): Int {
-        if (rainForecast == null || rainForecast.`3h` == null) {
-            return 0 // If rain data is not available, return 0% chance of rain
+
+
+        fun convertRainToPercentage(rainForecast: RainForecast?): Int {
+            if (rainForecast == null || rainForecast.`3h` == null) {
+                return 0 // If rain data is not available, return 0% chance of rain
+            }
+
+            // Maximum rainfall value used as reference (adjust as needed)
+            val maxRainValue = 5.0 // For example, 5.0 mm is considered heavy rain
+
+            // Get the rainfall amount for a 3-hour period
+            val rain3h = rainForecast.`3h`
+
+            // Calculate the percentage of rain relative to the maximum value
+            val percentage = (rain3h / maxRainValue) * 100
+
+            // Cap the percentage at 100% if it exceeds
+            val cappedPercentage = if (percentage > 100) 100 else percentage
+
+            // Round the percentage to the nearest integer
+            val roundedPercentage = cappedPercentage.toInt()
+
+            // Set a minimum threshold to make the percentage more meaningful
+            val minThreshold = 1
+
+            // If the rounded percentage is below the threshold, return 10%
+            if (roundedPercentage < minThreshold) {
+                return 10
+            }
+
+            // Calculate the nearest multiple of 10
+            val nearestMultipleOf10 = ((roundedPercentage + 9) / 10) * 10
+
+            return nearestMultipleOf10
         }
 
-        // Maximum rainfall value used as reference (adjust as needed)
-        val maxRainValue = 5.0 // For example, 5.0 mm is considered heavy rain
 
-        // Get the rainfall amount for a 3-hour period
-        val rain3h = rainForecast.`3h`
 
-        // Calculate the percentage of rain relative to the maximum value
-        val percentage = (rain3h / maxRainValue) * 100
-
-        // Round the percentage to the nearest integer
-        val roundedPercentage = percentage.toInt()
-
-        // Set a minimum threshold to make the percentage more meaningful
-        val minThreshold = 10
-
-        // If the rounded percentage is below the threshold, return 10%
-        if (roundedPercentage < minThreshold) {
-            return 10
-        }
-
-        // Calculate the nearest multiple of 10
-        val nearestMultipleOf10 = ((roundedPercentage + 9) / 10) * 10
-
-        return nearestMultipleOf10
-    }
+//    fun convertRainToPercentage(rainForecast: RainForecast?): Int {
+//        if (rainForecast == null || rainForecast.`3h` == null) {
+//            return 0 // If rain data is not available, return 0% chance of rain
+//        }
+//
+//        // Maximum rainfall value used as reference (adjust as needed)
+//        val maxRainValue = 5.0 // For example, 5.0 mm is considered heavy rain
+//
+//        // Get the rainfall amount for a 3-hour period
+//        val rain3h = rainForecast.`3h`
+//
+//        // Calculate the percentage of rain relative to the maximum value
+//        val percentage = (rain3h / maxRainValue) * 100
+//
+//        // Round the percentage to the nearest integer
+//        val roundedPercentage = percentage.toInt()
+//
+//        // Set a minimum threshold to make the percentage more meaningful
+//        val minThreshold = 10
+//
+//        // If the rounded percentage is below the threshold, return 10%
+//        if (roundedPercentage < minThreshold) {
+//            return 10
+//        }
+//
+//        // Calculate the nearest multiple of 10
+//        val nearestMultipleOf10 = ((roundedPercentage + 9) / 10) * 10
+//
+//        return nearestMultipleOf10
+//    }
 
     fun convertUnixTimestampToDate(unixTimestamp: Long): String {
         val date = Date(unixTimestamp * 1000)
