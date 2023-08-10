@@ -9,7 +9,7 @@
         android:id="@+id/hourlyFragment"
         android:icon="@drawable/ic_hourglass"
         android:iconTint="@color/blue_700"
-        android:title="Hourly" />
+        android:title="Periodic" />
 
     <item
         android:id="@+id/forecastFragment"

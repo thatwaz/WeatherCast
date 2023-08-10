@@ -19,6 +19,7 @@ import com.thatwaz.weathercast.model.data.LocationRepository
 import com.thatwaz.weathercast.model.data.WeatherDataHandler
 import com.thatwaz.weathercast.model.forecastresponse.WeatherItem
 import com.thatwaz.weathercast.utils.error.Resource
+import com.thatwaz.weathercast.view.ui.adapters.ForecastAdapter
 
 import com.thatwaz.weathercast.view.ui.adapters.HourlyAdapter
 import com.thatwaz.weathercast.viewmodel.WeatherViewModel
@@ -38,7 +39,7 @@ class ForecastFragment : Fragment() {
     private var _binding: FragmentForecastBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var hourlyAdapter: HourlyAdapter
+    private lateinit var forecastAdapter: ForecastAdapter
 
     private lateinit var fusedLocationClient: FusedLocationProviderClient
 
@@ -105,18 +106,18 @@ class ForecastFragment : Fragment() {
 
     private fun setupRecyclerView() {
         // Create the adapter
-        hourlyAdapter = HourlyAdapter()
+        forecastAdapter = ForecastAdapter()
 
         // Set up the RecyclerView with the adapter
         binding.rvForecast.apply {
             layoutManager = LinearLayoutManager(requireContext())
-            adapter = hourlyAdapter
+            adapter = forecastAdapter
         }
     }
 
     private fun updateRecyclerView(forecastList: List<WeatherItem>) {
         // Update the adapter's data with the new forecast list
-        hourlyAdapter.submitList(forecastList)
+        forecastAdapter.submitList(forecastList)
         Log.i("MOH!", "list is $forecastList")
     }
 

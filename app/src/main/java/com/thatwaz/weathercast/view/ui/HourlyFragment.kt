@@ -106,10 +106,10 @@ class HourlyFragment : Fragment() {
         }
     }
 
-    private fun updateRecyclerView(forecastList: List<WeatherItem>) {
+    private fun updateRecyclerView(hourlyList: List<WeatherItem>) {
         // Update the adapter's data with the new forecast list
-        hourlyAdapter.submitList(forecastList)
-        Log.i("MOH!", "list is $forecastList")
+        hourlyAdapter.submitList(hourlyList)
+
     }
 
 }

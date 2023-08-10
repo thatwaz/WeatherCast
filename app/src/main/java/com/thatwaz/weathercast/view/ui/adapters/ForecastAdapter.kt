@@ -37,8 +37,12 @@ class ForecastAdapter :
         RecyclerView.ViewHolder(binding.root) {
 
             fun bind(weatherItem: WeatherItem) {
+                binding.apply {
+                    tvForecastDescription.text = "Lorem ipsum dolor sit amet. Et autem ullam sit magnam quia qui tempora obcaecati aut necessitatibus dolores. Non tempora dolore ut blanditiis laborum aut molestias illum in corporis mollitia eum quia asperiores sed voluptas vitae eos esse omnis."
+                }
 
             }
+
 
     }
 

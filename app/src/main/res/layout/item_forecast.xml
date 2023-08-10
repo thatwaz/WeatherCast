@@ -7,58 +7,131 @@
     android:padding="8dp"
     tools:context=".view.ui.ForecastFragment">
 
-    <TextView
-        android:id="@+id/tv_forecast_date"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Nov 5 1955"
-        android:layout_marginTop="4dp"
-        android:textColor="@color/black"
-        android:textSize="14sp"
-        android:layout_marginStart="8dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
     <androidx.cardview.widget.CardView
-        android:id="@+id/cv_weather_details"
+        android:id="@+id/cv_forecast_details"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:cardUseCompatPadding="true"
-        android:outlineSpotShadowColor="@color/blue_500"
-        app:cardElevation="4dp"
         app:cardCornerRadius="4dp"
-
-        app:layout_constraintTop_toBottomOf="@id/tv_forecast_date">
+        app:cardElevation="4dp"
+        app:cardUseCompatPadding="true"
+        app:layout_constraintTop_toTopOf="parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/cl_weather_details"
+            android:id="@+id/cl_forecast_details"
             android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginEnd="12dp"
+            android:layout_marginBottom="12dp"
             android:background="@color/white"
-            android:padding="6dp"
-            android:layout_height="match_parent">
+            android:padding="6dp">
 
             <ImageView
-                android:id="@+id/iv_weather_icon"
+                android:id="@+id/iv_forecast_icon"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
+                android:layout_marginStart="4dp"
                 android:layout_marginTop="4dp"
                 android:src="@drawable/day_partly_cloudy"
-                android:layout_marginStart="4dp"/>
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/tv_forecast_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="4dp"
+                android:text="Sat Nov 5"
+                android:textColor="@color/black"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@id/iv_forecast_icon"
+                app:layout_constraintStart_toEndOf="@id/iv_forecast_icon"
+                app:layout_constraintTop_toTopOf="@id/iv_forecast_icon" />
+
+            <TextView
+                android:id="@+id/lbl_temperature_high"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:text="High "
+                android:textColor="@color/black"
+                android:textSize="18sp"
+                app:layout_constraintStart_toStartOf="@id/iv_forecast_icon"
+                app:layout_constraintTop_toBottomOf="@id/iv_forecast_icon" />
 
             <TextView
                 android:id="@+id/tv_temperature_high"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
-                android:text="Condition"
+                android:text="95&#176;F"
+                android:textColor="@color/blue_500"
+                android:textSize="18sp"
+                app:layout_constraintStart_toStartOf="@id/lbl_temperature_high"
+                app:layout_constraintTop_toBottomOf="@id/lbl_temperature_high" />
+
+            <TextView
+                android:id="@+id/lbl_temperature_low"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:text="Low "
+                android:textColor="@color/black"
+                android:textSize="18sp"
+                app:layout_constraintStart_toStartOf="@id/tv_temperature_high"
+                app:layout_constraintTop_toBottomOf="@id/tv_temperature_high" />
+
+            <TextView
+                android:id="@+id/tv_temperature_low"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:text="75&#176;F"
+                android:textColor="@color/blue_500"
+                android:textSize="18sp"
+                app:layout_constraintStart_toStartOf="@id/lbl_temperature_low"
+                app:layout_constraintTop_toBottomOf="@id/lbl_temperature_low" />
+
+            <ImageView
+                android:id="@+id/ic_forecast_chance_of_rain"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/ic_chance_of_rain"
+                app:layout_constraintBottom_toBottomOf="@id/iv_forecast_icon"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+            <TextView
+                android:id="@+id/tv_forecast_chance_of_rain"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="20%"
                 android:textColor="@android:color/darker_gray"
                 android:textSize="18sp"
-                app:layout_constraintStart_toStartOf="@id/iv_weather_icon"
-                app:layout_constraintTop_toBottomOf="@id/iv_weather_icon" />
+                app:layout_constraintBottom_toBottomOf="@id/ic_forecast_chance_of_rain"
+                app:layout_constraintEnd_toStartOf="@id/ic_forecast_chance_of_rain"
+                app:layout_constraintTop_toTopOf="@id/ic_forecast_chance_of_rain" />
 
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/cl_forecast_description"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="@id/tv_forecast_date"
+                app:layout_constraintTop_toBottomOf="@id/tv_forecast_date"
+                app:layout_constraintEnd_toEndOf="parent">
 
+                <TextView
+                    android:id="@+id/tv_forecast_description"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:ellipsize="end"
+                    android:text=""
+                    android:textColor="@color/text_darker_gray"
+                    android:textSize="18sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>
