@@ -202,3 +202,50 @@ initial ui test
                 <solid android:color="#80000000" /> <!-- 80% black with some transparency (adjust as needed) -->
                 <corners android:radius="4dp" /> <!-- Add rounded corners if you prefer -->
             </shape>
+
+
+
+
+    private fun transformForecastData(weatherItems: List<WeatherItem>): List<DailyForecast> {
+        val dailyForecasts = mutableListOf<DailyForecast>()
+
+        val groupedByDay = weatherItems.groupBy { it.dtTxt.substring(0, 10) }
+
+        for ((day, items) in groupedByDay) {
+            val highTemperature = items.maxByOrNull { it.main.tempMax }?.main?.tempMax ?: 0.0
+            val lowTemperature = items.minByOrNull { it.main.tempMin }?.main?.tempMin ?: 0.0
+            val averageRain = items.mapNotNull { it.pop }.average()
+
+            val morningItems = items.filter { it.dtTxt.contains("06:00:00") }
+            val afternoonItems = items.filter { it.dtTxt.contains("12:00:00") }
+            val eveningItems = items.filter { it.dtTxt.contains("18:00:00") }
+
+            val morningWeather = morningItems.firstOrNull()?.weather?.get(0)?.description ?: ""
+            val afternoonWeather = afternoonItems.firstOrNull()?.weather?.get(0)?.description ?: ""
+            val eveningWeather = eveningItems.firstOrNull()?.weather?.get(0)?.description ?: ""
+
+            val dailyForecast = DailyForecast(
+                date = day,
+                highTemperature = highTemperature,
+                lowTemperature = lowTemperature,
+                chanceOfRain = averageRain,
+                morningWeather = morningWeather,
+                afternoonWeather = afternoonWeather,
+                eveningWeather = eveningWeather
+            )
+
+            dailyForecasts.add(dailyForecast)
+        }
+
+        return dailyForecasts
+    }
+
+        data class DailyForecast(
+            val date: String,
+            val highTemperature: Double,
+            val lowTemperature: Double,
+            val chanceOfRain: Double,
+            val morningWeather: String,
+            val afternoonWeather: String,
+            val eveningWeather: String
+        )

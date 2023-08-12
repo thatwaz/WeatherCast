@@ -17,11 +17,11 @@ import com.thatwaz.weathercast.databinding.FragmentForecastBinding
 import com.thatwaz.weathercast.model.application.WeatherCastApplication
 import com.thatwaz.weathercast.model.data.LocationRepository
 import com.thatwaz.weathercast.model.data.WeatherDataHandler
+import com.thatwaz.weathercast.model.forecastresponse.DailyForecast
 import com.thatwaz.weathercast.model.forecastresponse.WeatherItem
 import com.thatwaz.weathercast.utils.error.Resource
 import com.thatwaz.weathercast.view.ui.adapters.ForecastAdapter
 
-import com.thatwaz.weathercast.view.ui.adapters.HourlyAdapter
 import com.thatwaz.weathercast.viewmodel.WeatherViewModel
 import javax.inject.Inject
 
@@ -41,7 +41,7 @@ class ForecastFragment : Fragment() {
 
     private lateinit var forecastAdapter: ForecastAdapter
 
-    private lateinit var fusedLocationClient: FusedLocationProviderClient
+//    private lateinit var fusedLocationClient: FusedLocationProviderClient
 
 
     override fun onCreateView(
@@ -71,36 +71,36 @@ class ForecastFragment : Fragment() {
         // Call fetchForecastData to initiate fetching the forecast data
         fetchForecastData()
 
+        Log.i("MOH!", "Observing forecastData")
         viewModel.forecastData.observe(viewLifecycleOwner) { resource ->
+            Log.i("MOH!", "Resource status: ${resource}")
             when (resource) {
                 is Resource.Loading -> {
                     // Handle loading state if needed
                 }
                 is Resource.Success -> {
-                    val forecastResponse = resource.data
-                    if (forecastResponse != null) {
-                        // Log the API response to understand its structure and data
-                        Log.i("MOH!", "Forecast API Response: $forecastResponse")
-
-                        // Implement your forecast data handling here based on the forecastResponse
-                        // ...
+                    val dailyForecasts = resource.data
+                    if (dailyForecasts != null) {
                         // Update the RecyclerView with the new forecast data
-                        updateRecyclerView(forecastResponse.list)
+                        updateRecyclerView(dailyForecasts)
+                        Log.i("MOH!", "Daily diddly is $dailyForecasts")
                     }
                 }
                 is Resource.Error -> {
                     // Handle error state if needed
                     val errorMessage = resource.errorMessage
-                    Log.e("DOH!", "Error fetching forecast data: $errorMessage")
+                    Log.e("ForecastFragment", "Error fetching forecast data: $errorMessage")
                 }
             }
         }
+
+
     }
 
 
     private fun fetchForecastData() {
         locationRepository.getCurrentLocation { latitude, longitude ->
-            weatherDataHandler.fetchWeatherForecast(latitude, longitude)
+            weatherDataHandler.fetchDailyForecast(latitude, longitude)
         }
     }
 
@@ -115,10 +115,10 @@ class ForecastFragment : Fragment() {
         }
     }
 
-    private fun updateRecyclerView(forecastList: List<WeatherItem>) {
+    private fun updateRecyclerView(dailyForecasts: List<DailyForecast>) {
         // Update the adapter's data with the new forecast list
-        forecastAdapter.submitList(forecastList)
-        Log.i("MOH!", "list is $forecastList")
+        forecastAdapter.submitList(dailyForecasts)
+        Log.i("MOH!", "Adapter data updated: $dailyForecasts")
     }
 
 

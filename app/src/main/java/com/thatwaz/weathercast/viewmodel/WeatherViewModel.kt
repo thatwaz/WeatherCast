@@ -8,10 +8,13 @@ import com.google.gson.Gson
 import com.thatwaz.weathercast.config.ApiConfig
 import com.thatwaz.weathercast.model.database.WeatherDataEntity
 import com.thatwaz.weathercast.model.database.WeatherDatabase
+import com.thatwaz.weathercast.model.forecastresponse.DailyForecast
 import com.thatwaz.weathercast.model.forecastresponse.ForecastResponse
+import com.thatwaz.weathercast.model.forecastresponse.WeatherItem
 import com.thatwaz.weathercast.model.weatherresponse.WeatherResponse
 import com.thatwaz.weathercast.repository.WeatherRepository
 import com.thatwaz.weathercast.utils.error.Resource
+import retrofit2.Response
 import javax.inject.Inject
 
 
@@ -19,23 +22,48 @@ class WeatherViewModel @Inject constructor(
     private val repository: WeatherRepository,
     private val weatherDatabase: WeatherDatabase
 ) : ViewModel() {
-
-
-//    private val repository = WeatherRepository()
-
-//    private val _weatherData = MutableLiveData<WeatherResponse>()
-//    val weatherData: LiveData<WeatherResponse> get() = _weatherData
+    
 
     private val _weatherData = MutableLiveData<Resource<WeatherResponse>>()
     val weatherData: LiveData<Resource<WeatherResponse>> get() = _weatherData
 
-    private val _forecastData = MutableLiveData<Resource<ForecastResponse>>()
-    val forecastData: LiveData<Resource<ForecastResponse>> get() = _forecastData
+    private val _hourlyData = MutableLiveData<Resource<ForecastResponse>>()
+    val hourlyData: LiveData<Resource<ForecastResponse>> get() = _hourlyData
 
+//    private val _forecastData = MutableLiveData<Resource<ForecastResponse>>()
+//    val forecastData: LiveData<Resource<ForecastResponse>> get() = _forecastData
 
-//    private val weatherDatabase: WeatherDatabase by lazy {
-//        WeatherDatabase.getInstance(WeatherCastApplication.instance)
-//    }
+    private val _forecastData = MutableLiveData<Resource<List<DailyForecast>>>()
+    val forecastData: LiveData<Resource<List<DailyForecast>>> get() = _forecastData
+
+    fun consolidateForecastData(forecastResponse: ForecastResponse): List<DailyForecast> {
+        Log.i("MOH!", "consolidateForecastData called")
+        val dailyForecasts = mutableListOf<DailyForecast>()
+
+        // Group the forecast items by day
+        val groupedForecasts = forecastResponse.list.groupBy { forecastItem ->
+            forecastItem.dtTxt.substringBefore(" ") // Extract the date part
+        }
+
+        // Calculate high and low temperatures for each day
+        for ((date, forecasts) in groupedForecasts) {
+            val highTemp = forecasts.maxByOrNull { it.main.tempMax }?.main?.tempMax ?: 0.0
+            val lowTemp = forecasts.minByOrNull { it.main.tempMin }?.main?.tempMin ?: 0.0
+            val weatherDescription = forecasts.firstOrNull()?.weather?.getOrNull(0)?.description ?: ""
+
+            dailyForecasts.add(
+                DailyForecast(
+                    date = date,
+                    highTemperature = highTemp,
+                    lowTemperature = lowTemp,
+                    weatherDescription = weatherDescription
+                )
+            )
+        }
+
+        return dailyForecasts
+    }
+
 
     private fun handleError(errorMsg: String) {
         _weatherData.value = Resource.Error(errorMsg)
@@ -91,70 +119,80 @@ class WeatherViewModel @Inject constructor(
         }
     }
 
-    suspend fun fetchForecastData(latitude: Double, longitude: Double) {
-        Log.i("MOH!", "fetchForecastData is called with latitude=$latitude, longitude=$longitude")
+    suspend fun fetchHourlyData(latitude: Double, longitude: Double) {
 
+        _hourlyData.value = Resource.Loading()
+
+        try {
+            val hourlyResponse = repository.getForecastData(ApiConfig.APP_ID, latitude, longitude)
+            if (hourlyResponse.isSuccessful) {
+                val hourlyResponseBody = hourlyResponse.body()
+                if (hourlyResponseBody != null) {
+                    _hourlyData.value = Resource.Success(hourlyResponseBody)
+                } else {
+                    _hourlyData.value = Resource.Error("Null response body")
+                }
+            } else {
+                _hourlyData.value =
+                    Resource.Error("Error fetching hourly data: ${hourlyResponse.code()}")
+            }
+        } catch (e: Exception) {
+            handleError("Error fetching hourly data: ${e.message}")
+            _hourlyData.value = Resource.Error("Error fetching hourly data: ${e.message}")
+        }
+    }
+
+    suspend fun fetchForecastData(latitude: Double, longitude: Double) {
+        // Use the same _forecastData LiveData instance
         _forecastData.value = Resource.Loading()
 
         try {
-            // Fetch forecast data from the API using the repository's getForecastData function
             val forecastResponse = repository.getForecastData(ApiConfig.APP_ID, latitude, longitude)
-
             if (forecastResponse.isSuccessful) {
                 val forecastResponseBody = forecastResponse.body()
                 if (forecastResponseBody != null) {
-                    // Forecast data fetched successfully
-                    _forecastData.value = Resource.Success(forecastResponseBody)
-                    Log.i("MOH!", "Forecast Response: $forecastResponseBody")
-
-                    // If needed, you can handle the forecast data here or pass it to the fragment
+                    val consolidatedData = consolidateForecastData(forecastResponseBody)
+                    _forecastData.value = Resource.Success(consolidatedData)
+                    Log.i("MOH!", "Consol is $consolidatedData")
                 } else {
-                    // Handle null response body here if needed
                     _forecastData.value = Resource.Error("Null response body")
                 }
             } else {
-                // Handle forecast data error
-                _forecastData.value =
-                    Resource.Error("Error fetching forecast data: ${forecastResponse.code()}")
+                _forecastData.value = Resource.Error("Error fetching forecast data: ${forecastResponse.code()}")
             }
         } catch (e: Exception) {
-            // Handle any other exceptions that might occur during the network request
-            handleError("Error fetching forecast data: ${e.message}")
             _forecastData.value = Resource.Error("Error fetching forecast data: ${e.message}")
         }
     }
 
 
-//    suspend fun fetchForecastData(latitude: Double, longitude: Double) {
-//        _forecastData.value = Resource.Loading()
+//    suspend fun fetchForecastData(latitude: Double, longitude: Double) : LiveData<Resource<List<DailyForecast>>> {
+//        // Define a LiveData for consolidated forecast data
+//        val consolidatedDataLiveData = MutableLiveData<Resource<List<DailyForecast>>>()
+//
+//        consolidatedDataLiveData.value = Resource.Loading()
 //
 //        try {
-//            // Fetch forecast data from the API using the repository's getForecastData function
-//            val forecastResponse =
-//                repository.getForecastData(ApiConfig.APP_ID, latitude, longitude)
-//
+//            val forecastResponse = repository.getForecastData(ApiConfig.APP_ID, latitude, longitude)
 //            if (forecastResponse.isSuccessful) {
 //                val forecastResponseBody = forecastResponse.body()
-//                if (forecastResponseBody != null) {
-//                    // Forecast data fetched successfully
-//                    _forecastData.value = Resource.Success(forecastResponseBody)
-//                    Log.i("DOH!", "Forecast Response: $forecastResponseBody")
 //
-//                    // If needed, you can handle the forecast data here or pass it to the fragment
+//                if (forecastResponseBody != null) {
+//                    val consolidatedData = consolidateForecastData(forecastResponseBody)
+//                    consolidatedDataLiveData.value = Resource.Success(consolidatedData)
+//                    Log.i("MOH!","Consol is $consolidatedData")
 //                } else {
-//                    // Handle null response body here if needed
-//                    _forecastData.value = Resource.Error("Null response body")
+//                    consolidatedDataLiveData.value = Resource.Error("Null response body")
 //                }
 //            } else {
-//                // Handle forecast data error
-//                _forecastData.value =
+//                consolidatedDataLiveData.value =
 //                    Resource.Error("Error fetching forecast data: ${forecastResponse.code()}")
 //            }
 //        } catch (e: Exception) {
-//            // Handle any other exceptions that might occur during the network request
-//            handleError("Error fetching forecast data: ${e.message}")
-//            _forecastData.value = Resource.Error("Error fetching forecast data: ${e.message}")
+//            consolidatedDataLiveData.value = Resource.Error("Error fetching forecast data: ${e.message}")
 //        }
+//
+//        return consolidatedDataLiveData
 //    }
 
 }

@@ -45,7 +45,7 @@ class HourlyAdapter :
         fun bind(weatherItem: WeatherItem, showDate: Boolean) {
             val unixTimestamp = weatherItem.dt // Access the Unix timestamp from the WeatherItem
             val timeRange = ConversionUtil.convertUnixTimestampToTimeRange(unixTimestamp)
-            val date = ConversionUtil.convertUnixTimestampToDate(unixTimestamp)
+            val date = ConversionUtil.convertUnixTimestampToRelativeDate(unixTimestamp)
             val weatherCondition = weatherItem.weather[0].description
             val weatherIcon = weatherItem.weather[0].icon
             val displayIcon = WeatherIconUtil.getWeatherIconResource(weatherIcon)

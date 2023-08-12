@@ -58,6 +58,25 @@ class WeatherDataHandler(
 
         if (isConnected) {
             viewModel.viewModelScope.launch {
+                viewModel.fetchHourlyData(latitude, longitude)
+            }
+        } else {
+            Toast.makeText(context, "No internet connection", Toast.LENGTH_SHORT).show()
+            // Show no internet message
+        }
+    }
+
+    fun fetchDailyForecast(latitude: Double, longitude: Double) {
+        val connectivityManager =
+            context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val networkInfo = connectivityManager.activeNetworkInfo
+        val isConnected =
+            networkInfo != null && networkInfo.isConnected && NetworkUtil.isInternetAvailable(
+                connectivityManager
+            )
+
+        if (isConnected) {
+            viewModel.viewModelScope.launch {
                 viewModel.fetchForecastData(latitude, longitude)
             }
         } else {

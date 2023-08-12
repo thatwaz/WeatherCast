@@ -3,6 +3,7 @@ package com.thatwaz.weathercast.utils
 import android.icu.text.SimpleDateFormat
 import android.icu.util.Calendar
 import com.thatwaz.weathercast.model.forecastresponse.RainForecast
+import com.thatwaz.weathercast.model.forecastresponse.WeatherItem
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
@@ -122,6 +123,40 @@ object ConversionUtil {
             return nearestMultipleOf10
         }
 
+    data class WeatherCondition(val time: String, val description: String)
+
+    fun filterWeatherConditions(weatherItems: List<WeatherItem>): List<WeatherCondition> {
+        val morningTime = 6 // 6:00 AM
+        val afternoonTime = 12 // 12:00 PM
+        val eveningTime = 18 // 6:00 PM
+
+        val morningWeather = mutableListOf<String>()
+        val afternoonWeather = mutableListOf<String>()
+        val eveningWeather = mutableListOf<String>()
+
+        for (item in weatherItems) {
+            val hour = item.dtTxt.split(" ")[1].split(":")[0].toInt()
+
+            when {
+                hour >= morningTime && hour < afternoonTime -> morningWeather.add(item.weather[0].description)
+                hour >= afternoonTime && hour < eveningTime -> afternoonWeather.add(item.weather[0].description)
+                else -> eveningWeather.add(item.weather[0].description)
+            }
+        }
+
+        val morningCondition = morningWeather.groupingBy { it }.eachCount().maxByOrNull { it.value }?.key ?: "No Data"
+        val afternoonCondition = afternoonWeather.groupingBy { it }.eachCount().maxByOrNull { it.value }?.key ?: "No Data"
+        val eveningCondition = eveningWeather.groupingBy { it }.eachCount().maxByOrNull { it.value }?.key ?: "No Data"
+
+        val conditions = mutableListOf<WeatherCondition>()
+        conditions.add(WeatherCondition("morning", morningCondition))
+        conditions.add(WeatherCondition("afternoon", afternoonCondition))
+        conditions.add(WeatherCondition("evening", eveningCondition))
+
+        return conditions
+    }
+
+
 
 
 //    fun convertRainToPercentage(rainForecast: RainForecast?): Int {
@@ -155,7 +190,14 @@ object ConversionUtil {
 //        return nearestMultipleOf10
 //    }
 
-    fun convertUnixTimestampToDate(unixTimestamp: Long): String {
+    fun convertUnixTimestampToFormattedDate(unixTimestamp: Long): String {
+        val date = Date(unixTimestamp * 1000)
+        val dateFormat = SimpleDateFormat("E MMM d", Locale.getDefault())
+        return dateFormat.format(date)
+    }
+
+
+    fun convertUnixTimestampToRelativeDate(unixTimestamp: Long): String {
         val date = Date(unixTimestamp * 1000)
         val currentDate = Date(System.currentTimeMillis())
 

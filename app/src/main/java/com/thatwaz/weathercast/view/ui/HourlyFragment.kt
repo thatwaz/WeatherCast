@@ -63,7 +63,7 @@ class HourlyFragment : Fragment() {
         // Call fetchForecastData to initiate fetching the forecast data
         fetchForecastData()
 
-        viewModel.forecastData.observe(viewLifecycleOwner) { resource ->
+        viewModel.hourlyData.observe(viewLifecycleOwner) { resource ->
             when (resource) {
                 is Resource.Loading -> {
                     // Handle loading state if needed
