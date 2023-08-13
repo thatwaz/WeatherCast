@@ -190,11 +190,17 @@ object ConversionUtil {
 //        return nearestMultipleOf10
 //    }
 
-    fun convertUnixTimestampToFormattedDate(unixTimestamp: Long): String {
-        val date = Date(unixTimestamp * 1000)
+    fun convertUnixTimestampToFormattedDate(date: Date): String {
         val dateFormat = SimpleDateFormat("E MMM d", Locale.getDefault())
         return dateFormat.format(date)
     }
+
+
+//    fun convertUnixTimestampToFormattedDate(unixTimestamp: Long): String {
+//        val date = Date(unixTimestamp * 1000)
+//        val dateFormat = SimpleDateFormat("E MMM d", Locale.getDefault())
+//        return dateFormat.format(date)
+//    }
 
 
     fun convertUnixTimestampToRelativeDate(unixTimestamp: Long): String {

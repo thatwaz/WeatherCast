@@ -39,7 +39,7 @@
                 android:id="@+id/tv_forecast_date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
+                android:layout_marginStart="10dp"
                 android:layout_marginTop="4dp"
                 android:text="Sat Nov 5"
                 android:textColor="@color/black"
@@ -124,13 +124,75 @@
                     android:id="@+id/tv_forecast_description"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
+                    android:layout_marginTop="10dp"
                     android:ellipsize="end"
-                    android:text=""
+                    android:text="test"
                     android:textColor="@color/text_darker_gray"
                     android:textSize="18sp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/lbl_forecast_humidity"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toBottomOf="@id/tv_forecast_description"
+                    app:layout_constraintStart_toStartOf="@id/tv_forecast_description"
+                    android:textSize="16sp"
+                    android:layout_marginTop="8dp"
+                    android:textStyle="italic"
+                    android:textColor="@color/inactive_grey"
+                    android:text="Humidity"
+                    android:layout_marginStart="16dp"/>
+
+                <TextView
+                    android:id="@+id/tv_forecast_humidity"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toTopOf="@id/lbl_forecast_humidity"
+                    app:layout_constraintStart_toEndOf="@id/lbl_forecast_humidity"
+                    android:textSize="16sp"
+                    android:textStyle="italic"
+                    android:textColor="@color/inactive_grey"
+                    android:text=" 96%" />
+
+                <TextView
+                    android:id="@+id/lbl_forecast_wind"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toTopOf="@id/tv_forecast_humidity"
+                    app:layout_constraintStart_toEndOf="@id/tv_forecast_humidity"
+                    android:textSize="16sp"
+                    android:textStyle="italic"
+                    android:textColor="@color/inactive_grey"
+                    android:text="Wind "
+                    android:layout_marginStart="50dp"/>
+
+                <TextView
+                    android:id="@+id/tv_forecast_wind"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toTopOf="@id/lbl_forecast_wind"
+                    app:layout_constraintStart_toEndOf="@id/lbl_forecast_wind"
+                    android:textSize="16sp"
+                    android:textStyle="italic"
+                    android:textColor="@color/inactive_grey"
+                    android:text="SSE 5 mph" />
+
+                <TextView
+                    android:id="@+id/lbl_forecast_feels_like_temperature"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:textSize="16sp"
+                    android:textStyle="italic"
+                    android:textColor="@color/inactive_grey"
+                    app:layout_constraintStart_toStartOf="@id/lbl_forecast_humidity"
+                    app:layout_constraintTop_toBottomOf="@id/lbl_forecast_humidity"
+                    android:text="Feels Like 106"/>
+
+
+
             </androidx.constraintlayout.widget.ConstraintLayout>
 
 

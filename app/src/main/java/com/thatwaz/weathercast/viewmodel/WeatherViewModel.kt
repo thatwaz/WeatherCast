@@ -36,7 +36,7 @@ class WeatherViewModel @Inject constructor(
     private val _forecastData = MutableLiveData<Resource<List<DailyForecast>>>()
     val forecastData: LiveData<Resource<List<DailyForecast>>> get() = _forecastData
 
-    fun consolidateForecastData(forecastResponse: ForecastResponse): List<DailyForecast> {
+    private fun consolidateForecastData(forecastResponse: ForecastResponse): List<DailyForecast> {
         Log.i("MOH!", "consolidateForecastData called")
         val dailyForecasts = mutableListOf<DailyForecast>()
 

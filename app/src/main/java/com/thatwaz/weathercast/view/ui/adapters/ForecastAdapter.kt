@@ -1,5 +1,6 @@
 package com.thatwaz.weathercast.view.ui.adapters
 
+import android.icu.text.SimpleDateFormat
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
@@ -9,6 +10,11 @@ import com.thatwaz.weathercast.databinding.ItemForecastBinding
 import com.thatwaz.weathercast.model.forecastresponse.DailyForecast
 import com.thatwaz.weathercast.model.forecastresponse.WeatherItem
 import com.thatwaz.weathercast.utils.ConversionUtil
+import com.thatwaz.weathercast.utils.ConversionUtil.breakTextIntoLines
+import com.thatwaz.weathercast.utils.ConversionUtil.capitalizeWords
+import com.thatwaz.weathercast.utils.ConversionUtil.convertUnixTimestampToFormattedDate
+import com.thatwaz.weathercast.utils.ConversionUtil.kelvinToFahrenheit
+import java.util.*
 
 class ForecastAdapter :
     ListAdapter<DailyForecast, ForecastAdapter.ForecastViewHolder>(DiffCallback) {
@@ -31,15 +37,20 @@ class ForecastAdapter :
     class ForecastViewHolder(private val binding: ItemForecastBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(dailyForecast: DailyForecast) {
-            binding.apply {
-                // Uncomment this section to display the date from DailyForecast
-//                val formattedDate = ConversionUtil.convertUnixTimestampToFormattedDate(dailyForecast)
-//                tvForecastDate.text = formattedDate
 
-                // Bind other data to UI elements
-                tvForecastDescription.text = dailyForecast.weatherDescription
-                // You can also bind other properties like highTemperature and lowTemperature
+
+        fun bind(dailyForecast: DailyForecast) {
+            val forecastDescriptionToCaps = dailyForecast.weatherDescription.capitalizeWords()
+
+            binding.apply {
+                tvForecastDescription.text = breakTextIntoLines(forecastDescriptionToCaps,18)
+                val inputDateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+                val date = inputDateFormat.parse(dailyForecast.date)
+                tvForecastDate.text = convertUnixTimestampToFormattedDate(date)
+                val highTemperatureFahrenheit = kelvinToFahrenheit(dailyForecast.highTemperature)
+                tvTemperatureHigh.text = "$highTemperatureFahrenheit°F"
+                val lowTemperatureFahrenheit = kelvinToFahrenheit(dailyForecast.lowTemperature)
+                tvTemperatureLow.text = "$lowTemperatureFahrenheit°F"
             }
         }
     }
