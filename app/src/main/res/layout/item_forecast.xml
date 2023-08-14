@@ -25,16 +25,6 @@
             android:background="@color/white"
             android:padding="6dp">
 
-            <ImageView
-                android:id="@+id/iv_forecast_icon"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:layout_marginStart="4dp"
-                android:layout_marginTop="4dp"
-                android:src="@drawable/day_partly_cloudy"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
             <TextView
                 android:id="@+id/tv_forecast_date"
                 android:layout_width="wrap_content"
@@ -45,20 +35,19 @@
                 android:textColor="@color/black"
                 android:textSize="18sp"
                 android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="@id/iv_forecast_icon"
-                app:layout_constraintStart_toEndOf="@id/iv_forecast_icon"
-                app:layout_constraintTop_toTopOf="@id/iv_forecast_icon" />
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
                 android:id="@+id/lbl_temperature_high"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
+                android:layout_marginTop="8dp"
                 android:text="High "
                 android:textColor="@color/black"
                 android:textSize="18sp"
-                app:layout_constraintStart_toStartOf="@id/iv_forecast_icon"
-                app:layout_constraintTop_toBottomOf="@id/iv_forecast_icon" />
+                app:layout_constraintStart_toStartOf="@id/tv_forecast_date"
+                app:layout_constraintTop_toBottomOf="@id/tv_forecast_date" />
 
             <TextView
                 android:id="@+id/tv_temperature_high"
@@ -98,8 +87,9 @@
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:src="@drawable/ic_chance_of_rain"
-                app:layout_constraintBottom_toBottomOf="@id/iv_forecast_icon"
-                app:layout_constraintEnd_toEndOf="parent" />
+                app:layout_constraintBottom_toBottomOf="@id/tv_forecast_date"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/tv_forecast_date" />
 
             <TextView
                 android:id="@+id/tv_forecast_chance_of_rain"
@@ -112,88 +102,85 @@
                 app:layout_constraintEnd_toStartOf="@id/ic_forecast_chance_of_rain"
                 app:layout_constraintTop_toTopOf="@id/ic_forecast_chance_of_rain" />
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/cl_forecast_description"
-                android:layout_width="0dp"
+            <ImageView
+                android:id="@+id/iv_forecast_icon"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginStart="16dp"
+                android:src="@drawable/day_partly_cloudy"
+                app:layout_constraintBottom_toBottomOf="@id/tv_temperature_high"
+                app:layout_constraintStart_toEndOf="@id/lbl_temperature_high"
+                app:layout_constraintTop_toTopOf="@id/lbl_temperature_high" />
+
+            <TextView
+                android:id="@+id/tv_forecast_description"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:layout_constraintStart_toStartOf="@id/tv_forecast_date"
-                app:layout_constraintTop_toBottomOf="@id/tv_forecast_date"
-                app:layout_constraintEnd_toEndOf="parent">
+                android:ellipsize="end"
+                android:text="test"
+                android:textColor="@color/text_darker_gray"
+                android:textSize="18sp"
+                app:layout_constraintBottom_toBottomOf="@id/iv_forecast_icon"
+                app:layout_constraintStart_toEndOf="@id/iv_forecast_icon"
+                app:layout_constraintTop_toTopOf="@id/iv_forecast_icon" />
 
-                <TextView
-                    android:id="@+id/tv_forecast_description"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:ellipsize="end"
-                    android:text="test"
-                    android:textColor="@color/text_darker_gray"
-                    android:textSize="18sp"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+            <TextView
+                android:id="@+id/lbl_forecast_humidity"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Humidity"
+                android:textColor="@color/inactive_grey"
+                android:textSize="16sp"
+                android:textStyle="italic"
+                app:layout_constraintStart_toStartOf="@id/tv_forecast_description"
+                app:layout_constraintTop_toBottomOf="@id/tv_forecast_description" />
 
-                <TextView
-                    android:id="@+id/lbl_forecast_humidity"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:layout_constraintTop_toBottomOf="@id/tv_forecast_description"
-                    app:layout_constraintStart_toStartOf="@id/tv_forecast_description"
-                    android:textSize="16sp"
-                    android:layout_marginTop="8dp"
-                    android:textStyle="italic"
-                    android:textColor="@color/inactive_grey"
-                    android:text="Humidity"
-                    android:layout_marginStart="16dp"/>
+            <TextView
+                android:id="@+id/tv_forecast_humidity"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=" 96%"
+                android:textColor="@color/inactive_grey"
+                android:textSize="16sp"
+                android:textStyle="italic"
+                app:layout_constraintStart_toEndOf="@id/lbl_forecast_humidity"
+                app:layout_constraintTop_toTopOf="@id/lbl_forecast_humidity" />
 
-                <TextView
-                    android:id="@+id/tv_forecast_humidity"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:layout_constraintTop_toTopOf="@id/lbl_forecast_humidity"
-                    app:layout_constraintStart_toEndOf="@id/lbl_forecast_humidity"
-                    android:textSize="16sp"
-                    android:textStyle="italic"
-                    android:textColor="@color/inactive_grey"
-                    android:text=" 96%" />
+            <TextView
+                android:id="@+id/lbl_forecast_wind"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="Wind "
+                android:textColor="@color/inactive_grey"
+                android:textSize="16sp"
+                android:textStyle="italic"
+                app:layout_constraintStart_toStartOf="@id/lbl_forecast_feels_like_temperature"
+                app:layout_constraintTop_toBottomOf="@id/lbl_forecast_feels_like_temperature" />
 
-                <TextView
-                    android:id="@+id/lbl_forecast_wind"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:layout_constraintTop_toTopOf="@id/tv_forecast_humidity"
-                    app:layout_constraintStart_toEndOf="@id/tv_forecast_humidity"
-                    android:textSize="16sp"
-                    android:textStyle="italic"
-                    android:textColor="@color/inactive_grey"
-                    android:text="Wind "
-                    android:layout_marginStart="50dp"/>
+            <TextView
+                android:id="@+id/tv_forecast_wind"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="SSE 5 mph"
+                android:textColor="@color/inactive_grey"
+                android:textSize="16sp"
+                android:textStyle="italic"
+                app:layout_constraintStart_toEndOf="@id/lbl_forecast_wind"
+                app:layout_constraintTop_toTopOf="@id/lbl_forecast_wind" />
 
-                <TextView
-                    android:id="@+id/tv_forecast_wind"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:layout_constraintTop_toTopOf="@id/lbl_forecast_wind"
-                    app:layout_constraintStart_toEndOf="@id/lbl_forecast_wind"
-                    android:textSize="16sp"
-                    android:textStyle="italic"
-                    android:textColor="@color/inactive_grey"
-                    android:text="SSE 5 mph" />
-
-                <TextView
-                    android:id="@+id/lbl_forecast_feels_like_temperature"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:textSize="16sp"
-                    android:textStyle="italic"
-                    android:textColor="@color/inactive_grey"
-                    app:layout_constraintStart_toStartOf="@id/lbl_forecast_humidity"
-                    app:layout_constraintTop_toBottomOf="@id/lbl_forecast_humidity"
-                    android:text="Feels Like 106"/>
-
-
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
+            <TextView
+                android:id="@+id/lbl_forecast_feels_like_temperature"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="Feels Like 106"
+                android:textColor="@color/inactive_grey"
+                android:textSize="16sp"
+                android:textStyle="italic"
+                app:layout_constraintStart_toStartOf="@id/lbl_forecast_humidity"
+                app:layout_constraintTop_toBottomOf="@id/lbl_forecast_humidity" />
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>
