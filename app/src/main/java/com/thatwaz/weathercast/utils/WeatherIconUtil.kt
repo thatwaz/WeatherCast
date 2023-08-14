@@ -17,6 +17,30 @@ object WeatherIconUtil {
         }
     }
 
+    fun convertNightToDayIcon(iconId: String): String {
+        return when (iconId) {
+            "01n" -> "01d" // Clear sky night to clear sky day
+            "02n", "03n", "04n", "50n" -> "02d" // Cloudy night to partly cloudy day
+            "09n" -> "09d" // Showers night to showers day
+            "10n" -> "10d" // Rain night to rain day
+            "11n" -> "11d" // Thunderstorm night to thunderstorm day
+            "13n" -> "13d" // Snow night to snow day
+            else -> iconId // Keep other icons unchanged
+        }
+    }
+
+    fun getForecastWeatherIconResource(iconId: String): Int {
+        return when (iconId) {
+            "01n" -> R.drawable.day_clear_sky // Convert clear night to clear day
+            "02n", "03n", "04n", "50n" -> R.drawable.day_partly_cloudy // Convert cloudy night to partly cloudy day
+            "09n" -> R.drawable.day_showers // Convert showers night to showers day
+            "10n" -> R.drawable.day_rain // Convert rain night to rain day
+            "11n" -> R.drawable.day_thunderstorm // Convert thunderstorm night to thunderstorm day
+            "13n" -> R.drawable.day_snow // Convert snow night to snow day
+            else -> getWeatherIconResource(iconId) // Use existing mapping for other icons
+        }
+    }
+
     fun getWeatherIconResource(iconId: String): Int {
         return when (iconId) {
             "01d" -> R.drawable.day_clear_sky

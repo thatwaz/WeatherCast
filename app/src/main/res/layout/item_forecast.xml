@@ -129,7 +129,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:text="Humidity"
+                android:text="Humidity "
                 android:textColor="@color/inactive_grey"
                 android:textSize="16sp"
                 android:textStyle="italic"
@@ -175,12 +175,22 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
-                android:text="Feels Like 106"
+                android:text="Average Feels Like "
                 android:textColor="@color/inactive_grey"
                 android:textSize="16sp"
                 android:textStyle="italic"
                 app:layout_constraintStart_toStartOf="@id/lbl_forecast_humidity"
                 app:layout_constraintTop_toBottomOf="@id/lbl_forecast_humidity" />
+
+            <TextView
+                android:id="@+id/tv_forecast_feels_like_temperature"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/inactive_grey"
+                android:textSize="16sp"
+                android:textStyle="italic"
+                app:layout_constraintStart_toEndOf="@id/lbl_forecast_feels_like_temperature"
+                app:layout_constraintTop_toTopOf="@id/lbl_forecast_feels_like_temperature" />
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>

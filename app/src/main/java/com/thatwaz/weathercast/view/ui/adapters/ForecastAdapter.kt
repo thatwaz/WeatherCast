@@ -8,12 +8,15 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.thatwaz.weathercast.databinding.ItemForecastBinding
 import com.thatwaz.weathercast.model.forecastresponse.DailyForecast
+import com.thatwaz.weathercast.model.forecastresponse.ForecastResponse
 import com.thatwaz.weathercast.model.forecastresponse.WeatherItem
 import com.thatwaz.weathercast.utils.ConversionUtil
 import com.thatwaz.weathercast.utils.ConversionUtil.breakTextIntoLines
 import com.thatwaz.weathercast.utils.ConversionUtil.capitalizeWords
 import com.thatwaz.weathercast.utils.ConversionUtil.convertUnixTimestampToFormattedDate
+
 import com.thatwaz.weathercast.utils.ConversionUtil.kelvinToFahrenheit
+import com.thatwaz.weathercast.utils.WeatherIconUtil
 import java.util.*
 
 class ForecastAdapter :
@@ -41,19 +44,36 @@ class ForecastAdapter :
 
         fun bind(dailyForecast: DailyForecast) {
             val forecastDescriptionToCaps = dailyForecast.weatherDescription.capitalizeWords()
+            val weatherIcon = dailyForecast.weatherIcon
+            val displayIcon = WeatherIconUtil.getForecastWeatherIconResource(weatherIcon)
+            val chanceOfRainPercentage = dailyForecast.chanceOfRain
+            val highTemperatureFahrenheit = kelvinToFahrenheit(dailyForecast.highTemperature)
+            val inputDateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+            val date = inputDateFormat.parse(dailyForecast.date)
+            val lowTemperatureFahrenheit = kelvinToFahrenheit(dailyForecast.lowTemperature)
+            val windDirectionDegrees = dailyForecast.windDeg // Use windDeg property
+            val formattedWindDirection = ConversionUtil.getWindDirection(windDirectionDegrees)
+            val windSpeed = dailyForecast.windSpeed.toInt()
+
+
+            val feelsLikeTemperature = kelvinToFahrenheit(dailyForecast.feelsLikeTemperature)
 
             binding.apply {
                 tvForecastDescription.text = breakTextIntoLines(forecastDescriptionToCaps,18)
-                val inputDateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-                val date = inputDateFormat.parse(dailyForecast.date)
                 tvForecastDate.text = convertUnixTimestampToFormattedDate(date)
-                val highTemperatureFahrenheit = kelvinToFahrenheit(dailyForecast.highTemperature)
                 tvTemperatureHigh.text = "$highTemperatureFahrenheit°F"
-                val lowTemperatureFahrenheit = kelvinToFahrenheit(dailyForecast.lowTemperature)
                 tvTemperatureLow.text = "$lowTemperatureFahrenheit°F"
+                tvForecastChanceOfRain.text = "${chanceOfRainPercentage.toInt()}%"
+                ivForecastIcon.setImageResource(displayIcon)
+                tvForecastHumidity.text = "${dailyForecast.humidity}%"
+                tvForecastFeelsLikeTemperature.text = "$feelsLikeTemperature°F"
+                tvForecastWind.text = "$formattedWindDirection $windSpeed mph"
             }
         }
     }
+
+
+
 
     companion object {
         private val DiffCallback = object : DiffUtil.ItemCallback<DailyForecast>() {

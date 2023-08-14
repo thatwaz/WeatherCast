@@ -2,6 +2,7 @@ package com.thatwaz.weathercast.utils
 
 import android.icu.text.SimpleDateFormat
 import android.icu.util.Calendar
+import com.thatwaz.weathercast.model.forecastresponse.ForecastResponse
 import com.thatwaz.weathercast.model.forecastresponse.RainForecast
 import com.thatwaz.weathercast.model.forecastresponse.WeatherItem
 import java.time.Instant
