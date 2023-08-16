@@ -16,6 +16,8 @@
         android:paddingBottom="50dp"
         android:paddingTop="24dp"
         android:background="@color/white">
+
+
     <TextView
         android:id="@+id/lbl_barometric_pressure"
         android:layout_width="match_parent"
@@ -33,7 +35,6 @@
             android:layout_marginTop="6dp"
             android:layout_below="@id/lbl_barometric_pressure"
             android:textSize="18sp"
-
             app:layout_constraintTop_toBottomOf="@+id/lbl_barometric_pressure"
             app:layout_constraintStart_toStartOf="@id/lbl_barometric_pressure"
             app:layout_constraintEnd_toEndOf="@id/lbl_barometric_pressure"
@@ -42,20 +43,64 @@
             android:layout_height="wrap_content"
             android:text="(at sea level)"/>
 
-        <TextView
-            android:id="@+id/second"
-            android:layout_marginTop="6dp"
-            android:layout_below="@id/first"
-            app:layout_constraintTop_toBottomOf="@id/first"
-            app:layout_constraintStart_toStartOf="@id/first"
-            app:layout_constraintEnd_toEndOf="@id/first"
-            android:textSize="14sp"
-            android:gravity="center"
-            android:textColor="@color/black"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="28.0 - 31.0 inHg = Typical"/>
+    <TextView
+        android:id="@+id/lbl_typical"
+        android:layout_marginTop="6dp"
+        app:layout_constraintTop_toBottomOf="@id/first"
+        app:layout_constraintStart_toStartOf="@id/first"
+        app:layout_constraintEnd_toEndOf="@id/first"
+        android:textSize="14sp"
+        android:textColor="@color/black"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="28.55 - 30.21 = TYPICAL - Fair Weather, Moderate Winds"/>
 
+    <TextView
+        android:id="@+id/lbl_low_pressure"
+        android:layout_marginTop="6dp"
+        app:layout_constraintTop_toBottomOf="@id/lbl_typical"
+        app:layout_constraintStart_toStartOf="@id/lbl_typical"
+        app:layout_constraintEnd_toEndOf="@id/lbl_typical"
+        android:textSize="14sp"
+        android:textColor="@color/black"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="28.50 - 28.54 = LOW PRESSURE - Cloudy Skies, Possible Rain"/>
+
+    <TextView
+        android:id="@+id/lbl_high_pressure"
+        android:layout_marginTop="6dp"
+        app:layout_constraintTop_toBottomOf="@id/lbl_low_pressure"
+        app:layout_constraintStart_toStartOf="@id/lbl_low_pressure"
+        app:layout_constraintEnd_toEndOf="@id/lbl_low_pressure"
+        android:textSize="14sp"
+        android:textColor="@color/black"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="30.10 - 30.50 = HIGH PRESSURE - Clear Skies, Stable Conditions"/>
+
+    <TextView
+        android:id="@+id/lbl_very_low_pressure"
+        android:layout_marginTop="6dp"
+        app:layout_constraintTop_toBottomOf="@id/lbl_high_pressure"
+        app:layout_constraintStart_toStartOf="@id/lbl_high_pressure"
+        app:layout_constraintEnd_toEndOf="@id/lbl_high_pressure"
+        android:textSize="14sp"
+        android:textColor="@color/black"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="27.00 - 28.49 = VERY LOW PRESSURE - Stormy Weather, Strong Winds"/>
+
+    <TextView
+        android:id="@+id/lbl_very_high_pressure"
+        android:layout_marginTop="6dp"
+        app:layout_constraintTop_toBottomOf="@id/lbl_very_low_pressure"
+        app:layout_constraintStart_toStartOf="@id/lbl_very_low_pressure"
+        app:layout_constraintEnd_toEndOf="@id/lbl_very_low_pressure"
+        android:textSize="14sp"
+        android:textColor="@color/black"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="31.00 and above = VERY HIGH PRESSURE - Dry Weather, Light Winds"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
-
 </androidx.cardview.widget.CardView>

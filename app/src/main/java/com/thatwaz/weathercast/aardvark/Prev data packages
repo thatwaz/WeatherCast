@@ -7,3 +7,9 @@
                 android:src="@drawable/day_partly_cloudy"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
+
+                | 29.97                     | Typical                 | Fair weather, moderate winds    |
+                | 28.50                     | Low Pressure            | Cloudy skies, possible rain     |
+                | 30.10                     | High Pressure           | Clear skies, stable conditions |
+                | 27.00                     | Very Low Pressure       | Stormy weather, strong winds    |
+                | 31.00                     | Very High Pressure      | Dry weather, light winds

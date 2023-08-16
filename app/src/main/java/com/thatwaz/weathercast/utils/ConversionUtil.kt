@@ -2,15 +2,9 @@ package com.thatwaz.weathercast.utils
 
 import android.icu.text.SimpleDateFormat
 import android.icu.util.Calendar
-import com.thatwaz.weathercast.model.forecastresponse.ForecastResponse
+import com.thatwaz.weathercast.model.forecastresponse.DailyForecast
 import com.thatwaz.weathercast.model.forecastresponse.RainForecast
-import com.thatwaz.weathercast.model.forecastresponse.WeatherItem
-import java.time.Instant
-import java.time.LocalDateTime
-import java.time.ZoneId
-import java.time.format.DateTimeFormatter
-import java.util.Date
-import java.util.Locale
+import java.util.*
 
 
 object ConversionUtil {
@@ -39,11 +33,17 @@ object ConversionUtil {
         return "${dateFormat.format(startTime)} TO ${dateFormat.format(endTime)}"
     }
 
-//    fun convertUnixTimestampToDate(unixTimestamp: Long): String {
-//        val dateFormat = SimpleDateFormat("E MMM d", Locale.getDefault())
-//        val date = Date(unixTimestamp * 1000) // Convert to milliseconds
-//        return dateFormat.format(date)
-//    }
+
+    fun excludeTodayFromForecast(dailyForecasts: List<DailyForecast>): List<DailyForecast> {
+        val currentDate = Date(System.currentTimeMillis())
+        val filteredForecasts = dailyForecasts.filter { forecast ->
+            val forecastDate =
+                SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).parse(forecast.date)
+            forecastDate != currentDate
+        }
+        return filteredForecasts
+    }
+
 
     fun getWindDirection(degrees: Int): String {
         val directions = arrayOf(
@@ -89,120 +89,44 @@ object ConversionUtil {
     }
 
 
-
-        fun convertRainToPercentage(rainForecast: RainForecast?): Int {
-            if (rainForecast == null || rainForecast.`3h` == null) {
-                return 0 // If rain data is not available, return 0% chance of rain
-            }
-
-            // Maximum rainfall value used as reference (adjust as needed)
-            val maxRainValue = 5.0 // For example, 5.0 mm is considered heavy rain
-
-            // Get the rainfall amount for a 3-hour period
-            val rain3h = rainForecast.`3h`
-
-            // Calculate the percentage of rain relative to the maximum value
-            val percentage = (rain3h / maxRainValue) * 100
-
-            // Cap the percentage at 100% if it exceeds
-            val cappedPercentage = if (percentage > 100) 100 else percentage
-
-            // Round the percentage to the nearest integer
-            val roundedPercentage = cappedPercentage.toInt()
-
-            // Set a minimum threshold to make the percentage more meaningful
-            val minThreshold = 1
-
-            // If the rounded percentage is below the threshold, return 10%
-            if (roundedPercentage < minThreshold) {
-                return 10
-            }
-
-            // Calculate the nearest multiple of 10
-            val nearestMultipleOf10 = ((roundedPercentage + 9) / 10) * 10
-
-            return nearestMultipleOf10
+    fun convertRainToPercentage(rainForecast: RainForecast?): Int {
+        if (rainForecast == null || rainForecast.`3h` == null) {
+            return 0 // If rain data is not available, return 0% chance of rain
         }
 
-    data class WeatherCondition(val time: String, val description: String)
+        // Maximum rainfall value used as reference (adjust as needed)
+        val maxRainValue = 5.0 // For example, 5.0 mm is considered heavy rain
 
-    fun filterWeatherConditions(weatherItems: List<WeatherItem>): List<WeatherCondition> {
-        val morningTime = 6 // 6:00 AM
-        val afternoonTime = 12 // 12:00 PM
-        val eveningTime = 18 // 6:00 PM
+        // Get the rainfall amount for a 3-hour period
+        val rain3h = rainForecast.`3h`
 
-        val morningWeather = mutableListOf<String>()
-        val afternoonWeather = mutableListOf<String>()
-        val eveningWeather = mutableListOf<String>()
+        // Calculate the percentage of rain relative to the maximum value
+        val percentage = (rain3h / maxRainValue) * 100
 
-        for (item in weatherItems) {
-            val hour = item.dtTxt.split(" ")[1].split(":")[0].toInt()
+        // Cap the percentage at 100% if it exceeds
+        val cappedPercentage = if (percentage > 100) 100 else percentage
 
-            when {
-                hour >= morningTime && hour < afternoonTime -> morningWeather.add(item.weather[0].description)
-                hour >= afternoonTime && hour < eveningTime -> afternoonWeather.add(item.weather[0].description)
-                else -> eveningWeather.add(item.weather[0].description)
-            }
+        // Round the percentage to the nearest integer
+        val roundedPercentage = cappedPercentage.toInt()
+
+        // Set a minimum threshold to make the percentage more meaningful
+        val minThreshold = 1
+
+        // If the rounded percentage is below the threshold, return 10%
+        if (roundedPercentage < minThreshold) {
+            return 10
         }
 
-        val morningCondition = morningWeather.groupingBy { it }.eachCount().maxByOrNull { it.value }?.key ?: "No Data"
-        val afternoonCondition = afternoonWeather.groupingBy { it }.eachCount().maxByOrNull { it.value }?.key ?: "No Data"
-        val eveningCondition = eveningWeather.groupingBy { it }.eachCount().maxByOrNull { it.value }?.key ?: "No Data"
+        // Calculate the nearest multiple of 10
+        val nearestMultipleOf10 = ((roundedPercentage + 9) / 10) * 10
 
-        val conditions = mutableListOf<WeatherCondition>()
-        conditions.add(WeatherCondition("morning", morningCondition))
-        conditions.add(WeatherCondition("afternoon", afternoonCondition))
-        conditions.add(WeatherCondition("evening", eveningCondition))
-
-        return conditions
+        return nearestMultipleOf10
     }
-
-
-
-
-//    fun convertRainToPercentage(rainForecast: RainForecast?): Int {
-//        if (rainForecast == null || rainForecast.`3h` == null) {
-//            return 0 // If rain data is not available, return 0% chance of rain
-//        }
-//
-//        // Maximum rainfall value used as reference (adjust as needed)
-//        val maxRainValue = 5.0 // For example, 5.0 mm is considered heavy rain
-//
-//        // Get the rainfall amount for a 3-hour period
-//        val rain3h = rainForecast.`3h`
-//
-//        // Calculate the percentage of rain relative to the maximum value
-//        val percentage = (rain3h / maxRainValue) * 100
-//
-//        // Round the percentage to the nearest integer
-//        val roundedPercentage = percentage.toInt()
-//
-//        // Set a minimum threshold to make the percentage more meaningful
-//        val minThreshold = 10
-//
-//        // If the rounded percentage is below the threshold, return 10%
-//        if (roundedPercentage < minThreshold) {
-//            return 10
-//        }
-//
-//        // Calculate the nearest multiple of 10
-//        val nearestMultipleOf10 = ((roundedPercentage + 9) / 10) * 10
-//
-//        return nearestMultipleOf10
-//    }
 
     fun convertUnixTimestampToFormattedDate(date: Date): String {
         val dateFormat = SimpleDateFormat("E MMM d", Locale.getDefault())
         return dateFormat.format(date)
     }
-
-
-//    fun convertUnixTimestampToFormattedDate(unixTimestamp: Long): String {
-//        val date = Date(unixTimestamp * 1000)
-//        val dateFormat = SimpleDateFormat("E MMM d", Locale.getDefault())
-//        return dateFormat.format(date)
-//    }
-
 
     fun convertUnixTimestampToRelativeDate(unixTimestamp: Long): String {
         val date = Date(unixTimestamp * 1000)
@@ -233,14 +157,6 @@ object ConversionUtil {
                 cal1.get(Calendar.DAY_OF_YEAR) == cal2.get(Calendar.DAY_OF_YEAR)
     }
 
-
-    fun convertGMTtoLocal(gmtTime: Long): String {
-        val instant = Instant.ofEpochSecond(gmtTime)
-        val localDateTime = LocalDateTime.ofInstant(instant, ZoneId.systemDefault())
-
-        val dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
-        return localDateTime.format(dateFormat)
-    }
 
     fun String.capitalizeWords(): String = split(" ")
         .joinToString(" ") {

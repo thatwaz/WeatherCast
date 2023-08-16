@@ -20,4 +20,12 @@
     <string name="visibility_icon_description">visibility_icon_description</string>
     <string name="sunrise_icon_description">sunrise_icon_description</string>
     <string name="sunset_icon_description">sunset_icon_description</string>
+
+    <string name="temperature_high">%s°F</string>
+    <string name="temperature_low">Low: %1$s°F</string>
+    <string name="chance_of_rain">Chance of Rain: %1$d%%</string>
+    <!-- Define other string resources here -->
+
+
+
 </resources>

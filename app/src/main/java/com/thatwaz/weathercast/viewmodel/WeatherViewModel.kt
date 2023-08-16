@@ -40,10 +40,13 @@ class WeatherViewModel @Inject constructor(
     private fun consolidateForecastData(forecastResponse: ForecastResponse): List<DailyForecast> {
         val dailyForecasts = mutableListOf<DailyForecast>()
 
+
         // Group the forecast items by day
         val groupedForecasts = forecastResponse.list.groupBy { forecastItem ->
             forecastItem.dtTxt.substringBefore(" ") // Extract the date part
         }
+
+
 
         // Calculate high and low temperatures, weather description, and other properties for each day
         for ((date, forecasts) in groupedForecasts) {

@@ -10,7 +10,7 @@ object WeatherIconUtil {
             "02d" -> R.drawable.img_isolated_clouds
             "03d", "04d" -> R.drawable.img_partly_cloudy
             "09d", "10d", "13d" -> R.drawable.img_mostly_cloudy
-            "11d" -> R.drawable.img_thunderstorm
+            "11d" -> R.drawable.img_thunderstorm2
             "50d" -> R.drawable.img_mist
             "01n", "02n", "03n", "04n", "09n", "10n", "13n", "11n", "50n" -> R.drawable.img_night_clear
             else -> R.drawable.aaa_error_image_homer
