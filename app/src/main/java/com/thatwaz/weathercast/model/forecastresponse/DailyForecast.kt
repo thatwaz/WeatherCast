@@ -9,6 +9,7 @@ data class DailyForecast(
     val weatherDescription: String,
     val weatherIcon: String,
     val chanceOfRain: Double,
+    val cityName: String,
     val humidity: Int,
     val feelsLikeTemperature: Double,
     val windSpeed: Double,

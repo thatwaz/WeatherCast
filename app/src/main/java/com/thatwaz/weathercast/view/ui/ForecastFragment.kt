@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
@@ -71,6 +72,7 @@ class ForecastFragment : Fragment() {
         // Call fetchForecastData to initiate fetching the forecast data
         fetchForecastData()
 
+
         Log.i("MOH!", "Observing forecastData")
         viewModel.forecastData.observe(viewLifecycleOwner) { resource ->
             Log.i("MOH!", "Resource status: ${resource}")
@@ -80,8 +82,10 @@ class ForecastFragment : Fragment() {
                 }
                 is Resource.Success -> {
                     val dailyForecasts = resource.data
+
                     if (dailyForecasts != null) {
                         // Update the RecyclerView with the new forecast data
+                        binding.tvForecastLocation.text = dailyForecasts[0].cityName
                         updateRecyclerView(dailyForecasts)
                         Log.i("MOH!", "Daily diddly is $dailyForecasts")
                     }
@@ -100,9 +104,17 @@ class ForecastFragment : Fragment() {
 
     private fun fetchForecastData() {
         locationRepository.getCurrentLocation { latitude, longitude ->
-            weatherDataHandler.fetchDailyForecast(latitude, longitude)
+            weatherDataHandler.fetchWeatherForecast(latitude, longitude,
+                WeatherDataHandler.ForecastType.DAILY
+            )
         }
     }
+
+//    private fun requestLocationData() {
+//        locationRepository.getCurrentLocation { latitude, longitude ->
+//            weatherDataHandler.requestLocationData(latitude, longitude)
+//        }
+//    }
 
     private fun setupRecyclerView() {
         // Create the adapter

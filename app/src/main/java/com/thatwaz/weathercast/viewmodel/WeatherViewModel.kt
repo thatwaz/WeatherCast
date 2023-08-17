@@ -37,6 +37,14 @@ class WeatherViewModel @Inject constructor(
     private val _forecastData = MutableLiveData<Resource<List<DailyForecast>>>()
     val forecastData: LiveData<Resource<List<DailyForecast>>> get() = _forecastData
 
+    // LiveData to signal refresh command
+    val refreshCommand = MutableLiveData<Boolean>()
+
+    // Method to trigger refresh
+    fun refreshWeatherData() {
+        refreshCommand.value = true
+    }
+
     private fun consolidateForecastData(forecastResponse: ForecastResponse): List<DailyForecast> {
         val dailyForecasts = mutableListOf<DailyForecast>()
 
@@ -72,43 +80,15 @@ class WeatherViewModel @Inject constructor(
                     humidity = humidity,
                     feelsLikeTemperature = feelsLikeTemperature,
                     windSpeed = windSpeed,
-                    windDeg = windDeg
+                    windDeg = windDeg,
+                    cityName = forecastResponse.city.name
+
                 )
             )
         }
 
         return dailyForecasts
     }
-
-
-
-//    private fun consolidateForecastData(forecastResponse: ForecastResponse): List<DailyForecast> {
-//        Log.i("MOH!", "consolidateForecastData called")
-//        val dailyForecasts = mutableListOf<DailyForecast>()
-//
-//        // Group the forecast items by day
-//        val groupedForecasts = forecastResponse.list.groupBy { forecastItem ->
-//            forecastItem.dtTxt.substringBefore(" ") // Extract the date part
-//        }
-//
-//        // Calculate high and low temperatures for each day
-//        for ((date, forecasts) in groupedForecasts) {
-//            val highTemp = forecasts.maxByOrNull { it.main.tempMax }?.main?.tempMax ?: 0.0
-//            val lowTemp = forecasts.minByOrNull { it.main.tempMin }?.main?.tempMin ?: 0.0
-//            val weatherDescription = forecasts.firstOrNull()?.weather?.getOrNull(0)?.description ?: ""
-//
-//            dailyForecasts.add(
-//                DailyForecast(
-//                    date = date,
-//                    highTemperature = highTemp,
-//                    lowTemperature = lowTemp,
-//                    weatherDescription = weatherDescription
-//                )
-//            )
-//        }
-//
-//        return dailyForecasts
-//    }
 
 
     private fun handleError(errorMsg: String) {
@@ -210,36 +190,6 @@ class WeatherViewModel @Inject constructor(
             _forecastData.value = Resource.Error("Error fetching forecast data: ${e.message}")
         }
     }
-
-
-//    suspend fun fetchForecastData(latitude: Double, longitude: Double) : LiveData<Resource<List<DailyForecast>>> {
-//        // Define a LiveData for consolidated forecast data
-//        val consolidatedDataLiveData = MutableLiveData<Resource<List<DailyForecast>>>()
-//
-//        consolidatedDataLiveData.value = Resource.Loading()
-//
-//        try {
-//            val forecastResponse = repository.getForecastData(ApiConfig.APP_ID, latitude, longitude)
-//            if (forecastResponse.isSuccessful) {
-//                val forecastResponseBody = forecastResponse.body()
-//
-//                if (forecastResponseBody != null) {
-//                    val consolidatedData = consolidateForecastData(forecastResponseBody)
-//                    consolidatedDataLiveData.value = Resource.Success(consolidatedData)
-//                    Log.i("MOH!","Consol is $consolidatedData")
-//                } else {
-//                    consolidatedDataLiveData.value = Resource.Error("Null response body")
-//                }
-//            } else {
-//                consolidatedDataLiveData.value =
-//                    Resource.Error("Error fetching forecast data: ${forecastResponse.code()}")
-//            }
-//        } catch (e: Exception) {
-//            consolidatedDataLiveData.value = Resource.Error("Error fetching forecast data: ${e.message}")
-//        }
-//
-//        return consolidatedDataLiveData
-//    }
 
 }
 

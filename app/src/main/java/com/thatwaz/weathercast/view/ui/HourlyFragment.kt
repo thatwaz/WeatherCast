@@ -5,6 +5,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.gms.location.LocationServices
@@ -15,6 +16,7 @@ import com.thatwaz.weathercast.model.application.WeatherCastApplication
 import com.thatwaz.weathercast.model.data.LocationRepository
 import com.thatwaz.weathercast.model.data.WeatherDataHandler
 import com.thatwaz.weathercast.model.forecastresponse.WeatherItem
+import com.thatwaz.weathercast.utils.PermissionUtil
 import com.thatwaz.weathercast.utils.error.Resource
 import com.thatwaz.weathercast.view.ui.adapters.HourlyAdapter
 import com.thatwaz.weathercast.viewmodel.WeatherViewModel
@@ -56,12 +58,13 @@ class HourlyFragment : Fragment() {
         )
         // Initialize the WeatherDataHandler on the main thread
         weatherDataHandler = WeatherDataHandler(requireContext(), viewModel)
-
+        fetchForecastData()
         // Set up RecyclerView
         setupRecyclerView()
 
         // Call fetchForecastData to initiate fetching the forecast data
-        fetchForecastData()
+//        fetchForecastData()
+
 
         viewModel.hourlyData.observe(viewLifecycleOwner) { resource ->
             when (resource) {
@@ -73,6 +76,8 @@ class HourlyFragment : Fragment() {
                     if (forecastResponse != null) {
                         // Log the API response to understand its structure and data
                         Log.i("MOH!", "Forecast API Response: $forecastResponse")
+                        // prob need to put in function______________________________________________________
+                        binding.tvHourlyLocation.text = forecastResponse.city.name
 
                         // Implement your forecast data handling here based on the forecastResponse
                         // ...
@@ -89,9 +94,32 @@ class HourlyFragment : Fragment() {
         }
     }
 
+//    private fun checkLocationPermissions() {
+//        PermissionUtil.requestLocationPermissions(
+//            requireContext(),
+//            { // On permission granted
+//                requestLocationData()
+//            },
+//            { // On permission denied
+//                showToast("You have denied permission")
+//            }
+//        )
+//    }
+//    private fun showToast(message: String) {
+//        Toast.makeText(requireContext(), message, Toast.LENGTH_LONG).show()
+//    }
+
+//    private fun requestLocationData() {
+//        locationRepository.getCurrentLocation { latitude, longitude ->
+//            weatherDataHandler.requestLocationData(latitude, longitude)
+//        }
+//    }
+
     private fun fetchForecastData() {
         locationRepository.getCurrentLocation { latitude, longitude ->
-            weatherDataHandler.fetchWeatherForecast(latitude, longitude)
+            weatherDataHandler.fetchWeatherForecast(latitude, longitude,
+                WeatherDataHandler.ForecastType.HOURLY
+            )
         }
     }
 

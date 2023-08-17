@@ -51,22 +51,25 @@ class CurrentWeatherFragment : Fragment() {
 
     private var isErrorOccurred = false
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            R.id.action_refresh -> {
-                // Call the function to manually request weather data
-                requestWeatherDataManually()
-                return true
-            }
-            else -> return super.onOptionsItemSelected(item)
-        }
-    }
 
 
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.menu_main, menu)
-        super.onCreateOptionsMenu(menu, inflater)
-    }
+
+//    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+//        when (item.itemId) {
+//            R.id.action_refresh -> {
+//                // Call the function to manually request weather data
+//                requestWeatherDataManually()
+//                return true
+//            }
+//            else -> return super.onOptionsItemSelected(item)
+//        }
+//    }
+//
+//
+//    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+//        inflater.inflate(R.menu.menu_main, menu)
+//        super.onCreateOptionsMenu(menu, inflater)
+//    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -184,10 +187,17 @@ class CurrentWeatherFragment : Fragment() {
     }
 
     private fun requestLocationData() {
-        locationRepository.getCurrentLocation { latitude, longitude ->
-            weatherDataHandler.requestLocationData(latitude, longitude)
+        locationRepository.getCurrentLocation { _, _ ->
+            weatherDataHandler.requestLocationData()
         }
     }
+
+
+//    private fun requestLocationData() {
+//        locationRepository.getCurrentLocation { latitude, longitude ->
+//            weatherDataHandler.requestLocationData()
+//        }
+//    }
 
     private fun setCurrentWeatherImage(iconId: String) {
         val resourceId = WeatherIconUtil.getWeatherImageResource(iconId)
@@ -222,8 +232,8 @@ class CurrentWeatherFragment : Fragment() {
 
     private val locationCallback = object : LocationCallback() {
         override fun onLocationResult(locationResult: LocationResult) {
-            val lastLocation = locationResult.lastLocation
-            weatherDataHandler.requestLocationData(lastLocation.latitude, lastLocation.longitude)
+//            val lastLocation = locationResult.lastLocation
+            weatherDataHandler.requestLocationData()
         }
     }
 
