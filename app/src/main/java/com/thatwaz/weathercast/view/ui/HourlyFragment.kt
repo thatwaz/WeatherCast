@@ -2,11 +2,12 @@ package com.thatwaz.weathercast.view.ui
 
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.Toast
+import androidx.core.view.MenuHost
+import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.gms.location.LocationServices
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -53,6 +54,25 @@ class HourlyFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+            val menuHost: MenuHost = requireActivity() as MenuHost
+
+        menuHost.addMenuProvider(object : MenuProvider {
+            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+                menuInflater.inflate(R.menu.menu_refresh, menu)
+            }
+
+            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+                return when (menuItem.itemId) {
+                    R.id.action_refresh -> {
+                        // Call your ViewModel or other logic to refresh data
+                        refreshHourlyWeatherData()
+                        true
+                    }
+                    else -> false
+                }
+            }
+        }, viewLifecycleOwner, Lifecycle.State.RESUMED)
+
         locationRepository = LocationRepository(
             LocationServices.getFusedLocationProviderClient(requireContext())
         )
@@ -68,10 +88,12 @@ class HourlyFragment : Fragment() {
             when (resource) {
                 is Resource.Loading -> {
                     // Handle loading state if needed
+                    setWeatherDataVisibility(false)
                 }
                 is Resource.Success -> {
                     val forecastResponse = resource.data
                     if (forecastResponse != null) {
+                        setWeatherDataVisibility(true)
                         // Log the API response to understand its structure and data
                         Log.i("MOH!", "Forecast API Response: $forecastResponse")
                         // prob need to put in function______________________________________________________
@@ -85,6 +107,7 @@ class HourlyFragment : Fragment() {
                 }
                 is Resource.Error -> {
                     // Handle error state if needed
+                    setWeatherDataVisibility(false)
                     val errorMessage = resource.errorMessage
                     Log.e("DOH!", "Error fetching forecast data: $errorMessage")
                 }
@@ -118,145 +141,23 @@ class HourlyFragment : Fragment() {
         hourlyAdapter.submitList(hourlyList)
 
     }
+    private fun setWeatherDataVisibility(isVisible: Boolean) {
+        binding.clLoading.visibility = if (isVisible) View.INVISIBLE else View.VISIBLE
+        binding.clTop.visibility = if (isVisible) View.VISIBLE else View.GONE
+        binding.rvHourlyForecast.visibility = if (isVisible) View.VISIBLE else View.GONE
+        binding.clTop.visibility = if (isVisible) View.VISIBLE else View.GONE
+    }
+    private fun refreshHourlyWeatherData() {
+        // Show the loading state (optional, if you want to indicate that data is being fetched)
+        setWeatherDataVisibility(false)
+//        binding.progressBar.visibility = View.VISIBLE
+
+        // Request the weather data
+        fetchForecastData()
+    }
 
 }
 
 
-
-//class HourlyFragment : Fragment() {
-//
-//    private lateinit var bottomNavView: BottomNavigationView
-//    private lateinit var weatherDataHandler: WeatherDataHandler
-//    private lateinit var locationRepository: LocationRepository
-//
-//    private val viewModel: WeatherViewModel by viewModels()
-//    private var _binding: FragmentHourlyBinding? = null
-//    private val binding get() = _binding!!
-//
-//    override fun onCreateView(
-//        inflater: LayoutInflater, container: ViewGroup?,
-//        savedInstanceState: Bundle?
-//    ): View? {
-//        bottomNavView = activity?.findViewById(R.id.bnv_weather_cast) ?: return binding.root
-//        // Inflate the layout for this fragment
-//        _binding = FragmentHourlyBinding.inflate(inflater, container, false)
-//        return binding.root
-//    }
-//
-//    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-//        super.onViewCreated(view, savedInstanceState)
-//
-//        locationRepository = LocationRepository(
-//            LocationServices.getFusedLocationProviderClient(requireContext())
-//        )
-//        // Initialize the WeatherDataHandler on the main thread
-//        weatherDataHandler = WeatherDataHandler(requireContext(), viewModel)
-//
-//        // Call fetchForecastData to initiate fetching the forecast data
-//        requestLocationData()
-//        fetchForecastData()
-//
-//
-//        viewModel.forecastData.observe(viewLifecycleOwner) { resource ->
-//            when (resource) {
-//                is Resource.Loading -> {
-//                    // Handle loading state if needed
-//                }
-//                is Resource.Success -> {
-//                    val forecastResponse = resource.data
-//                    if (forecastResponse != null) {
-//                        // Log the API response to understand its structure and data
-//                        Log.i("MOH!", "Forecast API Response: $forecastResponse")
-//
-//                        // Implement your forecast data handling here based on the forecastResponse
-//                        // ...
-//                    }
-//                }
-//                is Resource.Error -> {
-//                    // Handle error state if needed
-//                    val errorMessage = resource.errorMessage
-//                    Log.e("DOH!", "Error fetching forecast data: $errorMessage")
-//                }
-//            }
-//        }
-//    }
-//    private fun fetchForecastData() {
-//        requestLocationData()
-//    }
-//    private fun requestLocationData() {
-//        locationRepository.getCurrentLocation { latitude, longitude ->
-//            weatherDataHandler.fetchWeatherForecast(latitude, longitude)
-//        }
-//    }
-//
-//    // ... (rest of the code)
-//}
-
-
-//class HourlyFragment : Fragment() {
-//
-//    private lateinit var bottomNavView: BottomNavigationView
-//    private lateinit var weatherDataHandler: WeatherDataHandler
-//
-//    private val viewModel: WeatherViewModel by viewModels()
-//    private var _binding: FragmentHourlyBinding? = null
-//    private val binding get() = _binding!!
-//
-//
-//    override fun onCreateView(
-//        inflater: LayoutInflater, container: ViewGroup?,
-//        savedInstanceState: Bundle?
-//    ): View? {
-//        bottomNavView = activity?.findViewById(R.id.bnv_weather_cast) ?: return binding.root
-//        // Inflate the layout for this fragment
-//        _binding = FragmentHourlyBinding.inflate(inflater, container, false)
-//        return binding.root
-//    }
-//
-//    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-//        super.onViewCreated(view, savedInstanceState)
-//        // Call fetchForecastData to initiate fetching the forecast data
-//        // Pass the latitude and longitude to the function
-////        viewModel.fetchForecastData(latitude, longitude)
-//        // Launch a coroutine in the lifecycle scope of the fragment
-//        viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
-//            // Call fetchForecastData to initiate fetching the forecast data
-//            // Pass the latitude and longitude to the function
-//            weatherDataHandler = WeatherDataHandler(requireContext(), viewModel)
-//            fetchForecastData()
-//        }
-//
-//        viewModel.forecastData.observe(viewLifecycleOwner) { resource ->
-//            when (resource) {
-//                is Resource.Loading -> {
-//                    // Handle loading state if needed
-//                }
-//                is Resource.Success -> {
-//                    val forecastResponse = resource.data
-//                    if (forecastResponse != null) {
-//                        // Log the API response to understand its structure and data
-//                        Log.i("DOH!", "Forecast API Response: $forecastResponse")
-//
-//                        // Implement your forecast data handling here based on the forecastResponse
-//                        // ...
-//                    }
-//                }
-//                is Resource.Error -> {
-//                    // Handle error state if needed
-//                    val errorMessage = resource.errorMessage
-//                    Log.e("DOH!", "Error fetching forecast data: $errorMessage")
-//                }
-//            }
-//        }
-//    }
-//    private fun fetchForecastData() {
-//        // Use latitude and longitude values appropriate for your location
-//        val latitude = 37.7749
-//        val longitude = -122.4194
-//
-//        // Call fetchForecastData to initiate fetching the forecast data
-//        weatherDataHandler.requestLocationData(latitude, longitude)
-//    }
-//}
 
 

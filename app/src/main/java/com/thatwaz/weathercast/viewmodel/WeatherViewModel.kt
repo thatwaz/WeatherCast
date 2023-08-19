@@ -31,18 +31,10 @@ class WeatherViewModel @Inject constructor(
     private val _hourlyData = MutableLiveData<Resource<ForecastResponse>>()
     val hourlyData: LiveData<Resource<ForecastResponse>> get() = _hourlyData
 
-//    private val _forecastData = MutableLiveData<Resource<ForecastResponse>>()
-//    val forecastData: LiveData<Resource<ForecastResponse>> get() = _forecastData
 
     private val _forecastData = MutableLiveData<Resource<List<DailyForecast>>>()
     val forecastData: LiveData<Resource<List<DailyForecast>>> get() = _forecastData
 
-
-
-    // Method to trigger refresh
-//    fun refreshCurrentWeatherData() {
-//
-//    }
 
     private fun consolidateForecastData(forecastResponse: ForecastResponse): List<DailyForecast> {
         val dailyForecasts = mutableListOf<DailyForecast>()
@@ -104,6 +96,7 @@ class WeatherViewModel @Inject constructor(
                 weatherDatabase.weatherDataDao().getWeatherData(latitude, longitude)
             if (cachedWeatherData != null) {
                 // Cached data found, use it directly
+                Log.i("WeatherCache", "Using cached weather data: ${cachedWeatherData.weatherJson}")
                 _weatherData.value = Resource.Success(
                     Gson().fromJson(
                         cachedWeatherData.weatherJson,

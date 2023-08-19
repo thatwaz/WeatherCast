@@ -2,11 +2,12 @@ package com.thatwaz.weathercast.view.ui
 
 import android.os.Bundle
 import android.util.Log
+import android.view.*
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import androidx.core.content.ContentProviderCompat.requireContext
+import androidx.core.view.MenuHost
+import androidx.core.view.MenuProvider
+import androidx.lifecycle.Lifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
@@ -60,6 +61,25 @@ class ForecastFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val menuHost: MenuHost = requireActivity() as MenuHost
+
+        menuHost.addMenuProvider(object : MenuProvider {
+            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+                menuInflater.inflate(R.menu.menu_refresh, menu)
+            }
+
+            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+                return when (menuItem.itemId) {
+                    R.id.action_refresh -> {
+                        // Call your ViewModel or other logic to refresh data
+                        refreshForecastWeatherData()
+                        true
+                    }
+                    else -> false
+                }
+            }
+        }, viewLifecycleOwner, Lifecycle.State.RESUMED)
+
         locationRepository = LocationRepository(
             LocationServices.getFusedLocationProviderClient(requireContext())
         )
@@ -79,11 +99,12 @@ class ForecastFragment : Fragment() {
             when (resource) {
                 is Resource.Loading -> {
                     // Handle loading state if needed
+                    setWeatherDataVisibility(false)
                 }
                 is Resource.Success -> {
                     val dailyForecasts = resource.data
-
                     if (dailyForecasts != null) {
+                        setWeatherDataVisibility(true)
                         // Update the RecyclerView with the new forecast data
                         binding.tvForecastLocation.text = dailyForecasts[0].cityName
                         updateRecyclerView(dailyForecasts)
@@ -92,6 +113,7 @@ class ForecastFragment : Fragment() {
                 }
                 is Resource.Error -> {
                     // Handle error state if needed
+                    setWeatherDataVisibility(false)
                     val errorMessage = resource.errorMessage
                     Log.e("ForecastFragment", "Error fetching forecast data: $errorMessage")
                 }
@@ -131,6 +153,20 @@ class ForecastFragment : Fragment() {
         // Update the adapter's data with the new forecast list
         forecastAdapter.submitList(dailyForecasts)
         Log.i("MOH!", "Adapter data updated: $dailyForecasts")
+    }
+    private fun setWeatherDataVisibility(isVisible: Boolean) {
+        binding.clLoading.visibility = if (isVisible) View.INVISIBLE else View.VISIBLE
+        binding.clForecastTop.visibility = if (isVisible) View.VISIBLE else View.GONE
+        binding.rvForecast.visibility = if (isVisible) View.VISIBLE else View.GONE
+
+    }
+    private fun refreshForecastWeatherData() {
+        // Show the loading state (optional, if you want to indicate that data is being fetched)
+        setWeatherDataVisibility(false)
+//        binding.progressBar.visibility = View.VISIBLE
+
+        // Request the weather data
+        fetchForecastData()
     }
 
 

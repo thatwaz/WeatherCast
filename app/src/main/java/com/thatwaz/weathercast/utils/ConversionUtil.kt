@@ -34,17 +34,6 @@ object ConversionUtil {
     }
 
 
-    fun excludeTodayFromForecast(dailyForecasts: List<DailyForecast>): List<DailyForecast> {
-        val currentDate = Date(System.currentTimeMillis())
-        val filteredForecasts = dailyForecasts.filter { forecast ->
-            val forecastDate =
-                SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).parse(forecast.date)
-            forecastDate != currentDate
-        }
-        return filteredForecasts
-    }
-
-
     fun getWindDirection(degrees: Int): String {
         val directions = arrayOf(
             "N", "NNE", "NE", "ENE",

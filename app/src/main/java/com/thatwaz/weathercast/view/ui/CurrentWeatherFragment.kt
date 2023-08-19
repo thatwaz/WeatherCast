@@ -197,12 +197,6 @@ class CurrentWeatherFragment : Fragment() {
     }
 
 
-//    private fun requestLocationData() {
-//        locationRepository.getCurrentLocation { latitude, longitude ->
-//            weatherDataHandler.requestLocationData()
-//        }
-//    }
-
     private fun setCurrentWeatherImage(iconId: String) {
         val resourceId = WeatherIconUtil.getWeatherImageResource(iconId)
         binding.ivCurrentWeatherImage.setImageResource(resourceId)
@@ -250,16 +244,3 @@ class CurrentWeatherFragment : Fragment() {
         _binding = null
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-

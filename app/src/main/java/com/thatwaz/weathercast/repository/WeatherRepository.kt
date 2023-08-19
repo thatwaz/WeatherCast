@@ -11,17 +11,6 @@ import javax.inject.Inject
 
 class WeatherRepository@Inject constructor(private val weatherService: WeatherService) {
 
-//    private val weatherService: WeatherService
-
-//    init {
-//        val retrofit = Retrofit.Builder()
-//            .baseUrl(ApiConfig.BASE_URL)
-//            .addConverterFactory(GsonConverterFactory.create())
-//            .build()
-//
-//        weatherService = retrofit.create(WeatherService::class.java)
-//    }
-
     suspend fun getWeatherData(
         appId: String,
         latitude: Double,
