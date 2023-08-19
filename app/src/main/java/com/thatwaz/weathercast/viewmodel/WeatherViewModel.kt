@@ -37,13 +37,12 @@ class WeatherViewModel @Inject constructor(
     private val _forecastData = MutableLiveData<Resource<List<DailyForecast>>>()
     val forecastData: LiveData<Resource<List<DailyForecast>>> get() = _forecastData
 
-    // LiveData to signal refresh command
-    val refreshCommand = MutableLiveData<Boolean>()
+
 
     // Method to trigger refresh
-    fun refreshWeatherData() {
-        refreshCommand.value = true
-    }
+//    fun refreshCurrentWeatherData() {
+//
+//    }
 
     private fun consolidateForecastData(forecastResponse: ForecastResponse): List<DailyForecast> {
         val dailyForecasts = mutableListOf<DailyForecast>()

@@ -4,6 +4,10 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.MenuProvider
+import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
@@ -23,14 +27,13 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var navController: NavController
+    private val menuProviders = mutableListOf<MenuProvider>() // Store our MenuProviders
 //    private lateinit var viewModel: WeatherViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-//        viewModel = ViewModelProvider(this)[WeatherViewModel::class.java]
 
         val navHostFragment = supportFragmentManager
             .findFragmentById(R.id.nav_host_fragment) as NavHostFragment
@@ -68,21 +71,31 @@ class MainActivity : AppCompatActivity() {
             true
         }
     }
-//    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-//        menuInflater.inflate(R.menu.menu_main, menu)
-//        return true
-//    }
-//
-//    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-//        when (item.itemId) {
-//            R.id.action_refresh -> {
-//                // Notify ViewModel or use other communication mechanisms
-//                viewModel.refreshWeatherData()
-//                return true
-//            }
-//            else -> return super.onOptionsItemSelected(item)
-//        }
-//    }
+
+    // Implement MenuHost's functions
+    override fun addMenuProvider(provider: MenuProvider, owner: LifecycleOwner, showState: Lifecycle.State) {
+        menuProviders.add(provider)
+        owner.lifecycle.addObserver(object : DefaultLifecycleObserver {
+            override fun onDestroy(owner: LifecycleOwner) {
+                menuProviders.remove(provider)
+            }
+        })
+    }
+    override fun removeMenuProvider(provider: MenuProvider) {
+        menuProviders.remove(provider)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        val inflater = menuInflater
+        menuProviders.forEach {
+            it.onCreateMenu(menu!!, inflater)
+        }
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return menuProviders.any { it.onMenuItemSelected(item) } || super.onOptionsItemSelected(item)
+    }
 }
 
 

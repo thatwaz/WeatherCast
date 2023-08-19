@@ -62,8 +62,6 @@ class HourlyFragment : Fragment() {
         // Set up RecyclerView
         setupRecyclerView()
 
-        // Call fetchForecastData to initiate fetching the forecast data
-//        fetchForecastData()
 
 
         viewModel.hourlyData.observe(viewLifecycleOwner) { resource ->
@@ -94,26 +92,7 @@ class HourlyFragment : Fragment() {
         }
     }
 
-//    private fun checkLocationPermissions() {
-//        PermissionUtil.requestLocationPermissions(
-//            requireContext(),
-//            { // On permission granted
-//                requestLocationData()
-//            },
-//            { // On permission denied
-//                showToast("You have denied permission")
-//            }
-//        )
-//    }
-//    private fun showToast(message: String) {
-//        Toast.makeText(requireContext(), message, Toast.LENGTH_LONG).show()
-//    }
 
-//    private fun requestLocationData() {
-//        locationRepository.getCurrentLocation { latitude, longitude ->
-//            weatherDataHandler.requestLocationData(latitude, longitude)
-//        }
-//    }
 
     private fun fetchForecastData() {
         locationRepository.getCurrentLocation { latitude, longitude ->

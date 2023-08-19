@@ -7,8 +7,10 @@ import android.view.*
 import android.widget.Toast
 import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.view.MenuHost
+import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.navigation.fragment.findNavController
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
@@ -52,31 +54,12 @@ class CurrentWeatherFragment : Fragment() {
     private var isErrorOccurred = false
 
 
-
-
-//    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-//        when (item.itemId) {
-//            R.id.action_refresh -> {
-//                // Call the function to manually request weather data
-//                requestWeatherDataManually()
-//                return true
-//            }
-//            else -> return super.onOptionsItemSelected(item)
-//        }
-//    }
-//
-//
-//    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-//        inflater.inflate(R.menu.menu_main, menu)
-//        super.onCreateOptionsMenu(menu, inflater)
+//    private fun refreshContent() {
+//        // Your logic to fetch or update the data. Typically, you will call some method from your ViewModel here.
+//        viewModel.refreshWeatherData()
 //    }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setHasOptionsMenu(true)
-        // Register this fragment as the MenuProvider
 
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -87,19 +70,40 @@ class CurrentWeatherFragment : Fragment() {
         _binding = FragmentCurrentWeatherBinding.inflate(inflater, container, false)
         (activity?.application as WeatherCastApplication).appComponent.inject(this)
         viewModel.weatherData.removeObservers(viewLifecycleOwner)
-        observeWeatherData()
+
         return binding.root
     }
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        val menuHost: MenuHost = requireActivity() as MenuHost
+
+        menuHost.addMenuProvider(object : MenuProvider {
+            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+                menuInflater.inflate(R.menu.menu_refresh, menu)
+            }
+
+            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+                return when (menuItem.itemId) {
+                    R.id.action_refresh -> {
+                        // Call your ViewModel or other logic to refresh data
+                        refreshCurrentWeatherData()
+                        true
+                    }
+                    else -> false
+                }
+            }
+        }, viewLifecycleOwner, Lifecycle.State.RESUMED)
+
+
         Log.i("MOH!", "On view created")
         setWeatherDataVisibility(false)
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext())
         locationRepository = LocationRepository(fusedLocationClient)
         weatherDataHandler = WeatherDataHandler(requireContext(), viewModel)
         // Check location permissions and start updates
+        observeWeatherData()
         checkLocationPermissions()
     }
 
@@ -220,7 +224,7 @@ class CurrentWeatherFragment : Fragment() {
         updateWeatherUI(weatherData)
     }
 
-    private fun requestWeatherDataManually() {
+    private fun refreshCurrentWeatherData() {
         // Show the loading state (optional, if you want to indicate that data is being fetched)
         setWeatherDataVisibility(false)
 //        binding.progressBar.visibility = View.VISIBLE
