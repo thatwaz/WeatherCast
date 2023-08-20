@@ -6,6 +6,7 @@
         <entry key="..\:/Toolkit/WeatherCast/app/src/main/res/layout/activity_main.xml" value="0.18802083333333333" />
         <entry key="..\:/Toolkit/WeatherCast/app/src/main/res/layout/fragment_current_weather.xml" value="0.18" />
         <entry key="..\:/Toolkit/weathercast-priv-/app/src/main/res/drawable/bottom_navigation_colors.xml" value="0.1" />
+        <entry key="..\:/Toolkit/weathercast-priv-/app/src/main/res/drawable/fade_background.xml" value="0.1" />
         <entry key="..\:/Toolkit/weathercast-priv-/app/src/main/res/drawable/gradient_1.xml" value="0.1" />
         <entry key="..\:/Toolkit/weathercast-priv-/app/src/main/res/drawable/ic_air_pressure.xml" value="0.1" />
         <entry key="..\:/Toolkit/weathercast-priv-/app/src/main/res/drawable/ic_calendar.xml" value="0.1" />
@@ -13,16 +14,19 @@
         <entry key="..\:/Toolkit/weathercast-priv-/app/src/main/res/drawable/ic_refresh.xml" value="0.1" />
         <entry key="..\:/Toolkit/weathercast-priv-/app/src/main/res/drawable/semi_transparent_black_background.xml" value="0.1" />
         <entry key="..\:/Toolkit/weathercast-priv-/app/src/main/res/layout/activity_main.xml" value="0.1" />
+        <entry key="..\:/Toolkit/weathercast-priv-/app/src/main/res/layout/activity_splash.xml" value="0.18802083333333333" />
         <entry key="..\:/Toolkit/weathercast-priv-/app/src/main/res/layout/fragment_barometric_pressure_dialog.xml" value="0.21" />
         <entry key="..\:/Toolkit/weathercast-priv-/app/src/main/res/layout/fragment_current_weather.xml" value="0.25" />
         <entry key="..\:/Toolkit/weathercast-priv-/app/src/main/res/layout/fragment_five_day_outlook.xml" value="0.18385416666666668" />
         <entry key="..\:/Toolkit/weathercast-priv-/app/src/main/res/layout/fragment_forecast.xml" value="0.18385416666666668" />
         <entry key="..\:/Toolkit/weathercast-priv-/app/src/main/res/layout/fragment_hourly.xml" value="0.1814814814814815" />
+        <entry key="..\:/Toolkit/weathercast-priv-/app/src/main/res/layout/fragment_splash.xml" value="0.18802083333333333" />
         <entry key="..\:/Toolkit/weathercast-priv-/app/src/main/res/layout/item_five_day_outlook.xml" value="0.18385416666666668" />
         <entry key="..\:/Toolkit/weathercast-priv-/app/src/main/res/layout/item_forecast.xml" value="0.22" />
         <entry key="..\:/Toolkit/weathercast-priv-/app/src/main/res/layout/item_hourly.xml" value="0.18385416666666668" />
         <entry key="..\:/Toolkit/weathercast-priv-/app/src/main/res/menu/bottom_nav_menu.xml" value="0.1" />
         <entry key="..\:/Toolkit/weathercast-priv-/app/src/main/res/menu/menu_main.xml" value="0.18385416666666668" />
+        <entry key="..\:/Toolkit/weathercast-priv-/app/src/main/res/menu/menu_refresh.xml" value="0.18802083333333333" />
       </map>
     </option>
   </component>

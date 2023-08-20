@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.*
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
@@ -43,7 +44,7 @@ class CurrentWeatherFragment : Fragment() {
     lateinit var viewModel: WeatherViewModel
 
     private lateinit var bottomNavView: BottomNavigationView
-//    private val viewModel: WeatherViewModel by viewModels()
+    //    private val viewModel: WeatherViewModel by viewModels()
     private var _binding: FragmentCurrentWeatherBinding? = null
     private val binding get() = _binding!!
 
@@ -58,8 +59,6 @@ class CurrentWeatherFragment : Fragment() {
 //        // Your logic to fetch or update the data. Typically, you will call some method from your ViewModel here.
 //        viewModel.refreshWeatherData()
 //    }
-
-
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -244,3 +243,4 @@ class CurrentWeatherFragment : Fragment() {
         _binding = null
     }
 }
+

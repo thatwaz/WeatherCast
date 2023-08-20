@@ -24,10 +24,9 @@
     <string name="temperature_high">%s°F</string>
     <string name="temperature_low">Low: %1$s°F</string>
     <string name="chance_of_rain">Chance of Rain: %1$d%%</string>
-    <string name="five_day_forecast">5 Day Forecast</string>
+    <string name="five_day_forecast">Five Day Forecast</string>
     <string name="periodic_outlook">Periodic Outlook</string>
     <!-- Define other string resources here -->
-
 
 
 </resources>
