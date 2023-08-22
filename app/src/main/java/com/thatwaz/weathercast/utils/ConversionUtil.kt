@@ -5,6 +5,7 @@ import android.icu.util.Calendar
 import com.thatwaz.weathercast.model.forecastresponse.DailyForecast
 import com.thatwaz.weathercast.model.forecastresponse.RainForecast
 import java.util.*
+import kotlin.math.round
 
 
 object ConversionUtil {
@@ -16,9 +17,19 @@ object ConversionUtil {
         return (hPaPressure / 33.8639).toString()
     }
 
-    fun convertMetersToMiles(visibilityInMeters: Int): Double {
-        return visibilityInMeters / 1609.34 // 1 mile = 1609.34 meters
+//    fun convertMetersToMiles(visibilityInMeters: Int): Double {
+//        return visibilityInMeters / 1609.34 // 1 mile = 1609.34 meters
+//    }
+
+    fun convertMetersToMiles(visibilityInMeters: Int): Int {
+        return if (visibilityInMeters >= 10000) {
+            10 // Optimal visibility in miles
+        } else {
+            val miles = visibilityInMeters / 1609.34 // Convert other values
+            round(miles).toInt() // Round to the nearest Int
+        }
     }
+
 
     fun convertUnixTimestampToTimeWithAMPM(unixTimestamp: Long): String {
         val dateFormat = SimpleDateFormat("h:mm a", Locale.getDefault())

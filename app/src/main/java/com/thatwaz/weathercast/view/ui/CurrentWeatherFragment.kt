@@ -24,6 +24,7 @@ import com.thatwaz.weathercast.model.application.WeatherCastApplication
 import com.thatwaz.weathercast.model.data.LocationRepository
 import com.thatwaz.weathercast.model.data.WeatherDataHandler
 import com.thatwaz.weathercast.model.weatherresponse.WeatherResponse
+import com.thatwaz.weathercast.utils.BarometricPressureColorUtil
 import com.thatwaz.weathercast.utils.BarometricPressureColorUtil.getPressureColor
 import com.thatwaz.weathercast.utils.ConversionUtil.breakTextIntoLines
 import com.thatwaz.weathercast.utils.ConversionUtil.capitalizeWords
@@ -109,7 +110,13 @@ class CurrentWeatherFragment : Fragment() {
     private fun updateWeatherUI(weatherData: WeatherResponse) {
         val pressureInhPa = weatherData.main.pressure
         val pressureInInHg = hPaToInHg(pressureInhPa)
+//        val pressureInInHg = hPaToInHg(pressureInhPa)
+
         val pressureColor = getPressureColor(pressureInhPa)
+
+
+
+//        val pressureColor = getPressureColor(pressureInhPa)
         val currentConditions = weatherData.weather[0].description.capitalizeWords()
         val kelvinTemp = weatherData.main.temp
         val fahrenheitTemp = kelvinToFahrenheit(kelvinTemp)
@@ -135,7 +142,7 @@ class CurrentWeatherFragment : Fragment() {
             tvFeelsLike.text = formattedFeelsLike
             tvCurrentTemperature.text = fahrenheitTemp.toString()
             tvHumidity.text = formattedHumidity
-            tvWind.text = "$formattedWindDirection ${weatherData.wind.speed} mph "
+            tvWind.text = "$formattedWindDirection ${weatherData.wind.speed.toInt()} mph "
             tvAirPressure.text = String.format("%.2f", pressureInInHg.toDouble())
             binding.tvAirPressure.paint?.isUnderlineText = true
             binding.tvAirPressure.setTextColor(pressureColor)
@@ -144,7 +151,8 @@ class CurrentWeatherFragment : Fragment() {
                     .actionCurrentWeatherFragmentToBarometricPressureDialogFragment()
                 findNavController().navigate(action)
             }
-            tvVisibility.text = String.format("%.2f miles", visibilityInMiles)
+//            tvVisibility.text = String.format("%.2f miles", visibilityInMiles)
+            tvVisibility.text = "${visibilityInMiles} miles"
             tvSunrise.text = sunriseTime
             tvSunset.text = sunsetTime
         }
