@@ -6,6 +6,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.gson.Gson
 import com.thatwaz.weathercast.config.ApiConfig
+import com.thatwaz.weathercast.model.database.ForecastEntity
+import com.thatwaz.weathercast.model.database.HourlyWeatherEntity
 import com.thatwaz.weathercast.model.database.WeatherDataEntity
 import com.thatwaz.weathercast.model.database.WeatherDatabase
 import com.thatwaz.weathercast.model.forecastresponse.DailyForecast
@@ -138,30 +140,51 @@ class WeatherViewModel @Inject constructor(
     }
 
     suspend fun fetchHourlyData(latitude: Double, longitude: Double) {
-
         _hourlyData.value = Resource.Loading()
 
         try {
-            val hourlyResponse = repository.getForecastData(ApiConfig.APP_ID, latitude, longitude)
-            if (hourlyResponse.isSuccessful) {
-                val hourlyResponseBody = hourlyResponse.body()
-                if (hourlyResponseBody != null) {
-                    _hourlyData.value = Resource.Success(hourlyResponseBody)
-                } else {
-                    _hourlyData.value = Resource.Error("Null response body")
-                }
+            // Check if cached hourly data exists in the Room database
+            val cachedHourlyData = weatherDatabase.hourlyWeatherDao().getHourlyWeather(latitude, longitude)
+
+            if (cachedHourlyData != null) {
+                // Use cached data
+                Log.i("Cache", "Using cached hourly data")
+                _hourlyData.value = Resource.Success(
+                    Gson().fromJson(
+                        cachedHourlyData.hourlyWeatherJson,
+                        ForecastResponse::class.java
+                    )
+                )
             } else {
-                _hourlyData.value =
-                    Resource.Error("Error fetching hourly data: ${hourlyResponse.code()}")
+                Log.i("Cache", "Fetching hourly data from API")
+                // Fetch data from the API
+                val hourlyResponse = repository.getForecastData(ApiConfig.APP_ID, latitude, longitude)
+
+                if (hourlyResponse.isSuccessful) {
+                    val hourlyResponseBody = hourlyResponse.body()
+                    if (hourlyResponseBody != null) {
+                        _hourlyData.value = Resource.Success(hourlyResponseBody)
+
+                        // Cache the API response in the Room database
+                        val hourlyWeatherEntity = HourlyWeatherEntity(
+                            latitude = latitude,
+                            longitude = longitude,
+                            hourlyWeatherJson = Gson().toJson(hourlyResponseBody)
+                        )
+                        weatherDatabase.hourlyWeatherDao().insertHourlyWeather(hourlyWeatherEntity)
+                    } else {
+                        _hourlyData.value = Resource.Error("Null response body")
+                    }
+                } else {
+                    _hourlyData.value = Resource.Error("Error fetching hourly data: ${hourlyResponse.code()}")
+                }
             }
         } catch (e: Exception) {
-            handleError("Error fetching hourly data: ${e.message}")
             _hourlyData.value = Resource.Error("Error fetching hourly data: ${e.message}")
         }
     }
 
     suspend fun fetchForecastData(latitude: Double, longitude: Double) {
-        // Use the same _forecastData LiveData instance
         _forecastData.value = Resource.Loading()
 
         try {
@@ -169,6 +192,15 @@ class WeatherViewModel @Inject constructor(
             if (forecastResponse.isSuccessful) {
                 val forecastResponseBody = forecastResponse.body()
                 if (forecastResponseBody != null) {
+                    // Cache the API response in the database
+                    val forecastEntity = ForecastEntity(
+                        latitude = latitude,
+                        longitude = longitude,
+                        forecastJson = Gson().toJson(forecastResponseBody)
+                    )
+                    weatherDatabase.forecastDao().insertForecast(forecastEntity)
+
+                    // Convert the forecastResponseBody to consolidated data
                     val consolidatedData = consolidateForecastData(forecastResponseBody)
                     _forecastData.value = Resource.Success(consolidatedData)
                     Log.i("MOH!", "Consol is $consolidatedData")

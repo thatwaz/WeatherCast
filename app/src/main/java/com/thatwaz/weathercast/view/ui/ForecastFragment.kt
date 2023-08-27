@@ -3,27 +3,21 @@ package com.thatwaz.weathercast.view.ui
 import android.os.Bundle
 import android.util.Log
 import android.view.*
-import androidx.fragment.app.Fragment
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.thatwaz.weathercast.R
-
 import com.thatwaz.weathercast.databinding.FragmentForecastBinding
-
 import com.thatwaz.weathercast.model.application.WeatherCastApplication
 import com.thatwaz.weathercast.model.data.LocationRepository
 import com.thatwaz.weathercast.model.data.WeatherDataHandler
 import com.thatwaz.weathercast.model.forecastresponse.DailyForecast
-import com.thatwaz.weathercast.model.forecastresponse.WeatherItem
 import com.thatwaz.weathercast.utils.error.Resource
 import com.thatwaz.weathercast.view.ui.adapters.ForecastAdapter
-
 import com.thatwaz.weathercast.viewmodel.WeatherViewModel
 import javax.inject.Inject
 
@@ -41,7 +35,7 @@ class ForecastFragment : Fragment() {
     private var _binding: FragmentForecastBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var forecastAdapter: ForecastAdapter
+    private var forecastAdapter: ForecastAdapter? = null
 
 //    private lateinit var fusedLocationClient: FusedLocationProviderClient
 
@@ -123,14 +117,22 @@ class ForecastFragment : Fragment() {
 
     }
 
-
     private fun fetchForecastData() {
-        locationRepository.getCurrentLocation { latitude, longitude ->
-            weatherDataHandler.fetchWeatherForecast(latitude, longitude,
-                WeatherDataHandler.ForecastType.DAILY
-            )
-        }
+//        locationRepository.getCurrentLocation { latitude, longitude ->
+        weatherDataHandler.fetchWeatherForecast(
+            WeatherDataHandler.ForecastType.DAILY
+        )
     }
+//    }
+
+//
+//    private fun fetchForecastData() {
+//        locationRepository.getCurrentLocation { latitude, longitude ->
+//            weatherDataHandler.fetchWeatherForecast(latitude, longitude,
+//                WeatherDataHandler.ForecastType.DAILY
+//            )
+//        }
+//    }
 
 //    private fun requestLocationData() {
 //        locationRepository.getCurrentLocation { latitude, longitude ->
@@ -151,7 +153,7 @@ class ForecastFragment : Fragment() {
 
     private fun updateRecyclerView(dailyForecasts: List<DailyForecast>) {
         // Update the adapter's data with the new forecast list
-        forecastAdapter.submitList(dailyForecasts)
+        forecastAdapter?.submitList(dailyForecasts)
         Log.i("MOH!", "Adapter data updated: $dailyForecasts")
     }
     private fun setWeatherDataVisibility(isVisible: Boolean) {
@@ -167,6 +169,12 @@ class ForecastFragment : Fragment() {
 
         // Request the weather data
         fetchForecastData()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        forecastAdapter = null
+        _binding = null
     }
 
 

@@ -50,14 +50,16 @@ class WeatherDataHandler(
         fetchWeatherData(latitude, longitude)
     }
 
-    fun fetchWeatherForecast(latitude: Double, longitude: Double, forecastType: ForecastType) {
+    fun fetchWeatherForecast(forecastType: ForecastType) {
         val isConnected = isNetworkConnected() && NetworkUtil.isInternetAvailable(connectivityManager)
 
         if (isConnected) {
-            viewModel.viewModelScope.launch {
-                when (forecastType) {
-                    ForecastType.HOURLY -> viewModel.fetchHourlyData(latitude, longitude)
-                    ForecastType.DAILY -> viewModel.fetchForecastData(latitude, longitude)
+            locationRepository.getCurrentLocation { lat, lon ->
+                viewModel.viewModelScope.launch {
+                    when (forecastType) {
+                        ForecastType.HOURLY -> viewModel.fetchHourlyData(lat, lon)
+                        ForecastType.DAILY -> viewModel.fetchForecastData(lat, lon)
+                    }
                 }
             }
         } else {

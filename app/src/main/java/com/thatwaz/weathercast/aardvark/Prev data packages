@@ -42,3 +42,66 @@
 
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
+
+                //    suspend fun fetchForecastData(latitude: Double, longitude: Double) {
+                //        _forecastData.value = Resource.Loading()
+                //
+                //        try {
+                //            val cachedForecastData = weatherDatabase.forecastDao().getForecast(latitude, longitude)
+                //
+                //            if (cachedForecastData != null) {
+                //                // Convert the cached ForecastEntity to ForecastResponse and then consolidate
+                //                val forecastResponse = Gson().fromJson(
+                //                    cachedForecastData.forecastJson,
+                //                    ForecastResponse::class.java
+                //                )
+                //                val consolidatedData = consolidateForecastData(forecastResponse)
+                //                _forecastData.value = Resource.Success(consolidatedData)
+                //            } else {
+                //                _forecastData.value = Resource.Error("Error fetching forecast data: ${forecastResponse.code()}")
+                //                // Fetch data from the API and handle the response and cache logic
+                //            }
+                //        } catch (e: Exception) {
+                //            _forecastData.value = Resource.Error("Error fetching forecast data: ${e.message}")
+                //        }
+                //    }
+
+
+
+                //    suspend fun fetchForecastData(latitude: Double, longitude: Double) {
+                //        // Use the same _forecastData LiveData instance
+                //        _forecastData.value = Resource.Loading()
+                //
+                //        try {
+                //            val forecastResponse = repository.getForecastData(ApiConfig.APP_ID, latitude, longitude)
+                //            if (forecastResponse.isSuccessful) {
+                //                val forecastResponseBody = forecastResponse.body()
+                //                if (forecastResponseBody != null) {
+                //                    val consolidatedData = consolidateForecastData(forecastResponseBody)
+                //                    _forecastData.value = Resource.Success(consolidatedData)
+                //                    Log.i("MOH!", "Consol is $consolidatedData")
+                //                } else {
+                //                    _forecastData.value = Resource.Error("Null response body")
+                //                }
+                //            } else {
+                //                _forecastData.value = Resource.Error("Error fetching forecast data: ${forecastResponse.code()}")
+                //            }
+                //        } catch (e: Exception) {
+                //            _forecastData.value = Resource.Error("Error fetching forecast data: ${e.message}")
+                //        }
+                //    }
+
+                //    fun fetchWeatherForecast(latitude: Double, longitude: Double, forecastType: ForecastType) {
+                //        val isConnected = isNetworkConnected() && NetworkUtil.isInternetAvailable(connectivityManager)
+                //
+                //        if (isConnected) {
+                //            viewModel.viewModelScope.launch {
+                //                when (forecastType) {
+                //                    ForecastType.HOURLY -> viewModel.fetchHourlyData(latitude, longitude)
+                //                    ForecastType.DAILY -> viewModel.fetchForecastData(latitude, longitude)
+                //                }
+                //            }
+                //        } else {
+                //            Toast.makeText(context, "No internet connection", Toast.LENGTH_SHORT).show()
+                //        }
+                //    }

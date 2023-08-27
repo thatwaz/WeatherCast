@@ -3,12 +3,14 @@ package com.thatwaz.weathercast.view.ui
 import android.os.Bundle
 import android.util.Log
 import android.view.*
-import android.widget.Toast
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.gms.location.LocationCallback
+import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.thatwaz.weathercast.R
@@ -17,7 +19,6 @@ import com.thatwaz.weathercast.model.application.WeatherCastApplication
 import com.thatwaz.weathercast.model.data.LocationRepository
 import com.thatwaz.weathercast.model.data.WeatherDataHandler
 import com.thatwaz.weathercast.model.forecastresponse.WeatherItem
-import com.thatwaz.weathercast.utils.PermissionUtil
 import com.thatwaz.weathercast.utils.error.Resource
 import com.thatwaz.weathercast.view.ui.adapters.HourlyAdapter
 import com.thatwaz.weathercast.viewmodel.WeatherViewModel
@@ -32,29 +33,34 @@ class HourlyFragment : Fragment() {
 
     private lateinit var bottomNavView: BottomNavigationView
     private lateinit var weatherDataHandler: WeatherDataHandler
-    private lateinit var locationRepository: LocationRepository
+//    private lateinit var locationRepository: LocationRepository
+
+
 
 //    private val viewModel: WeatherViewModel by viewModels()
     private var _binding: FragmentHourlyBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var hourlyAdapter: HourlyAdapter
+    private var hourlyAdapter: HourlyAdapter? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         bottomNavView = activity?.findViewById(R.id.bnv_weather_cast) ?: return binding.root
         // Inflate the layout for this fragment
         (activity?.application as WeatherCastApplication).appComponent.inject(this)
         _binding = FragmentHourlyBinding.inflate(inflater, container, false)
+//        locationRepository = LocationRepository(
+//            LocationServices.getFusedLocationProviderClient(requireContext())
+//        )
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-            val menuHost: MenuHost = requireActivity() as MenuHost
+            val menuHost: MenuHost = requireActivity()
 
         menuHost.addMenuProvider(object : MenuProvider {
             override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
@@ -73,9 +79,7 @@ class HourlyFragment : Fragment() {
             }
         }, viewLifecycleOwner, Lifecycle.State.RESUMED)
 
-        locationRepository = LocationRepository(
-            LocationServices.getFusedLocationProviderClient(requireContext())
-        )
+
         // Initialize the WeatherDataHandler on the main thread
         weatherDataHandler = WeatherDataHandler(requireContext(), viewModel)
         fetchForecastData()
@@ -118,12 +122,12 @@ class HourlyFragment : Fragment() {
 
 
     private fun fetchForecastData() {
-        locationRepository.getCurrentLocation { latitude, longitude ->
-            weatherDataHandler.fetchWeatherForecast(latitude, longitude,
+//        locationRepository.getCurrentLocation { latitude, longitude ->
+            weatherDataHandler.fetchWeatherForecast(
                 WeatherDataHandler.ForecastType.HOURLY
             )
         }
-    }
+//    }
 
     private fun setupRecyclerView() {
         // Create the adapter
@@ -138,11 +142,11 @@ class HourlyFragment : Fragment() {
 
     private fun updateRecyclerView(hourlyList: List<WeatherItem>) {
         // Update the adapter's data with the new forecast list
-        hourlyAdapter.submitList(hourlyList)
+        hourlyAdapter?.submitList(hourlyList)
 
     }
     private fun setWeatherDataVisibility(isVisible: Boolean) {
-        binding.clLoading.visibility = if (isVisible) View.INVISIBLE else View.VISIBLE
+        binding.clLoading.visibility = if (isVisible) View.GONE else View.VISIBLE
         binding.clTop.visibility = if (isVisible) View.VISIBLE else View.GONE
         binding.rvHourlyForecast.visibility = if (isVisible) View.VISIBLE else View.GONE
         binding.clTop.visibility = if (isVisible) View.VISIBLE else View.GONE
@@ -155,6 +159,17 @@ class HourlyFragment : Fragment() {
         // Request the weather data
         fetchForecastData()
     }
+
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        viewModel.hourlyData.removeObservers(viewLifecycleOwner)
+        Log.d("HourlyFragment", "onDestroyView called")
+        hourlyAdapter = null
+        _binding = null
+
+    }
+
 
 }
 

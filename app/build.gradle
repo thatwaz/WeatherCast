@@ -59,8 +59,10 @@ dependencies {
     // Retrofit
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
-    implementation "com.squareup.okhttp3:okhttp:4.9.0"
-    implementation("com.squareup.okhttp3:logging-interceptor:4.9.0")
+//    implementation "com.squareup.okhttp3:okhttp:4.9.0"
+//    implementation("com.squareup.okhttp3:logging-interceptor:4.9.0")
+
+    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.12'
 
     // ViewModel
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version")

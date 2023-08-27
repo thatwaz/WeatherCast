@@ -70,6 +70,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+
     // Implement MenuHost's functions
     override fun addMenuProvider(provider: MenuProvider, owner: LifecycleOwner, showState: Lifecycle.State) {
         menuProviders.add(provider)
@@ -94,6 +95,9 @@ class MainActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return menuProviders.any { it.onMenuItemSelected(item) } || super.onOptionsItemSelected(item)
     }
+
+
+
 }
 
 

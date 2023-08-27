@@ -5,12 +5,9 @@ import android.os.Bundle
 import android.util.Log
 import android.view.*
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.navigation.fragment.findNavController
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -24,7 +21,6 @@ import com.thatwaz.weathercast.model.application.WeatherCastApplication
 import com.thatwaz.weathercast.model.data.LocationRepository
 import com.thatwaz.weathercast.model.data.WeatherDataHandler
 import com.thatwaz.weathercast.model.weatherresponse.WeatherResponse
-import com.thatwaz.weathercast.utils.BarometricPressureColorUtil
 import com.thatwaz.weathercast.utils.BarometricPressureColorUtil.getPressureColor
 import com.thatwaz.weathercast.utils.ConversionUtil.breakTextIntoLines
 import com.thatwaz.weathercast.utils.ConversionUtil.capitalizeWords
@@ -45,6 +41,7 @@ class CurrentWeatherFragment : Fragment() {
     lateinit var viewModel: WeatherViewModel
 
     private lateinit var bottomNavView: BottomNavigationView
+
     //    private val viewModel: WeatherViewModel by viewModels()
     private var _binding: FragmentCurrentWeatherBinding? = null
     private val binding get() = _binding!!
@@ -110,13 +107,8 @@ class CurrentWeatherFragment : Fragment() {
     private fun updateWeatherUI(weatherData: WeatherResponse) {
         val pressureInhPa = weatherData.main.pressure
         val pressureInInHg = hPaToInHg(pressureInhPa)
-//        val pressureInInHg = hPaToInHg(pressureInhPa)
-
         val pressureColor = getPressureColor(pressureInhPa)
-
-
-
-//        val pressureColor = getPressureColor(pressureInhPa)
+        Log.i("PRESSURE","press is $pressureInhPa")
         val currentConditions = weatherData.weather[0].description.capitalizeWords()
         val kelvinTemp = weatherData.main.temp
         val fahrenheitTemp = kelvinToFahrenheit(kelvinTemp)
