@@ -9,17 +9,13 @@ import dagger.Component
 @Component(modules = [AppModule::class, DatabaseModule::class, NetworkModule::class])
 interface AppComponent {
 
-    // Inject into CurrentWeatherFragment
     fun inject(fragment: CurrentWeatherFragment)
 
-    // Inject into WeatherViewModel
     fun inject(viewModel: WeatherViewModel)
 
-    // Inject into HourlyFragment
     fun inject(fragment: HourlyFragment)
 
     fun inject(fragment: ForecastFragment)
 
-    // Add other inject methods for any other classes that need injection
 }
 

@@ -1,6 +1,7 @@
 package com.thatwaz.weathercast.viewmodel
 
-import android.util.Log
+
+
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -12,7 +13,6 @@ import com.thatwaz.weathercast.model.database.WeatherDataEntity
 import com.thatwaz.weathercast.model.database.WeatherDatabase
 import com.thatwaz.weathercast.model.forecastresponse.DailyForecast
 import com.thatwaz.weathercast.model.forecastresponse.ForecastResponse
-import com.thatwaz.weathercast.model.forecastresponse.WeatherItem
 import com.thatwaz.weathercast.model.weatherresponse.WeatherResponse
 import com.thatwaz.weathercast.repository.WeatherRepository
 import com.thatwaz.weathercast.utils.ConversionUtil.convertRainToPercentage
@@ -25,7 +25,7 @@ class WeatherViewModel @Inject constructor(
     private val repository: WeatherRepository,
     private val weatherDatabase: WeatherDatabase
 ) : ViewModel() {
-    
+
 
     private val _weatherData = MutableLiveData<Resource<WeatherResponse>>()
     val weatherData: LiveData<Resource<WeatherResponse>> get() = _weatherData
@@ -41,19 +41,17 @@ class WeatherViewModel @Inject constructor(
     private fun consolidateForecastData(forecastResponse: ForecastResponse): List<DailyForecast> {
         val dailyForecasts = mutableListOf<DailyForecast>()
 
-
         // Group the forecast items by day
         val groupedForecasts = forecastResponse.list.groupBy { forecastItem ->
             forecastItem.dtTxt.substringBefore(" ") // Extract the date part
         }
 
-
-
         // Calculate high and low temperatures, weather description, and other properties for each day
         for ((date, forecasts) in groupedForecasts) {
             val highTemp = forecasts.maxByOrNull { it.main.tempMax }?.main?.tempMax ?: 0.0
             val lowTemp = forecasts.minByOrNull { it.main.tempMin }?.main?.tempMin ?: 0.0
-            val weatherDescription = forecasts.firstOrNull()?.weather?.getOrNull(0)?.description ?: ""
+            val weatherDescription =
+                forecasts.firstOrNull()?.weather?.getOrNull(0)?.description ?: ""
             val weatherIcon = forecasts.firstOrNull()?.weather?.getOrNull(0)?.icon ?: ""
             val rainForecast = forecasts.firstOrNull()?.rain
             val chanceOfRain = convertRainToPercentage(rainForecast)
@@ -75,145 +73,120 @@ class WeatherViewModel @Inject constructor(
                     windSpeed = windSpeed,
                     windDeg = windDeg,
                     cityName = forecastResponse.city.name
-
                 )
             )
         }
-
         return dailyForecasts
     }
 
-
-    private fun handleError(errorMsg: String) {
-        _weatherData.value = Resource.Error(errorMsg)
-    }
 
 
     suspend fun fetchWeatherData(latitude: Double, longitude: Double) {
         _weatherData.value = Resource.Loading()
 
-        try {
-            // Check if cached data exists in the Room database
-            val cachedWeatherData =
-                weatherDatabase.weatherDataDao().getWeatherData(latitude, longitude)
-            if (cachedWeatherData != null) {
-                // Cached data found, use it directly
-                Log.i("WeatherCache", "Using cached weather data: ${cachedWeatherData.weatherJson}")
-                _weatherData.value = Resource.Success(
-                    Gson().fromJson(
-                        cachedWeatherData.weatherJson,
-                        WeatherResponse::class.java
-                    )
-                )
-            } else {
-                // No cached data found, fetch data from the API
-                val weatherResponse =
-                    repository.getWeatherData(ApiConfig.APP_ID, latitude, longitude)
-                if (weatherResponse.isSuccessful) {
-                    val weatherResponseBody = weatherResponse.body()
-                    if (weatherResponseBody != null) {
-                        Log.i("DOH!", "Response: $weatherResponseBody")
-                        _weatherData.value = Resource.Success(weatherResponseBody)
-
-                        // Cache the API response in the Room database
-                        val weatherDataEntity = WeatherDataEntity(
-                            latitude = latitude,
-                            longitude = longitude,
-                            weatherJson = Gson().toJson(weatherResponseBody)
-                        )
-                        weatherDatabase.weatherDataDao().insertWeatherData(weatherDataEntity)
-                    } else {
-                        // Handle null response body here if needed
-                        _weatherData.value = Resource.Error("Null response body")
-                    }
-                } else {
-                    // Handle current weather data error
-                    _weatherData.value =
-                        Resource.Error("Error fetching weather data: ${weatherResponse.code()}")
-                }
-            }
-        } catch (e: Exception) {
-            handleError("Error fetching data: ${e.message}")
-            // Handle any other exceptions that might occur during the network request
-            _weatherData.value = Resource.Error("Error fetching data: ${e.message}")
+        val fetchBlock: suspend () -> Response<WeatherResponse> = {
+            repository.getWeatherData(ApiConfig.APP_ID, latitude, longitude)
         }
+
+        val cacheBlock: suspend (WeatherResponse) -> Unit = { weatherResponseBody ->
+            val weatherDataEntity = WeatherDataEntity(
+                latitude = latitude,
+                longitude = longitude,
+                weatherJson = Gson().toJson(weatherResponseBody)
+            )
+            weatherDatabase.weatherDataDao().insertWeatherData(weatherDataEntity)
+        }
+
+        _weatherData.value = fetchAndCacheData(fetchBlock, cacheBlock)
     }
 
     suspend fun fetchHourlyData(latitude: Double, longitude: Double) {
         _hourlyData.value = Resource.Loading()
 
-        try {
-            // Check if cached hourly data exists in the Room database
-            val cachedHourlyData = weatherDatabase.hourlyWeatherDao().getHourlyWeather(latitude, longitude)
-
-            if (cachedHourlyData != null) {
-                // Use cached data
-                Log.i("Cache", "Using cached hourly data")
-                _hourlyData.value = Resource.Success(
-                    Gson().fromJson(
-                        cachedHourlyData.hourlyWeatherJson,
-                        ForecastResponse::class.java
-                    )
-                )
-            } else {
-                Log.i("Cache", "Fetching hourly data from API")
-                // Fetch data from the API
-                val hourlyResponse = repository.getForecastData(ApiConfig.APP_ID, latitude, longitude)
-
-                if (hourlyResponse.isSuccessful) {
-                    val hourlyResponseBody = hourlyResponse.body()
-                    if (hourlyResponseBody != null) {
-                        _hourlyData.value = Resource.Success(hourlyResponseBody)
-
-                        // Cache the API response in the Room database
-                        val hourlyWeatherEntity = HourlyWeatherEntity(
-                            latitude = latitude,
-                            longitude = longitude,
-                            hourlyWeatherJson = Gson().toJson(hourlyResponseBody)
-                        )
-                        weatherDatabase.hourlyWeatherDao().insertHourlyWeather(hourlyWeatherEntity)
-                    } else {
-                        _hourlyData.value = Resource.Error("Null response body")
-                    }
-                } else {
-                    _hourlyData.value = Resource.Error("Error fetching hourly data: ${hourlyResponse.code()}")
-                }
-            }
-        } catch (e: Exception) {
-            _hourlyData.value = Resource.Error("Error fetching hourly data: ${e.message}")
+        val fetchBlock: suspend () -> Response<ForecastResponse> = {
+            repository.getForecastData(ApiConfig.APP_ID, latitude, longitude)
         }
+
+        val cacheBlock: suspend (ForecastResponse) -> Unit = { hourlyResponseBody ->
+            val hourlyWeatherEntity = HourlyWeatherEntity(
+                latitude = latitude,
+                longitude = longitude,
+                hourlyWeatherJson = Gson().toJson(hourlyResponseBody)
+            )
+            weatherDatabase.hourlyWeatherDao().insertHourlyWeather(hourlyWeatherEntity)
+        }
+
+        _hourlyData.value = fetchAndCacheData(fetchBlock, cacheBlock)
     }
 
     suspend fun fetchForecastData(latitude: Double, longitude: Double) {
         _forecastData.value = Resource.Loading()
 
-        try {
-            val forecastResponse = repository.getForecastData(ApiConfig.APP_ID, latitude, longitude)
-            if (forecastResponse.isSuccessful) {
-                val forecastResponseBody = forecastResponse.body()
-                if (forecastResponseBody != null) {
-                    // Cache the API response in the database
-                    val forecastEntity = ForecastEntity(
-                        latitude = latitude,
-                        longitude = longitude,
-                        forecastJson = Gson().toJson(forecastResponseBody)
-                    )
-                    weatherDatabase.forecastDao().insertForecast(forecastEntity)
+        val fetchBlock: suspend () -> Response<ForecastResponse> = {
+            repository.getForecastData(ApiConfig.APP_ID, latitude, longitude)
+        }
 
-                    // Convert the forecastResponseBody to consolidated data
-                    val consolidatedData = consolidateForecastData(forecastResponseBody)
-                    _forecastData.value = Resource.Success(consolidatedData)
-                    Log.i("MOH!", "Consol is $consolidatedData")
+        val cacheBlock: suspend (ForecastResponse) -> Unit = { forecastResponseBody ->
+            val forecastEntity = ForecastEntity(
+                latitude = latitude,
+                longitude = longitude,
+                forecastJson = Gson().toJson(forecastResponseBody)
+            )
+            weatherDatabase.forecastDao().insertForecast(forecastEntity)
+        }
+
+        _forecastData.value = fetchAndCacheForecastData(fetchBlock, cacheBlock)
+    }
+
+
+
+
+    private suspend fun <T> fetchAndCacheData(
+        fetchBlock: suspend () -> Response<T>,
+        cacheBlock: suspend (T) -> Unit
+    ): Resource<T> {
+        try {
+            val response = fetchBlock()
+            if (response.isSuccessful) {
+                val responseBody = response.body()
+                if (responseBody != null) {
+                    cacheBlock(responseBody)
+                    return Resource.Success(responseBody)
                 } else {
-                    _forecastData.value = Resource.Error("Null response body")
+                    return Resource.Error("Null response body")
                 }
             } else {
-                _forecastData.value = Resource.Error("Error fetching forecast data: ${forecastResponse.code()}")
+                return Resource.Error("Error fetching data: ${response.code()}")
             }
         } catch (e: Exception) {
-            _forecastData.value = Resource.Error("Error fetching forecast data: ${e.message}")
+            return Resource.Error("Error fetching data: ${e.message}")
         }
     }
+
+    private suspend fun fetchAndCacheForecastData(
+        fetchBlock: suspend () -> Response<ForecastResponse>,
+        cacheBlock: suspend (ForecastResponse) -> Unit
+    ): Resource<List<DailyForecast>> {
+        try {
+            val response = fetchBlock()
+            return if (response.isSuccessful) {
+                val responseBody = response.body()
+                if (responseBody != null) {
+                    cacheBlock(responseBody)
+                    val consolidatedData = consolidateForecastData(responseBody)
+                    Resource.Success(consolidatedData)
+                } else {
+                    Resource.Error("Null response body")
+                }
+            } else {
+                Resource.Error("Error fetching data: ${response.code()}")
+            }
+        } catch (e: Exception) {
+            return Resource.Error("Error fetching data: ${e.message}")
+        }
+    }
+
+
 
 }
 

@@ -1,12 +1,10 @@
 package com.thatwaz.weathercast.repository
 
-import com.thatwaz.weathercast.config.ApiConfig
+
 import com.thatwaz.weathercast.model.forecastresponse.ForecastResponse
 import com.thatwaz.weathercast.model.weatherresponse.WeatherResponse
 import com.thatwaz.weathercast.network.WeatherService
 import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Inject
 
 class WeatherRepository@Inject constructor(private val weatherService: WeatherService) {
@@ -26,7 +24,6 @@ class WeatherRepository@Inject constructor(private val weatherService: WeatherSe
     ): Response<ForecastResponse> {
         return weatherService.getForecastData(appId,latitude,longitude)
     }
-
 
 }
 

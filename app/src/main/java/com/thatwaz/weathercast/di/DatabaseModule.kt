@@ -16,17 +16,8 @@ class DatabaseModule {
             WeatherDatabase::class.java,
             "weather_database"
         )
-            .fallbackToDestructiveMigration() // Use migration strategy here if needed
+            .fallbackToDestructiveMigration()
             .build()
     }
 }
 
-
-//@Module
-//class DatabaseModule {
-//
-//    @Provides
-//    fun provideWeatherDatabase(context: Context): WeatherDatabase {
-//        return WeatherDatabase.getInstance(context)
-//    }
-//}

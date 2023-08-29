@@ -1,22 +1,17 @@
 package com.thatwaz.weathercast.view.ui
 
 import android.os.Bundle
-import android.util.Log
 import android.view.*
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.google.android.gms.location.LocationCallback
-import com.google.android.gms.location.LocationResult
-import com.google.android.gms.location.LocationServices
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.snackbar.Snackbar
 import com.thatwaz.weathercast.R
 import com.thatwaz.weathercast.databinding.FragmentHourlyBinding
 import com.thatwaz.weathercast.model.application.WeatherCastApplication
-import com.thatwaz.weathercast.model.data.LocationRepository
 import com.thatwaz.weathercast.model.data.WeatherDataHandler
 import com.thatwaz.weathercast.model.forecastresponse.WeatherItem
 import com.thatwaz.weathercast.utils.error.Resource
@@ -25,7 +20,7 @@ import com.thatwaz.weathercast.viewmodel.WeatherViewModel
 import javax.inject.Inject
 
 
-// HourlyFragment.kt
+
 class HourlyFragment : Fragment() {
 
     @Inject
@@ -33,14 +28,8 @@ class HourlyFragment : Fragment() {
 
     private lateinit var bottomNavView: BottomNavigationView
     private lateinit var weatherDataHandler: WeatherDataHandler
-//    private lateinit var locationRepository: LocationRepository
-
-
-
-//    private val viewModel: WeatherViewModel by viewModels()
     private var _binding: FragmentHourlyBinding? = null
     private val binding get() = _binding!!
-
     private var hourlyAdapter: HourlyAdapter? = null
 
     override fun onCreateView(
@@ -48,12 +37,8 @@ class HourlyFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         bottomNavView = activity?.findViewById(R.id.bnv_weather_cast) ?: return binding.root
-        // Inflate the layout for this fragment
         (activity?.application as WeatherCastApplication).appComponent.inject(this)
         _binding = FragmentHourlyBinding.inflate(inflater, container, false)
-//        locationRepository = LocationRepository(
-//            LocationServices.getFusedLocationProviderClient(requireContext())
-//        )
         return binding.root
     }
 
@@ -70,7 +55,6 @@ class HourlyFragment : Fragment() {
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
                 return when (menuItem.itemId) {
                     R.id.action_refresh -> {
-                        // Call your ViewModel or other logic to refresh data
                         refreshHourlyWeatherData()
                         true
                     }
@@ -79,61 +63,45 @@ class HourlyFragment : Fragment() {
             }
         }, viewLifecycleOwner, Lifecycle.State.RESUMED)
 
-
-        // Initialize the WeatherDataHandler on the main thread
         weatherDataHandler = WeatherDataHandler(requireContext(), viewModel)
+
         fetchForecastData()
-        // Set up RecyclerView
         setupRecyclerView()
-
-
 
         viewModel.hourlyData.observe(viewLifecycleOwner) { resource ->
             when (resource) {
                 is Resource.Loading -> {
-                    // Handle loading state if needed
                     setWeatherDataVisibility(false)
                 }
                 is Resource.Success -> {
                     val forecastResponse = resource.data
                     if (forecastResponse != null) {
                         setWeatherDataVisibility(true)
-                        // Log the API response to understand its structure and data
-                        Log.i("MOH!", "Forecast API Response: $forecastResponse")
-                        // prob need to put in function______________________________________________________
                         binding.tvHourlyLocation.text = forecastResponse.city.name
-
-                        // Implement your forecast data handling here based on the forecastResponse
-                        // ...
-                        // Update the RecyclerView with the new forecast data
                         updateRecyclerView(forecastResponse.list)
                     }
                 }
                 is Resource.Error -> {
-                    // Handle error state if needed
                     setWeatherDataVisibility(false)
-                    val errorMessage = resource.errorMessage
-                    Log.e("DOH!", "Error fetching forecast data: $errorMessage")
+                    val errorMessage = resource.errorMessage ?: "An error occurred"
+                    displayErrorMessage(errorMessage)
                 }
             }
         }
     }
 
-
+    private fun displayErrorMessage(errorMessage: String) {
+        Snackbar.make(binding.root, errorMessage, Snackbar.LENGTH_LONG).show()
+    }
 
     private fun fetchForecastData() {
-//        locationRepository.getCurrentLocation { latitude, longitude ->
             weatherDataHandler.fetchWeatherForecast(
                 WeatherDataHandler.ForecastType.HOURLY
             )
         }
-//    }
 
     private fun setupRecyclerView() {
-        // Create the adapter
         hourlyAdapter = HourlyAdapter()
-
-        // Set up the RecyclerView with the adapter
         binding.rvHourlyForecast.apply {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = hourlyAdapter
@@ -141,7 +109,6 @@ class HourlyFragment : Fragment() {
     }
 
     private fun updateRecyclerView(hourlyList: List<WeatherItem>) {
-        // Update the adapter's data with the new forecast list
         hourlyAdapter?.submitList(hourlyList)
 
     }
@@ -152,25 +119,17 @@ class HourlyFragment : Fragment() {
         binding.clTop.visibility = if (isVisible) View.VISIBLE else View.GONE
     }
     private fun refreshHourlyWeatherData() {
-        // Show the loading state (optional, if you want to indicate that data is being fetched)
         setWeatherDataVisibility(false)
-//        binding.progressBar.visibility = View.VISIBLE
-
-        // Request the weather data
         fetchForecastData()
     }
-
 
     override fun onDestroyView() {
         super.onDestroyView()
         viewModel.hourlyData.removeObservers(viewLifecycleOwner)
-        Log.d("HourlyFragment", "onDestroyView called")
         hourlyAdapter = null
         _binding = null
 
     }
-
-
 }
 
 

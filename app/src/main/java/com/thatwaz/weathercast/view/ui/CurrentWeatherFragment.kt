@@ -2,7 +2,6 @@ package com.thatwaz.weathercast.view.ui
 
 
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import android.widget.Toast
 import androidx.core.view.MenuHost
@@ -42,7 +41,6 @@ class CurrentWeatherFragment : Fragment() {
 
     private lateinit var bottomNavView: BottomNavigationView
 
-    //    private val viewModel: WeatherViewModel by viewModels()
     private var _binding: FragmentCurrentWeatherBinding? = null
     private val binding get() = _binding!!
 
@@ -52,11 +50,6 @@ class CurrentWeatherFragment : Fragment() {
 
     private var isErrorOccurred = false
 
-
-//    private fun refreshContent() {
-//        // Your logic to fetch or update the data. Typically, you will call some method from your ViewModel here.
-//        viewModel.refreshWeatherData()
-//    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -74,7 +67,7 @@ class CurrentWeatherFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val menuHost: MenuHost = requireActivity() as MenuHost
+        val menuHost: MenuHost = requireActivity()
 
         menuHost.addMenuProvider(object : MenuProvider {
             override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
@@ -84,7 +77,6 @@ class CurrentWeatherFragment : Fragment() {
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
                 return when (menuItem.itemId) {
                     R.id.action_refresh -> {
-                        // Call your ViewModel or other logic to refresh data
                         refreshCurrentWeatherData()
                         true
                     }
@@ -93,13 +85,10 @@ class CurrentWeatherFragment : Fragment() {
             }
         }, viewLifecycleOwner, Lifecycle.State.RESUMED)
 
-
-        Log.i("MOH!", "On view created")
         setWeatherDataVisibility(false)
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext())
         locationRepository = LocationRepository(fusedLocationClient)
         weatherDataHandler = WeatherDataHandler(requireContext(), viewModel)
-        // Check location permissions and start updates
         observeWeatherData()
         checkLocationPermissions()
     }
@@ -108,7 +97,6 @@ class CurrentWeatherFragment : Fragment() {
         val pressureInhPa = weatherData.main.pressure
         val pressureInInHg = hPaToInHg(pressureInhPa)
         val pressureColor = getPressureColor(pressureInhPa)
-        Log.i("PRESSURE","press is $pressureInhPa")
         val currentConditions = weatherData.weather[0].description.capitalizeWords()
         val kelvinTemp = weatherData.main.temp
         val fahrenheitTemp = kelvinToFahrenheit(kelvinTemp)
@@ -134,7 +122,12 @@ class CurrentWeatherFragment : Fragment() {
             tvFeelsLike.text = formattedFeelsLike
             tvCurrentTemperature.text = fahrenheitTemp.toString()
             tvHumidity.text = formattedHumidity
-            tvWind.text = "$formattedWindDirection ${weatherData.wind.speed.toInt()} mph "
+            tvWind.text = buildString {
+                append(formattedWindDirection)
+                append(" ")
+                append(weatherData.wind.speed.toInt())
+                append(" mph ")
+            }
             tvAirPressure.text = String.format("%.2f", pressureInInHg.toDouble())
             binding.tvAirPressure.paint?.isUnderlineText = true
             binding.tvAirPressure.setTextColor(pressureColor)
@@ -143,8 +136,10 @@ class CurrentWeatherFragment : Fragment() {
                     .actionCurrentWeatherFragmentToBarometricPressureDialogFragment()
                 findNavController().navigate(action)
             }
-//            tvVisibility.text = String.format("%.2f miles", visibilityInMiles)
-            tvVisibility.text = "${visibilityInMiles} miles"
+            tvVisibility.text = buildString {
+                append(visibilityInMiles)
+                append(" miles")
+            }
             tvSunrise.text = sunriseTime
             tvSunset.text = sunsetTime
         }
@@ -218,18 +213,13 @@ class CurrentWeatherFragment : Fragment() {
     }
 
     private fun refreshCurrentWeatherData() {
-        // Show the loading state (optional, if you want to indicate that data is being fetched)
         setWeatherDataVisibility(false)
-//        binding.progressBar.visibility = View.VISIBLE
-
-        // Request the weather data
         requestLocationData()
     }
 
 
     private val locationCallback = object : LocationCallback() {
         override fun onLocationResult(locationResult: LocationResult) {
-//            val lastLocation = locationResult.lastLocation
             weatherDataHandler.requestLocationData()
         }
     }
@@ -237,9 +227,8 @@ class CurrentWeatherFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        // Remove the location callback when the view is destroyed
+        viewModel.weatherData.removeObservers(viewLifecycleOwner)
         fusedLocationClient.removeLocationUpdates(locationCallback)
-        // Nullify the binding to avoid potential memory leaks
         _binding = null
     }
 }

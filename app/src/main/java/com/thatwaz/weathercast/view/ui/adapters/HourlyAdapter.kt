@@ -8,8 +8,6 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.thatwaz.weathercast.databinding.ItemHourlyBinding
-
-
 import com.thatwaz.weathercast.model.forecastresponse.WeatherItem
 import com.thatwaz.weathercast.utils.ConversionUtil
 import com.thatwaz.weathercast.utils.WeatherIconUtil
@@ -43,7 +41,7 @@ class HourlyAdapter :
 
 
         fun bind(weatherItem: WeatherItem, showDate: Boolean) {
-            val unixTimestamp = weatherItem.dt // Access the Unix timestamp from the WeatherItem
+            val unixTimestamp = weatherItem.dt
             val timeRange = ConversionUtil.convertUnixTimestampToTimeRange(unixTimestamp)
             val date = ConversionUtil.convertUnixTimestampToRelativeDate(unixTimestamp)
             val weatherCondition = weatherItem.weather[0].description
@@ -63,9 +61,15 @@ class HourlyAdapter :
                 tvWeatherCondition.text = ConversionUtil.breakTextIntoLines(weatherCondition, 18)
                 val temperatureInFahrenheit =
                     ConversionUtil.kelvinToFahrenheit(weatherItem.main.temp)
-                tvTemperature.text = "${temperatureInFahrenheit}°F"
+                tvTemperature.text = buildString {
+                    append(temperatureInFahrenheit)
+                    append("°F")
+                }
                 ivWeatherIcon.setImageResource(displayIcon)
-                binding.tvChanceOfRain.text = "$chanceOfRainPercentage%"
+                binding.tvChanceOfRain.text = buildString {
+                    append(chanceOfRainPercentage)
+                    append("%")
+                }
 
             }
         }

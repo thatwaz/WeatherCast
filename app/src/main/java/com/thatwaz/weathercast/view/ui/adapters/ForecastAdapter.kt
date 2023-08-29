@@ -67,20 +67,38 @@ class ForecastAdapter :
                 val windSpeed = dailyForecast.windSpeed.toInt()
                 val feelsLikeTemperature = kelvinToFahrenheit(dailyForecast.feelsLikeTemperature)
                 val highTemperatureFahrenheit = kelvinToFahrenheit(dailyForecast.highTemperature)
-                //Refactor the rest of the strings like below
-                val formattedHighTemperature = context.getString(R.string.temperature_high,
-                    highTemperatureFahrenheit.toString())
+                val formattedHighTemperature = context.getString(
+                    R.string.temperature_high,
+                    highTemperatureFahrenheit.toString()
+                )
 
                 binding.apply {
                     tvForecastDescription.text = breakTextIntoLines(forecastDescriptionToCaps, 18)
                     tvForecastDate.text = convertUnixTimestampToFormattedDate(date)
                     tvTemperatureHigh.text = formattedHighTemperature
-                    tvTemperatureLow.text = "$lowTemperatureFahrenheit°F"
-                    tvForecastChanceOfRain.text = "${chanceOfRainPercentage.toInt()}%"
+                    tvTemperatureLow.text = buildString {
+                        append(lowTemperatureFahrenheit)
+                        append("°F")
+                    }
+                    tvForecastChanceOfRain.text = buildString {
+                        append(chanceOfRainPercentage.toInt())
+                        append("%")
+                    }
                     ivForecastIcon.setImageResource(displayIcon)
-                    tvForecastHumidity.text = "${dailyForecast.humidity}%"
-                    tvForecastFeelsLikeTemperature.text = "$feelsLikeTemperature°F"
-                    tvForecastWind.text = "$formattedWindDirection $windSpeed mph"
+                    tvForecastHumidity.text = buildString {
+                        append(dailyForecast.humidity)
+                        append("%")
+                    }
+                    tvForecastFeelsLikeTemperature.text = buildString {
+                        append(feelsLikeTemperature)
+                        append("°F")
+                    }
+                    tvForecastWind.text = buildString {
+                        append(formattedWindDirection)
+                        append(" ")
+                        append(windSpeed)
+                        append(" mph")
+                    }
                 }
             }
         }

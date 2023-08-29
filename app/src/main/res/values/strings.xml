@@ -1,7 +1,5 @@
 <resources>
     <string name="app_name">WeatherCast</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="u00b0">°</string>
     <string name="fahrenheit">F</string>
     <string name="feels_like">Feels Like\u00A0</string>
@@ -27,7 +25,11 @@
     <string name="visibility_icon_description">visibility_icon_description</string>
     <string name="sunrise_icon_description">sunrise_icon_description</string>
     <string name="sunset_icon_description">sunset_icon_description</string>
-
+    <string name="lbl_temperature_high">High</string>
+    <string name="lbl_temperature_low">Low</string>
+    <string name="lbl_humidity">Humidity\u00A0</string>
+    <string name="lbl_wind">Wind\u00A0</string>
+    <string name="lbl_average_feel">Average Feel\u00A0</string>
 
 
 </resources>

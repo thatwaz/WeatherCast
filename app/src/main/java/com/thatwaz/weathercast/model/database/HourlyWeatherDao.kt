@@ -11,5 +11,4 @@ interface HourlyWeatherDao {
     @Query("SELECT * FROM hourly_weather_data WHERE latitude = :latitude AND longitude = :longitude")
     suspend fun getHourlyWeather(latitude: Double, longitude: Double): HourlyWeatherEntity?
 
-
 }

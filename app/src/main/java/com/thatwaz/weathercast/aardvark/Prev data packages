@@ -105,3 +105,150 @@
                 //            Toast.makeText(context, "No internet connection", Toast.LENGTH_SHORT).show()
                 //        }
                 //    }
+
+
+
+                ===================================================================
+
+
+                //    suspend fun fetchWeatherData(latitude: Double, longitude: Double) {
+                //        _weatherData.value = Resource.Loading()
+                //        try {
+                //            val cachedWeatherData =
+                //                weatherDatabase.weatherDataDao().getWeatherData(latitude, longitude)
+                //            if (cachedWeatherData != null) {
+                //                // Cached data found, use it directly
+                //                Log.i("WeatherCache", "Using cached weather data")
+                //                _weatherData.value = Resource.Success(
+                //                    Gson().fromJson(
+                //                        cachedWeatherData.weatherJson,
+                //                        WeatherResponse::class.java
+                //                    )
+                //                )
+                //            } else {
+                //                Log.i("WeatherCache", "retrieving api response")
+                //                // No cached data found, fetch data from the API
+                //                val weatherResponse =
+                //                    repository.getWeatherData(ApiConfig.APP_ID, latitude, longitude)
+                //                if (weatherResponse.isSuccessful) {
+                //                    val weatherResponseBody = weatherResponse.body()
+                //                    if (weatherResponseBody != null) {
+                //                        Log.i("DOH!", "Response: $weatherResponseBody")
+                //                        _weatherData.value = Resource.Success(weatherResponseBody)
+                //
+                //                        // Cache the API response in the Room database
+                //                        val weatherDataEntity = WeatherDataEntity(
+                //                            latitude = latitude,
+                //                            longitude = longitude,
+                //                            weatherJson = Gson().toJson(weatherResponseBody)
+                //                        )
+                //                        weatherDatabase.weatherDataDao().insertWeatherData(weatherDataEntity)
+                //                    } else {
+                //                        // Handle null response body here if needed
+                //                        _weatherData.value = Resource.Error("Null response body")
+                //                    }
+                //                } else {
+                //                    // Handle current weather data error
+                //                    _weatherData.value =
+                //                        Resource.Error("Error fetching weather data: ${weatherResponse.code()}")
+                //                }
+                //            }
+                //        } catch (e: Exception) {
+                //            handleError("Error fetching data: ${e.message}")
+                //            _weatherData.value = Resource.Error("Error fetching data: ${e.message}")
+                //        }
+                //    }
+                //
+                //    suspend fun fetchHourlyData(latitude: Double, longitude: Double) {
+                //        _hourlyData.value = Resource.Loading()
+                //
+                //        try {
+                //            // Check if cached hourly data exists in the Room database
+                //            val cachedHourlyData =
+                //                weatherDatabase.hourlyWeatherDao().getHourlyWeather(latitude, longitude)
+                //
+                //            if (cachedHourlyData != null) {
+                //                // Use cached data
+                //                Log.i("Cache", "Using cached hourly data")
+                //                _hourlyData.value = Resource.Success(
+                //                    Gson().fromJson(
+                //                        cachedHourlyData.hourlyWeatherJson,
+                //                        ForecastResponse::class.java
+                //                    )
+                //                )
+                //            } else {
+                //                Log.i("Cache", "Fetching hourly data from API")
+                //                // Fetch data from the API
+                //                val hourlyResponse =
+                //                    repository.getForecastData(ApiConfig.APP_ID, latitude, longitude)
+                //
+                //                if (hourlyResponse.isSuccessful) {
+                //                    val hourlyResponseBody = hourlyResponse.body()
+                //                    if (hourlyResponseBody != null) {
+                //                        _hourlyData.value = Resource.Success(hourlyResponseBody)
+                //
+                //                        // Cache the API response in the Room database
+                //                        val hourlyWeatherEntity = HourlyWeatherEntity(
+                //                            latitude = latitude,
+                //                            longitude = longitude,
+                //                            hourlyWeatherJson = Gson().toJson(hourlyResponseBody)
+                //                        )
+                //                        weatherDatabase.hourlyWeatherDao().insertHourlyWeather(hourlyWeatherEntity)
+                //                    } else {
+                //                        _hourlyData.value = Resource.Error("Null response body")
+                //                    }
+                //                } else {
+                //                    _hourlyData.value =
+                //                        Resource.Error("Error fetching hourly data: ${hourlyResponse.code()}")
+                //                }
+                //            }
+                //        } catch (e: Exception) {
+                //            _hourlyData.value = Resource.Error("Error fetching hourly data: ${e.message}")
+                //        }
+                //    }
+                //
+                //    suspend fun fetchForecastData(latitude: Double, longitude: Double) {
+                //        _forecastData.value = Resource.Loading()
+                //
+                //        try {
+                //            // Check if cached forecast data exists in the Room database
+                //            val cachedForecastData = weatherDatabase.forecastDao().getForecast(latitude, longitude)
+                //
+                //            if (cachedForecastData != null) {
+                //                // Use cached data
+                //                Log.i("Cache", "Using cached forecast data")
+                //                val consolidatedData = consolidateForecastData(Gson().fromJson(
+                //                    cachedForecastData.forecastJson,
+                //                    ForecastResponse::class.java
+                //                ))
+                //                _forecastData.value = Resource.Success(consolidatedData)
+                //            } else {
+                //                Log.i("Cache", "Fetching forecast data from API")
+                //                val forecastResponse = repository.getForecastData(ApiConfig.APP_ID, latitude, longitude)
+                //
+                //                if (forecastResponse.isSuccessful) {
+                //                    val forecastResponseBody = forecastResponse.body()
+                //                    if (forecastResponseBody != null) {
+                //                        // Cache the API response in the database
+                //                        val forecastEntity = ForecastEntity(
+                //                            latitude = latitude,
+                //                            longitude = longitude,
+                //                            forecastJson = Gson().toJson(forecastResponseBody)
+                //                        )
+                //                        weatherDatabase.forecastDao().insertForecast(forecastEntity)
+                //
+                //                        val consolidatedData = consolidateForecastData(forecastResponseBody)
+                //                        _forecastData.value = Resource.Success(consolidatedData)
+                //                        Log.i("MOH!", "Consol is $consolidatedData")
+                //                    } else {
+                //                        _forecastData.value = Resource.Error("Null response body")
+                //                    }
+                //                } else {
+                //                    _forecastData.value =
+                //                        Resource.Error("Error fetching forecast data: ${forecastResponse.code()}")
+                //                }
+                //            }
+                //        } catch (e: Exception) {
+                //            _forecastData.value = Resource.Error("Error fetching forecast data: ${e.message}")
+                //        }
+                //    }

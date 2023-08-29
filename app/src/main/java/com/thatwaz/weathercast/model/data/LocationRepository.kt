@@ -15,19 +15,12 @@ class LocationRepository(private val fusedLocationClient: FusedLocationProviderC
             priority = LocationRequest.PRIORITY_HIGH_ACCURACY
             smallestDisplacement = 1000f // Set the minimum displacement (in meters) for updates
         }
-//        val locationRequest = LocationRequest.create().apply {
-//            priority = LocationRequest.PRIORITY_HIGH_ACCURACY
-//            interval = 100000
-//        }
 
         val locationCallback = object : LocationCallback() {
             override fun onLocationResult(locationResult: LocationResult) {
                 val lastLocation: Location? = locationResult.lastLocation
                 if (lastLocation != null) {
                     callback(lastLocation.latitude, lastLocation.longitude)
-                } else {
-                    // Handle the case when location is null or unavailable
-                    // For example, you can show an error message or provide a default location
                 }
             }
         }
@@ -38,5 +31,4 @@ class LocationRepository(private val fusedLocationClient: FusedLocationProviderC
             null
         )
     }
-
 }

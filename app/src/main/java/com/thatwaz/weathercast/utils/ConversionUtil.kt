@@ -2,7 +2,6 @@ package com.thatwaz.weathercast.utils
 
 import android.icu.text.SimpleDateFormat
 import android.icu.util.Calendar
-import com.thatwaz.weathercast.model.forecastresponse.DailyForecast
 import com.thatwaz.weathercast.model.forecastresponse.RainForecast
 import java.util.*
 import kotlin.math.round
@@ -17,9 +16,6 @@ object ConversionUtil {
         return (hPaPressure / 33.8639).toString()
     }
 
-//    fun convertMetersToMiles(visibilityInMeters: Int): Double {
-//        return visibilityInMeters / 1609.34 // 1 mile = 1609.34 meters
-//    }
 
     fun convertMetersToMiles(visibilityInMeters: Int): Int {
         return if (visibilityInMeters >= 10000) {
@@ -40,7 +36,9 @@ object ConversionUtil {
     fun convertUnixTimestampToTimeRange(unixTimestamp: Long): String {
         val dateFormat = SimpleDateFormat("h a", Locale.getDefault())
         val startTime = Date(unixTimestamp * 1000)
-        val endTime = Date((unixTimestamp + 3 * 60 * 60) * 1000) // Adding 3 hours to the start time
+        val endTime = Date((unixTimestamp + 3 * 60 * 60) * 1000) /* Adding 3 hours to the start
+        time removes current weather details in hourly fragment and displays only future data
+        */
         return "${dateFormat.format(startTime)} TO ${dateFormat.format(endTime)}"
     }
 
@@ -90,7 +88,7 @@ object ConversionUtil {
 
 
     fun convertRainToPercentage(rainForecast: RainForecast?): Int {
-        if (rainForecast == null || rainForecast.`3h` == null) {
+        if (rainForecast == null) {
             return 0 // If rain data is not available, return 0% chance of rain
         }
 
@@ -118,9 +116,8 @@ object ConversionUtil {
         }
 
         // Calculate the nearest multiple of 10
-        val nearestMultipleOf10 = ((roundedPercentage + 9) / 10) * 10
 
-        return nearestMultipleOf10
+        return ((roundedPercentage + 9) / 10) * 10
     }
 
     fun convertUnixTimestampToFormattedDate(date: Date): String {
@@ -157,10 +154,9 @@ object ConversionUtil {
                 cal1.get(Calendar.DAY_OF_YEAR) == cal2.get(Calendar.DAY_OF_YEAR)
     }
 
-
     fun String.capitalizeWords(): String = split(" ")
-        .joinToString(" ") {
-            it.replaceFirstChar {
+        .joinToString(" ") { word ->
+            word.replaceFirstChar {
                 if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString()
             }
         }
