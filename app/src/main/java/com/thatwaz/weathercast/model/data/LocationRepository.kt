@@ -1,22 +1,29 @@
 package com.thatwaz.weathercast.model.data
 
-import com.google.android.gms.location.FusedLocationProviderClient
 import android.annotation.SuppressLint
 import android.location.Location
-import com.google.android.gms.location.LocationCallback
-import com.google.android.gms.location.LocationRequest
-import com.google.android.gms.location.LocationResult
+import android.util.Log
+import com.google.android.gms.location.*
+import javax.inject.Inject
 
-class LocationRepository(private val fusedLocationClient: FusedLocationProviderClient) {
+
+class LocationRepository @Inject constructor(private val fusedLocationClient: FusedLocationProviderClient) {
+
+    private var locationCallback: LocationCallback? = null  // make it an instance variable
 
     @SuppressLint("MissingPermission")
     fun getCurrentLocation(callback: (latitude: Double, longitude: Double) -> Unit) {
-        val locationRequest = LocationRequest.create().apply {
-            priority = LocationRequest.PRIORITY_HIGH_ACCURACY
-            smallestDisplacement = 1000f // Set the minimum displacement (in meters) for updates
-        }
+        // Remove any existing location updates to ensure we're not creating multiple callbacks
+        removeLocationUpdates()
+        val locationRequest = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 10000)
+            .apply {
+                setWaitForAccurateLocation(false)
+                setMinUpdateIntervalMillis(10 * 60 * 1000)  // 10 minutes in milliseconds
+                setMaxUpdateDelayMillis(10 * 60 * 1000)  // 10 minutes in milliseconds
+                setMinUpdateDistanceMeters(1000f) // Minimum distance for update in meters
+            }.build()
 
-        val locationCallback = object : LocationCallback() {
+        locationCallback = object : LocationCallback() {
             override fun onLocationResult(locationResult: LocationResult) {
                 val lastLocation: Location? = locationResult.lastLocation
                 if (lastLocation != null) {
@@ -25,10 +32,53 @@ class LocationRepository(private val fusedLocationClient: FusedLocationProviderC
             }
         }
 
-        fusedLocationClient.requestLocationUpdates(
-            locationRequest,
-            locationCallback,
-            null
-        )
+        locationCallback?.let {
+            fusedLocationClient.requestLocationUpdates(
+                locationRequest,
+                it,
+                null
+            )
+        }
+    }
+
+    fun removeLocationUpdates() {
+        Log.i("MOH!", "Repository removeLocationUpdates called")
+        locationCallback?.let {
+            fusedLocationClient.removeLocationUpdates(it)
+            locationCallback = null // This may help in releasing the memory
+        }
     }
 }
+
+
+
+//        val locationRequest = LocationRequest.create().apply {
+//            priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+//            smallestDisplacement = 1000f // Set the minimum displacement (in meters) for updates
+//        }
+
+//class LocationRepository(private val fusedLocationClient: FusedLocationProviderClient) {
+//
+//    @SuppressLint("MissingPermission")
+//    fun getCurrentLocation(callback: (latitude: Double, longitude: Double) -> Unit) {
+//        val locationRequest = LocationRequest.create().apply {
+//            priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+//            smallestDisplacement = 1000f // Set the minimum displacement (in meters) for updates
+//        }
+//
+//        val locationCallback = object : LocationCallback() {
+//            override fun onLocationResult(locationResult: LocationResult) {
+//                val lastLocation: Location? = locationResult.lastLocation
+//                if (lastLocation != null) {
+//                    callback(lastLocation.latitude, lastLocation.longitude)
+//                }
+//            }
+//        }
+//
+//        fusedLocationClient.requestLocationUpdates(
+//            locationRequest,
+//            locationCallback,
+//            null
+//        )
+//    }
+//}

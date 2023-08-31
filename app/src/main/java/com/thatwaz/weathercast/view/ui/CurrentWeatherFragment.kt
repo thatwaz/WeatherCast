@@ -1,7 +1,9 @@
 package com.thatwaz.weathercast.view.ui
 
 
+
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import android.widget.Toast
 import androidx.core.view.MenuHost
@@ -9,10 +11,6 @@ import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.navigation.fragment.findNavController
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationCallback
-import com.google.android.gms.location.LocationResult
-import com.google.android.gms.location.LocationServices
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.thatwaz.weathercast.R
 import com.thatwaz.weathercast.databinding.FragmentCurrentWeatherBinding
@@ -33,22 +31,29 @@ import com.thatwaz.weathercast.utils.WeatherIconUtil
 import com.thatwaz.weathercast.utils.error.Resource
 import com.thatwaz.weathercast.viewmodel.WeatherViewModel
 import javax.inject.Inject
+import kotlin.math.ceil
+
 
 class CurrentWeatherFragment : Fragment() {
 
     @Inject
     lateinit var viewModel: WeatherViewModel
 
-    private lateinit var bottomNavView: BottomNavigationView
+    @Inject
+    lateinit var locationRepository: LocationRepository
+
+    @Inject
+    lateinit var weatherDataHandler: WeatherDataHandler
+
+//    @Inject
+//    lateinit var fusedLocationProviderClient: FusedLocationProviderClient
 
     private var _binding: FragmentCurrentWeatherBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var fusedLocationClient: FusedLocationProviderClient
-    private lateinit var locationRepository: LocationRepository
-    private lateinit var weatherDataHandler: WeatherDataHandler
+//    private lateinit var weatherDataHandler: WeatherDataHandler
+    private lateinit var bottomNavView: BottomNavigationView
 
-    private var isErrorOccurred = false
 
 
     override fun onCreateView(
@@ -57,16 +62,23 @@ class CurrentWeatherFragment : Fragment() {
     ): View {
         bottomNavView = activity?.findViewById(R.id.bnv_weather_cast) ?: return binding.root
         bottomNavView.visibility = View.VISIBLE
+
         _binding = FragmentCurrentWeatherBinding.inflate(inflater, container, false)
         (activity?.application as WeatherCastApplication).appComponent.inject(this)
-        viewModel.weatherData.removeObservers(viewLifecycleOwner)
 
         return binding.root
     }
 
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        setupMenu()
+        initializeComponents()
+        observeWeatherData()
+        checkLocationPermissions()
+    }
+
+    private fun setupMenu() {
         val menuHost: MenuHost = requireActivity()
 
         menuHost.addMenuProvider(object : MenuProvider {
@@ -74,26 +86,60 @@ class CurrentWeatherFragment : Fragment() {
                 menuInflater.inflate(R.menu.menu_refresh, menu)
             }
 
-            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
-                return when (menuItem.itemId) {
-                    R.id.action_refresh -> {
-                        refreshCurrentWeatherData()
-                        true
-                    }
-                    else -> false
+            override fun onMenuItemSelected(menuItem: MenuItem) = when (menuItem.itemId) {
+                R.id.action_refresh -> {
+                    refreshCurrentWeatherData()
+                    true
                 }
+                else -> false
             }
         }, viewLifecycleOwner, Lifecycle.State.RESUMED)
+    }
 
+    private fun initializeComponents() {
         setWeatherDataVisibility(false)
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext())
-        locationRepository = LocationRepository(fusedLocationClient)
         weatherDataHandler = WeatherDataHandler(requireContext(), viewModel)
-        observeWeatherData()
-        checkLocationPermissions()
+    }
+
+    private fun observeWeatherData() {
+        viewModel.weatherData.observe(viewLifecycleOwner) { resource ->
+            when (resource) {
+                is Resource.Success -> {
+                    setWeatherDataVisibility(true)
+                    updateWeatherUI(resource.data!!)
+                }
+                is Resource.Error -> {
+                    setWeatherDataVisibility(false)
+                    resource.errorMessage?.let { showToast(it) }
+                }
+                is Resource.Loading -> {
+                    setWeatherDataVisibility(false)
+                }
+            }
+        }
+    }
+
+    private fun setCurrentWeatherImage(iconId: String) {
+        val resourceId = WeatherIconUtil.getWeatherImageResource(iconId)
+        binding.ivCurrentWeatherImage.setImageResource(resourceId)
+    }
+
+    private fun setCurrentWeatherIcon(iconId: String) {
+        val resourceId = WeatherIconUtil.getWeatherIconResource(iconId)
+        binding.ivCurrentWeatherIcon.setImageResource(resourceId)
+    }
+
+    private fun setWeatherDataVisibility(isVisible: Boolean) {
+        val visibilityStatus = if (isVisible) View.VISIBLE else View.GONE
+        with(binding) {
+            listOf(clLoading, clCurrentWeatherDetails, clLocation, clTop).forEach { view ->
+                view.visibility = visibilityStatus
+            }
+        }
     }
 
     private fun updateWeatherUI(weatherData: WeatherResponse) {
+
         val pressureInhPa = weatherData.main.pressure
         val pressureInInHg = hPaToInHg(pressureInhPa)
         val pressureColor = getPressureColor(pressureInhPa)
@@ -125,7 +171,7 @@ class CurrentWeatherFragment : Fragment() {
             tvWind.text = buildString {
                 append(formattedWindDirection)
                 append(" ")
-                append(weatherData.wind.speed.toInt())
+                append(ceil(weatherData.wind.speed).toInt())
                 append(" mph ")
             }
             tvAirPressure.text = String.format("%.2f", pressureInInHg.toDouble())
@@ -152,64 +198,13 @@ class CurrentWeatherFragment : Fragment() {
     private fun checkLocationPermissions() {
         PermissionUtil.requestLocationPermissions(
             requireContext(),
-            { // On permission granted
-                requestLocationData()
-            },
-            { // On permission denied
-                showToast("You have denied permission")
-            }
+            { requestLocationData() },
+            { showToast("You have denied permission") }
         )
     }
 
-    private fun observeWeatherData() {
-        viewModel.weatherData.observe(viewLifecycleOwner) { resource ->
-            when (resource) {
-                is Resource.Success -> {
-                    setWeatherDataVisibility(true)
-                    handleWeatherData(resource.data!!)
-                }
-                is Resource.Error -> {
-                    isErrorOccurred = true
-                    setWeatherDataVisibility(false)
-                    resource.errorMessage?.let { showErrorToast(it) } // Show the error message
-                }
-                is Resource.Loading -> {
-                    setWeatherDataVisibility(false)
-                }
-            }
-        }
-    }
-
-    private fun showErrorToast(errorMessage: String) {
-        showToast(errorMessage)
-    }
-
     private fun requestLocationData() {
-        locationRepository.getCurrentLocation { _, _ ->
-            weatherDataHandler.requestLocationData()
-        }
-    }
-
-
-    private fun setCurrentWeatherImage(iconId: String) {
-        val resourceId = WeatherIconUtil.getWeatherImageResource(iconId)
-        binding.ivCurrentWeatherImage.setImageResource(resourceId)
-    }
-
-    private fun setCurrentWeatherIcon(iconId: String) {
-        val resourceId = WeatherIconUtil.getWeatherIconResource(iconId)
-        binding.ivCurrentWeatherIcon.setImageResource(resourceId)
-    }
-
-    private fun setWeatherDataVisibility(isVisible: Boolean) {
-        binding.clLoading.visibility = if (isVisible) View.INVISIBLE else View.VISIBLE
-        binding.clCurrentWeatherDetails.visibility = if (isVisible) View.VISIBLE else View.GONE
-        binding.clLocation.visibility = if (isVisible) View.VISIBLE else View.GONE
-        binding.clTop.visibility = if (isVisible) View.VISIBLE else View.GONE
-    }
-
-    private fun handleWeatherData(weatherData: WeatherResponse) {
-        updateWeatherUI(weatherData)
+        locationRepository.getCurrentLocation { _, _ -> weatherDataHandler.requestLocationData() }
     }
 
     private fun refreshCurrentWeatherData() {
@@ -217,19 +212,173 @@ class CurrentWeatherFragment : Fragment() {
         requestLocationData()
     }
 
-
-    private val locationCallback = object : LocationCallback() {
-        override fun onLocationResult(locationResult: LocationResult) {
-            weatherDataHandler.requestLocationData()
-        }
-    }
-
-
     override fun onDestroyView() {
         super.onDestroyView()
         viewModel.weatherData.removeObservers(viewLifecycleOwner)
-        fusedLocationClient.removeLocationUpdates(locationCallback)
+        weatherDataHandler.cleanUp()
+        Log.i("MOH!", "CW removeLocationUpdates called")
+        locationRepository.removeLocationUpdates()
         _binding = null
     }
 }
 
+
+
+
+
+
+//class CurrentWeatherFragment : Fragment() {
+//
+//    @Inject
+//    lateinit var viewModel: WeatherViewModel
+//
+//    @Inject
+//    lateinit var locationRepository: LocationRepository
+//
+//    private lateinit var bottomNavView: BottomNavigationView
+//
+//    private var _binding: FragmentCurrentWeatherBinding? = null
+//    private val binding get() = _binding!!
+//
+////    private lateinit var fusedLocationClient: FusedLocationProviderClient
+//
+//    @Inject
+//    lateinit var fusedLocationProviderClient: FusedLocationProviderClient
+////    private lateinit var locationRepository: LocationRepository
+//    private lateinit var weatherDataHandler: WeatherDataHandler
+//
+//    private var isErrorOccurred = false
+//
+//
+//    override fun onCreateView(
+//        inflater: LayoutInflater, container: ViewGroup?,
+//        savedInstanceState: Bundle?
+//    ): View {
+//        bottomNavView = activity?.findViewById(R.id.bnv_weather_cast) ?: return binding.root
+//        bottomNavView.visibility = View.VISIBLE
+//        _binding = FragmentCurrentWeatherBinding.inflate(inflater, container, false)
+//        (activity?.application as WeatherCastApplication).appComponent.inject(this)
+//        viewModel.weatherData.removeObservers(viewLifecycleOwner)
+//
+//        return binding.root
+//    }
+//
+//
+//    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+//        super.onViewCreated(view, savedInstanceState)
+//        val menuHost: MenuHost = requireActivity()
+//
+//        menuHost.addMenuProvider(object : MenuProvider {
+//            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+//                menuInflater.inflate(R.menu.menu_refresh, menu)
+//            }
+//
+//            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+//                return when (menuItem.itemId) {
+//                    R.id.action_refresh -> {
+//                        refreshCurrentWeatherData()
+//                        true
+//                    }
+//                    else -> false
+//                }
+//            }
+//        }, viewLifecycleOwner, Lifecycle.State.RESUMED)
+//
+//        setWeatherDataVisibility(false)
+//        fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext())
+//        locationRepository = LocationRepository(fusedLocationClient)
+//        weatherDataHandler = WeatherDataHandler(requireContext(), viewModel)
+//        observeWeatherData()
+//        checkLocationPermissions()
+//    }
+//
+//
+//
+//    private fun showToast(message: String) {
+//        Toast.makeText(requireContext(), message, Toast.LENGTH_LONG).show()
+//    }
+//
+//    private fun checkLocationPermissions() {
+//        PermissionUtil.requestLocationPermissions(
+//            requireContext(),
+//            { // On permission granted
+//                requestLocationData()
+//            },
+//            { // On permission denied
+//                showToast("You have denied permission")
+//            }
+//        )
+//    }
+//
+//    private fun observeWeatherData() {
+//        viewModel.weatherData.observe(viewLifecycleOwner) { resource ->
+//            when (resource) {
+//                is Resource.Success -> {
+//                    setWeatherDataVisibility(true)
+//                    handleWeatherData(resource.data!!)
+//                }
+//                is Resource.Error -> {
+//                    isErrorOccurred = true
+//                    setWeatherDataVisibility(false)
+//                    resource.errorMessage?.let { showErrorToast(it) } // Show the error message
+//                }
+//                is Resource.Loading -> {
+//                    setWeatherDataVisibility(false)
+//                }
+//            }
+//        }
+//    }
+//
+//    private fun showErrorToast(errorMessage: String) {
+//        showToast(errorMessage)
+//    }
+//
+//    private fun requestLocationData() {
+//        locationRepository.getCurrentLocation { _, _ ->
+//            weatherDataHandler.requestLocationData()
+//        }
+//    }
+//
+//
+//    private fun setCurrentWeatherImage(iconId: String) {
+//        val resourceId = WeatherIconUtil.getWeatherImageResource(iconId)
+//        binding.ivCurrentWeatherImage.setImageResource(resourceId)
+//    }
+//
+//    private fun setCurrentWeatherIcon(iconId: String) {
+//        val resourceId = WeatherIconUtil.getWeatherIconResource(iconId)
+//        binding.ivCurrentWeatherIcon.setImageResource(resourceId)
+//    }
+//
+//    private fun setWeatherDataVisibility(isVisible: Boolean) {
+//        binding.clLoading.visibility = if (isVisible) View.INVISIBLE else View.VISIBLE
+//        binding.clCurrentWeatherDetails.visibility = if (isVisible) View.VISIBLE else View.GONE
+//        binding.clLocation.visibility = if (isVisible) View.VISIBLE else View.GONE
+//        binding.clTop.visibility = if (isVisible) View.VISIBLE else View.GONE
+//    }
+//
+//    private fun handleWeatherData(weatherData: WeatherResponse) {
+//        updateWeatherUI(weatherData)
+//    }
+//
+//    private fun refreshCurrentWeatherData() {
+//        setWeatherDataVisibility(false)
+//        requestLocationData()
+//    }
+//
+//
+//    private val locationCallback = object : LocationCallback() {
+//        override fun onLocationResult(locationResult: LocationResult) {
+//            weatherDataHandler.requestLocationData()
+//        }
+//    }
+//
+//
+//    override fun onDestroyView() {
+//        super.onDestroyView()
+//        viewModel.weatherData.removeObservers(viewLifecycleOwner)
+//        fusedLocationClient.removeLocationUpdates(locationCallback)
+//        locationRepository.removeLocationUpdates()
+//        _binding = null
+//    }
+//}

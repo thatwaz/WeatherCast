@@ -1,19 +1,18 @@
 package com.thatwaz.weathercast.view.ui
 
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.google.android.gms.location.LocationServices
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.snackbar.Snackbar
 import com.thatwaz.weathercast.R
 import com.thatwaz.weathercast.databinding.FragmentForecastBinding
 import com.thatwaz.weathercast.model.application.WeatherCastApplication
-import com.thatwaz.weathercast.model.data.LocationRepository
 import com.thatwaz.weathercast.model.data.WeatherDataHandler
 import com.thatwaz.weathercast.model.forecastresponse.DailyForecast
 import com.thatwaz.weathercast.utils.error.Resource
@@ -30,7 +29,7 @@ class ForecastFragment : Fragment() {
 
     private lateinit var bottomNavView: BottomNavigationView
     private lateinit var weatherDataHandler: WeatherDataHandler
-    private lateinit var locationRepository: LocationRepository
+//    private lateinit var locationRepository: LocationRepository
 
     private var _binding: FragmentForecastBinding? = null
     private val binding get() = _binding!!
@@ -68,9 +67,9 @@ class ForecastFragment : Fragment() {
             }
         }, viewLifecycleOwner, Lifecycle.State.RESUMED)
 
-        locationRepository = LocationRepository(
-            LocationServices.getFusedLocationProviderClient(requireContext())
-        )
+//        locationRepository = LocationRepository(
+//            LocationServices.getFusedLocationProviderClient(requireContext())
+//        )
 
         weatherDataHandler = WeatherDataHandler(requireContext(), viewModel)
 
@@ -135,6 +134,10 @@ class ForecastFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         forecastAdapter = null
+        viewModel.forecastData.removeObservers(viewLifecycleOwner)
+        weatherDataHandler.cleanUp()
+        Log.i("MOH!", "Forecast removeLocationUpdates called")
+//        locationRepository.removeLocationUpdates()
         _binding = null
     }
 }

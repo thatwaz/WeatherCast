@@ -1,6 +1,7 @@
 package com.thatwaz.weathercast.view.ui
 
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
@@ -126,6 +127,9 @@ class HourlyFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         viewModel.hourlyData.removeObservers(viewLifecycleOwner)
+        weatherDataHandler.cleanUp()
+        Log.i("MOH!", "Hourly removeLocationUpdates called")
+//        locationRepository.removeLocationUpdates()
         hourlyAdapter = null
         _binding = null
 

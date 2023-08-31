@@ -6,14 +6,16 @@ import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.MenuProvider
 import androidx.lifecycle.DefaultLifecycleObserver
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupActionBarWithNavController
+import com.google.android.gms.location.FusedLocationProviderClient
 import com.thatwaz.weathercast.R
 import com.thatwaz.weathercast.databinding.ActivityMainBinding
-
+import com.thatwaz.weathercast.model.application.WeatherCastApplication
+import com.thatwaz.weathercast.model.data.WeatherDataHandler
+import javax.inject.Inject
 
 
 // start date 07/10/2023
@@ -24,8 +26,14 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var navController: NavController
+
     private val menuProviders = mutableListOf<MenuProvider>()
 
+    @Inject
+    lateinit var weatherDataHandler: WeatherDataHandler
+
+    @Inject
+    lateinit var fusedLocationProviderClient: FusedLocationProviderClient
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,6 +45,8 @@ class MainActivity : AppCompatActivity() {
         navController = navHostFragment.navController
 
         setupActionBarWithNavController(navController)
+
+        (application as WeatherCastApplication).appComponent.inject(this)
 
         supportActionBar?.setDisplayHomeAsUpEnabled(false)
 
@@ -70,7 +80,7 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    override fun addMenuProvider(provider: MenuProvider, owner: LifecycleOwner, showState: Lifecycle.State) {
+    override fun addMenuProvider(provider: MenuProvider, owner: LifecycleOwner) {
         menuProviders.add(provider)
         owner.lifecycle.addObserver(object : DefaultLifecycleObserver {
             override fun onDestroy(owner: LifecycleOwner) {
@@ -96,6 +106,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
+//        weatherDataHandler.cleanUp()
         menuProviders.clear()
     }
 

@@ -12,4 +12,11 @@ interface WeatherDataDao {
 
     @Query("SELECT * FROM weather_data WHERE latitude = :latitude AND longitude = :longitude")
     suspend fun getWeatherData(latitude: Double, longitude: Double): WeatherDataEntity?
+
+    @Query("SELECT COUNT(*) FROM weather_data")
+    suspend fun getCount(): Int
+
+    @Query("DELETE FROM weather_data WHERE id = (SELECT MIN(id) FROM weather_data)")
+    suspend fun deleteOldestEntry()
+
 }

@@ -57,7 +57,7 @@ dependencies {
     implementation 'com.github.bumptech.glide:glide:4.11.0'
     kapt 'com.github.bumptech.glide:compiler:4.11.0'
 
-    implementation 'com.google.android.gms:play-services-location:17.0.0'
+    implementation 'com.google.android.gms:play-services-location:21.0.1'
     implementation 'com.karumi:dexter:6.2.3'
 
     // Retrofit
@@ -67,6 +67,7 @@ dependencies {
 //    implementation("com.squareup.okhttp3:logging-interceptor:4.9.0")
 
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.12'
+
 
     // ViewModel
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version")

@@ -249,3 +249,187 @@ initial ui test
             val afternoonWeather: String,
             val eveningWeather: String
         )
+        \
+
+
+
+            private fun updateWeatherUI(weatherData: WeatherResponse) {
+                val pressureInhPa = weatherData.main.pressure
+                val pressureInInHg = hPaToInHg(pressureInhPa)
+                val pressureColor = getPressureColor(pressureInhPa)
+                val currentConditions = weatherData.weather[0].description.capitalizeWords()
+                val kelvinTemp = weatherData.main.temp
+                val fahrenheitTemp = kelvinToFahrenheit(kelvinTemp)
+                val humidityValue = weatherData.main.humidity
+                val formattedHumidity = "$humidityValue%"
+                val kelvinFeelsLikeTemp = weatherData.main.feelsLike
+                val fahrenheitFeelsLikeTemp = kelvinToFahrenheit(kelvinFeelsLikeTemp).toString()
+                val formattedFeelsLike = "$fahrenheitFeelsLikeTemp\u00B0"
+                val windDirectionDegrees = weatherData.wind.deg
+                val formattedWindDirection = getWindDirection(windDirectionDegrees)
+                val visibilityInMeters = weatherData.visibility
+                val visibilityInMiles = convertMetersToMiles(visibilityInMeters)
+                val sunriseTime = convertUnixTimestampToTimeWithAMPM(weatherData.sys.sunrise.toLong())
+                val sunsetTime = convertUnixTimestampToTimeWithAMPM(weatherData.sys.sunset.toLong())
+                val imageIcon = weatherData.weather[0].icon
+
+                setCurrentWeatherImage(imageIcon)
+                setCurrentWeatherIcon(imageIcon)
+
+                binding.apply {
+                    tvLocation.text = weatherData.name
+                    tvCurrentConditions.text = breakTextIntoLines(currentConditions, 18)
+                    tvFeelsLike.text = formattedFeelsLike
+                    tvCurrentTemperature.text = fahrenheitTemp.toString()
+                    tvHumidity.text = formattedHumidity
+                    tvWind.text = buildString {
+                        append(formattedWindDirection)
+                        append(" ")
+                        append(ceil(weatherData.wind.speed).toInt())
+                        append(" mph ")
+                    }
+                    tvAirPressure.text = String.format("%.2f", pressureInInHg.toDouble())
+                    binding.tvAirPressure.paint?.isUnderlineText = true
+                    binding.tvAirPressure.setTextColor(pressureColor)
+                    binding.tvAirPressure.setOnClickListener {
+                        val action = CurrentWeatherFragmentDirections
+                            .actionCurrentWeatherFragmentToBarometricPressureDialogFragment()
+                        findNavController().navigate(action)
+                    }
+                    tvVisibility.text = buildString {
+                        append(visibilityInMiles)
+                        append(" miles")
+                    }
+                    tvSunrise.text = sunriseTime
+                    tvSunset.text = sunsetTime
+                }
+            }
+
+
+
+class ForecastFragment : Fragment() {
+
+
+    @Inject
+    lateinit var viewModel: WeatherViewModel
+
+    @Inject
+    lateinit var locationRepository: LocationRepository
+
+    private lateinit var bottomNavView: BottomNavigationView
+    private lateinit var weatherDataHandler: WeatherDataHandler
+//    private lateinit var locationRepository: LocationRepository
+
+    private var _binding: FragmentForecastBinding? = null
+    private val binding get() = _binding!!
+
+    private var forecastAdapter: ForecastAdapter? = null
+
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        bottomNavView = activity?.findViewById(R.id.bnv_weather_cast) ?: return binding.root
+        (activity?.application as WeatherCastApplication).appComponent.inject(this)
+        _binding = FragmentForecastBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        val menuHost: MenuHost = requireActivity()
+
+        menuHost.addMenuProvider(object : MenuProvider {
+            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+                menuInflater.inflate(R.menu.menu_refresh, menu)
+            }
+
+            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+                return when (menuItem.itemId) {
+                    R.id.action_refresh -> {
+                        refreshForecastWeatherData()
+                        true
+                    }
+                    else -> false
+                }
+            }
+        }, viewLifecycleOwner, Lifecycle.State.RESUMED)
+
+        requestLocationData()
+//        locationRepository = LocationRepository(
+//            LocationServices.getFusedLocationProviderClient(requireContext())
+//        )
+
+        weatherDataHandler = WeatherDataHandler(requireContext(), viewModel)
+
+        setupRecyclerView()
+        fetchForecastData()
+
+
+        viewModel.forecastData.observe(viewLifecycleOwner) { resource ->
+            when (resource) {
+                is Resource.Loading -> {
+                    setWeatherDataVisibility(false)
+                }
+                is Resource.Success -> {
+                    val dailyForecasts = resource.data
+                    if (dailyForecasts != null) {
+                        setWeatherDataVisibility(true)
+                        binding.tvForecastLocation.text = dailyForecasts[0].cityName
+                        updateRecyclerView(dailyForecasts)
+                    }
+                }
+                is Resource.Error -> {
+                    setWeatherDataVisibility(false)
+                    val errorMessage = resource.errorMessage ?: "An error occurred"
+                    displayErrorMessage(errorMessage)
+                }
+            }
+        }
+    }
+
+    private fun requestLocationData() {
+        locationRepository.getCurrentLocation { _, _ -> weatherDataHandler.requestLocationData() }
+    }
+
+    private fun displayErrorMessage(errorMessage: String) {
+        Snackbar.make(binding.root, errorMessage, Snackbar.LENGTH_LONG).show()
+    }
+
+    private fun fetchForecastData() {
+        weatherDataHandler.fetchWeatherForecast(
+            WeatherDataHandler.ForecastType.DAILY
+        )
+    }
+
+    private fun setupRecyclerView() {
+        forecastAdapter = ForecastAdapter()
+        binding.rvForecast.apply {
+            layoutManager = LinearLayoutManager(requireContext())
+            adapter = forecastAdapter
+        }
+    }
+
+    private fun updateRecyclerView(dailyForecasts: List<DailyForecast>) {
+        forecastAdapter?.submitList(dailyForecasts)
+    }
+    private fun setWeatherDataVisibility(isVisible: Boolean) {
+        binding.clLoading.visibility = if (isVisible) View.INVISIBLE else View.VISIBLE
+        binding.clForecastTop.visibility = if (isVisible) View.VISIBLE else View.GONE
+        binding.rvForecast.visibility = if (isVisible) View.VISIBLE else View.GONE
+    }
+    private fun refreshForecastWeatherData() {
+        setWeatherDataVisibility(false)
+        fetchForecastData()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        forecastAdapter = null
+        viewModel.forecastData.removeObservers(viewLifecycleOwner)
+        weatherDataHandler.cleanUp()
+        locationRepository.removeLocationUpdates()
+        _binding = null
+    }
+}
