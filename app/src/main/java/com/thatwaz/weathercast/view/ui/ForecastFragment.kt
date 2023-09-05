@@ -27,6 +27,8 @@ class ForecastFragment : Fragment() {
     @Inject
     lateinit var viewModel: WeatherViewModel
 
+
+
     private lateinit var bottomNavView: BottomNavigationView
     private lateinit var weatherDataHandler: WeatherDataHandler
 //    private lateinit var locationRepository: LocationRepository
@@ -48,7 +50,7 @@ class ForecastFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        Log.i("Current","Rendering forecast fragment")
         val menuHost: MenuHost = requireActivity()
 
         menuHost.addMenuProvider(object : MenuProvider {
@@ -73,8 +75,9 @@ class ForecastFragment : Fragment() {
 
         weatherDataHandler = WeatherDataHandler(requireContext(), viewModel)
 
-        setupRecyclerView()
         fetchForecastData()
+        setupRecyclerView()
+
 
 
         viewModel.forecastData.observe(viewLifecycleOwner) { resource ->

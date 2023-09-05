@@ -433,3 +433,40 @@ class ForecastFragment : Fragment() {
         _binding = null
     }
 }
+
+//    private suspend fun pruneOldDatabaseEntries(
+//        getCount: suspend () -> Int,
+//        deleteOldestEntry: suspend () -> Unit
+//    ) {
+//        val initialCount = getCount()
+//        Log.i("MOH!", "Before: Total number of entries: $initialCount")
+//        Log.i("MOH!", "Running on thread: ${Thread.currentThread().name}")
+//
+//        var currentCount = initialCount
+//
+//        while (currentCount > 2) {
+//            deleteOldestEntry()
+//            currentCount = getCount()
+//        }
+//
+//        Log.i("MOH!", "After: Total number of entries: $currentCount")
+//        Log.i("MOH!", "Running on thread: ${Thread.currentThread().name}")
+//    }
+
+
+//    private suspend fun pruneOldDatabaseEntries(
+//        getCount: suspend () -> Int,
+//        deleteOldestEntry: suspend () -> Unit
+//    ) {
+//        val initialCount = getCount()
+//        Log.i("MOH!", "Before: Total number of entries: $initialCount")
+//
+//        var currentCount = initialCount
+//
+//        while (currentCount > 2) {
+//            deleteOldestEntry()
+//            currentCount = getCount()
+//        }
+//
+//        Log.i("MOH!", "After: Total number of entries: $currentCount")
+//    }

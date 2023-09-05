@@ -28,21 +28,17 @@ class WeatherDataHandler @Inject constructor(
         }
     }
 
-//    private fun isNetworkConnected(): Boolean {
-//        val network = connectivityManager.activeNetwork ?: return false
-//        val networkCapabilities = connectivityManager.getNetworkCapabilities(network) ?: return false
-//
-//        return networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) ||
-//                networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) ||
-//                networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET)
-//    }
 
     private fun fetchWeatherData(latitude: Double, longitude: Double) {
+        Log.d("WeatherDataHandler", "fetchWeatherData - Start")
+        val start = System.currentTimeMillis()
         val isConnected = isNetworkConnected(connectivityManager) && NetworkUtil.isInternetAvailable(connectivityManager)
 
         if (isConnected) {
             viewModel.viewModelScope.launch {
                 viewModel.fetchWeatherData(latitude, longitude)
+                val end = System.currentTimeMillis()
+                Log.d("WeatherDataHandler", "Weather data fetched in ${end - start} ms")
             }
         } else {
             Toast.makeText(applicationContext, "No internet connection", Toast.LENGTH_SHORT).show()

@@ -1,39 +1,32 @@
 package com.thatwaz.weathercast.viewmodel
 
 
-
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.gson.Gson
 import com.thatwaz.weathercast.config.ApiConfig
-import com.thatwaz.weathercast.model.database.ForecastEntity
-import com.thatwaz.weathercast.model.database.HourlyWeatherEntity
-import com.thatwaz.weathercast.model.database.WeatherDataEntity
-import com.thatwaz.weathercast.model.database.WeatherDatabase
+import com.thatwaz.weathercast.model.database.*
 import com.thatwaz.weathercast.model.forecastresponse.DailyForecast
 import com.thatwaz.weathercast.model.forecastresponse.ForecastResponse
 import com.thatwaz.weathercast.model.weatherresponse.WeatherResponse
 import com.thatwaz.weathercast.repository.WeatherRepository
 import com.thatwaz.weathercast.utils.ConversionUtil.convertRainToPercentage
 import com.thatwaz.weathercast.utils.error.Resource
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import retrofit2.Response
 import javax.inject.Inject
+
+
+
 
 
 class WeatherViewModel @Inject constructor(
     private val repository: WeatherRepository,
     private val weatherDatabase: WeatherDatabase
 ) : ViewModel() {
-
-    //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    suspend fun logWeatherDataCount() {
-        val count = weatherDatabase.weatherDataDao().getCount()
-        Log.i("MOH!", "Total number of entries: $count")
-    }
-
-
 
 
     private val _weatherData = MutableLiveData<Resource<WeatherResponse>>()
@@ -88,33 +81,10 @@ class WeatherViewModel @Inject constructor(
         return dailyForecasts
     }
 
+
+
     suspend fun fetchWeatherData(latitude: Double, longitude: Double) {
-
-        //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-        logWeatherDataCount()
         _weatherData.value = Resource.Loading()
-
-
-        // FOR initial database entry removal
-//        val initialCount = weatherDatabase.weatherDataDao().getCount()
-//        Log.i("MOH!", "Before: Total number of entries: $initialCount")
-//
-//        var currentCount = initialCount
-//
-//        while (currentCount > 10) {
-//            weatherDatabase.weatherDataDao().deleteOldestEntry()
-//            currentCount = weatherDatabase.weatherDataDao().getCount()
-//        }
-//
-//        Log.i("MOH!", "After: Total number of entries: $currentCount")
-
-        val count = weatherDatabase.weatherDataDao().getCount()
-        Log.i("MOH!", "Before: Total number of entries: $count")
-        if (count > 10) {
-            weatherDatabase.weatherDataDao().deleteOldestEntry()
-        }
-        val newCount = weatherDatabase.weatherDataDao().getCount()
-        Log.i("MOH!", "After: Total number of entries: $newCount")
 
         val fetchBlock: suspend () -> Response<WeatherResponse> = {
             repository.getWeatherData(ApiConfig.APP_ID, latitude, longitude)
@@ -171,26 +141,22 @@ class WeatherViewModel @Inject constructor(
     }
 
 
-
-
     private suspend fun <T> fetchAndCacheData(
         fetchBlock: suspend () -> Response<T>,
         cacheBlock: suspend (T) -> Unit
     ): Resource<T> {
         try {
             val response = fetchBlock()
-            return if (response.isSuccessful) {
+            if (response.isSuccessful) {
                 val responseBody = response.body()
                 if (responseBody != null) {
                     cacheBlock(responseBody)
-                    Log.i("DOH!","Response is $responseBody")
-                    Resource.Success(responseBody)
-
+                    return Resource.Success(responseBody)
                 } else {
-                    Resource.Error("Null response body")
+                    return Resource.Error("Null response body")
                 }
             } else {
-                Resource.Error("Error fetching data: ${response.code()}")
+                return Resource.Error("Error fetching data: ${response.code()}")
             }
         } catch (e: Exception) {
             return Resource.Error("Error fetching data: ${e.message}")
@@ -220,6 +186,4 @@ class WeatherViewModel @Inject constructor(
         }
     }
 }
-
-
 

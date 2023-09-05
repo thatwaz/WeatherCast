@@ -11,4 +11,10 @@ interface HourlyWeatherDao {
     @Query("SELECT * FROM hourly_weather_data WHERE latitude = :latitude AND longitude = :longitude")
     suspend fun getHourlyWeather(latitude: Double, longitude: Double): HourlyWeatherEntity?
 
+    @Query("DELETE FROM hourly_weather_data WHERE id = (SELECT MIN(id) FROM hourly_weather_data)")
+    suspend fun deleteOldestEntry()
+
+    @Query("SELECT COUNT(*) FROM hourly_weather_data")
+    suspend fun getCount(): Int
+
 }

@@ -27,6 +27,8 @@ class HourlyFragment : Fragment() {
     @Inject
     lateinit var viewModel: WeatherViewModel
 
+
+
     private lateinit var bottomNavView: BottomNavigationView
     private lateinit var weatherDataHandler: WeatherDataHandler
     private var _binding: FragmentHourlyBinding? = null
@@ -45,7 +47,7 @@ class HourlyFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+            Log.i("Current","Rendering Hourly Fragment")
             val menuHost: MenuHost = requireActivity()
 
         menuHost.addMenuProvider(object : MenuProvider {
@@ -66,7 +68,7 @@ class HourlyFragment : Fragment() {
 
         weatherDataHandler = WeatherDataHandler(requireContext(), viewModel)
 
-        fetchForecastData()
+        fetchHourlyForecastData()
         setupRecyclerView()
 
         viewModel.hourlyData.observe(viewLifecycleOwner) { resource ->
@@ -75,11 +77,11 @@ class HourlyFragment : Fragment() {
                     setWeatherDataVisibility(false)
                 }
                 is Resource.Success -> {
-                    val forecastResponse = resource.data
-                    if (forecastResponse != null) {
+                    val hourlyForecastResponse = resource.data
+                    if (hourlyForecastResponse != null) {
                         setWeatherDataVisibility(true)
-                        binding.tvHourlyLocation.text = forecastResponse.city.name
-                        updateRecyclerView(forecastResponse.list)
+                        binding.tvHourlyLocation.text = hourlyForecastResponse.city.name
+                        updateRecyclerView(hourlyForecastResponse.list)
                     }
                 }
                 is Resource.Error -> {
@@ -95,7 +97,7 @@ class HourlyFragment : Fragment() {
         Snackbar.make(binding.root, errorMessage, Snackbar.LENGTH_LONG).show()
     }
 
-    private fun fetchForecastData() {
+    private fun fetchHourlyForecastData() {
             weatherDataHandler.fetchWeatherForecast(
                 WeatherDataHandler.ForecastType.HOURLY
             )
@@ -121,7 +123,7 @@ class HourlyFragment : Fragment() {
     }
     private fun refreshHourlyWeatherData() {
         setWeatherDataVisibility(false)
-        fetchForecastData()
+        fetchHourlyForecastData()
     }
 
     override fun onDestroyView() {
