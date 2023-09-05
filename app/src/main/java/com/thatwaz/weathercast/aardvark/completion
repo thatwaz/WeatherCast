@@ -1,0 +1,20 @@
+1. remove this and other aardvark files
+DONE 2. fix visibility setting
+DONE 3. get rid of api key
+DONE 4. get launcher icon
+DONE 5. cache hourly and forecast
+6. complete code clean-up
+7. build a new repo and read me
+DONE 8. Round wind speed
+DONE 9. Finish barometric pressure and test red color
+DONE 10. Extract remaining strings
+11. Review Gradle files esp. okhttp
+DONE 12. ON destroy in fragments
+
+13. verify commented out code in database does not cause issue
+14. do the same with forecast data classes
+15. review comments once again in conversion util
+16. validate network util still works after refactor
+17. build lint.xml see if you could add unused gradle dependencies along with resources
+18. clean view model and any log notes
+19. Scroll view on current weather for device rotation or redo u.i. in horizontal fashion
