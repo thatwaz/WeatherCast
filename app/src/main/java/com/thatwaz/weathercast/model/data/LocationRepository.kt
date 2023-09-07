@@ -16,7 +16,7 @@ class LocationRepository @Inject constructor(private val fusedLocationClient: Fu
         Log.d("LocationRepository", "getCurrentLocation - Start")
         val start = System.currentTimeMillis()
         // Remove any existing location updates to ensure we're not creating multiple callbacks
-        removeLocationUpdates()
+//        removeLocationUpdates()
         val locationRequest = LocationRequest.Builder(Priority.PRIORITY_BALANCED_POWER_ACCURACY, 10000)
             .apply {
                 setWaitForAccurateLocation(false)

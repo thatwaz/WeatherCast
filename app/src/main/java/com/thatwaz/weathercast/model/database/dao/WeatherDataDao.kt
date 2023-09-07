@@ -1,12 +1,10 @@
-package com.thatwaz.weathercast.model.database
+package com.thatwaz.weathercast.model.database.dao
 
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.thatwaz.weathercast.model.weatherresponse.WeatherResponse
-import com.thatwaz.weathercast.utils.error.Resource
-import kotlinx.coroutines.flow.Flow
+import com.thatwaz.weathercast.model.database.WeatherDataEntity
 
 @Dao
 interface WeatherDataDao {

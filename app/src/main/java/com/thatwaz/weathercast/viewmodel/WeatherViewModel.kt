@@ -6,21 +6,24 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import com.thatwaz.weathercast.config.ApiConfig
-import com.thatwaz.weathercast.model.database.*
+import com.thatwaz.weathercast.model.database.WeatherDataEntity
+import com.thatwaz.weathercast.model.database.WeatherDatabase
+import com.thatwaz.weathercast.model.database.dbcleanup.DatabaseCleanupUtil
+import com.thatwaz.weathercast.model.database.entities.ForecastEntity
+import com.thatwaz.weathercast.model.database.entities.HourlyWeatherEntity
 import com.thatwaz.weathercast.model.forecastresponse.DailyForecast
 import com.thatwaz.weathercast.model.forecastresponse.ForecastResponse
 import com.thatwaz.weathercast.model.weatherresponse.WeatherResponse
 import com.thatwaz.weathercast.repository.WeatherRepository
 import com.thatwaz.weathercast.utils.ConversionUtil.convertRainToPercentage
+import com.thatwaz.weathercast.utils.ForecastDataConsolidator
 import com.thatwaz.weathercast.utils.error.Resource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import retrofit2.Response
 import javax.inject.Inject
-
-
-
 
 
 class WeatherViewModel @Inject constructor(
@@ -35,58 +38,39 @@ class WeatherViewModel @Inject constructor(
     private val _hourlyData = MutableLiveData<Resource<ForecastResponse>>()
     val hourlyData: LiveData<Resource<ForecastResponse>> get() = _hourlyData
 
-
     private val _forecastData = MutableLiveData<Resource<List<DailyForecast>>>()
     val forecastData: LiveData<Resource<List<DailyForecast>>> get() = _forecastData
 
 
-    private fun consolidateForecastData(forecastResponse: ForecastResponse): List<DailyForecast> {
-        val dailyForecasts = mutableListOf<DailyForecast>()
+    suspend fun fetchWeatherData(latitude: Double, longitude: Double) {
+        showLoading()
 
-        // Group the forecast items by day
-        val groupedForecasts = forecastResponse.list.groupBy { forecastItem ->
-            forecastItem.dtTxt.substringBefore(" ") // Extract the date part
+        if (loadFromCache(latitude, longitude)) {
+            return
         }
 
-        // Calculate high and low temperatures, weather description, and other properties for each day
-        for ((date, forecasts) in groupedForecasts) {
-            val highTemp = forecasts.maxByOrNull { it.main.tempMax }?.main?.tempMax ?: 0.0
-            val lowTemp = forecasts.minByOrNull { it.main.tempMin }?.main?.tempMin ?: 0.0
-            val weatherDescription =
-                forecasts.firstOrNull()?.weather?.getOrNull(0)?.description ?: ""
-            val weatherIcon = forecasts.firstOrNull()?.weather?.getOrNull(0)?.icon ?: ""
-            val rainForecast = forecasts.firstOrNull()?.rain
-            val chanceOfRain = convertRainToPercentage(rainForecast)
-            val humidity = forecasts.firstOrNull()?.main?.humidity ?: 0
-            val feelsLikeTemperature = forecasts.firstOrNull()?.main?.feelsLike ?: 0.0
-            val windSpeed = forecasts.firstOrNull()?.wind?.speed ?: 0.0
-            val windDeg = forecasts.firstOrNull()?.wind?.deg ?: 0
-
-            dailyForecasts.add(
-                DailyForecast(
-                    date = date,
-                    highTemperature = highTemp,
-                    lowTemperature = lowTemp,
-                    weatherDescription = weatherDescription,
-                    weatherIcon = weatherIcon,
-                    chanceOfRain = chanceOfRain.toDouble(),
-                    humidity = humidity,
-                    feelsLikeTemperature = feelsLikeTemperature,
-                    windSpeed = windSpeed,
-                    windDeg = windDeg,
-                    cityName = forecastResponse.city.name
-                )
-            )
-        }
-        return dailyForecasts
+        fetchDataFromApiAndCache(latitude, longitude)
     }
 
-
-
-    suspend fun fetchWeatherData(latitude: Double, longitude: Double) {
+    private fun showLoading() {
         _weatherData.value = Resource.Loading()
+    }
 
+    private suspend fun loadFromCache(latitude: Double, longitude: Double): Boolean {
+        val cachedData = weatherDatabase.weatherDataDao().getWeatherData(latitude, longitude)
+        if (cachedData != null) {
+            Log.i("WeatherApp", "Using cached data for weather.")
+            val weatherResponse = Gson().fromJson(cachedData.weatherJson, WeatherResponse::class.java)
+            _weatherData.postValue(Resource.Success(weatherResponse))
+            return true
+        }
+        return false
+    }
+
+    private suspend fun fetchDataFromApiAndCache(latitude: Double, longitude: Double) {
+        // Prepare blocks for network fetch and cache operations
         val fetchBlock: suspend () -> Response<WeatherResponse> = {
+            Log.i("WeatherApp", "Making a new API call for weather data.")
             repository.getWeatherData(ApiConfig.APP_ID, latitude, longitude)
         }
 
@@ -99,13 +83,30 @@ class WeatherViewModel @Inject constructor(
             weatherDatabase.weatherDataDao().insertWeatherData(weatherDataEntity)
         }
 
+        // Update LiveData on the Main thread
         _weatherData.value = fetchAndCacheData(fetchBlock, cacheBlock)
     }
+
+
 
     suspend fun fetchHourlyData(latitude: Double, longitude: Double) {
         _hourlyData.value = Resource.Loading()
 
+        // Prune old database entries if needed.
+        DatabaseCleanupUtil.cleanupHourlyWeatherDatabase(weatherDatabase)
+
+        // Check for existing cached data
+        val cachedData = weatherDatabase.hourlyWeatherDao().getHourlyWeather(latitude, longitude)
+        if (cachedData != null) {
+            Log.i("WeatherApp", "Using cached data for hourly weather.")
+            val hourlyResponse = Gson().fromJson(cachedData.hourlyWeatherJson, ForecastResponse::class.java)
+            _hourlyData.postValue(Resource.Success(hourlyResponse))
+            return
+        }
+
+        // Prepare blocks for network fetch and cache operations
         val fetchBlock: suspend () -> Response<ForecastResponse> = {
+            Log.i("WeatherApp", "Making a new API call for hourly weather data.")
             repository.getForecastData(ApiConfig.APP_ID, latitude, longitude)
         }
 
@@ -118,13 +119,29 @@ class WeatherViewModel @Inject constructor(
             weatherDatabase.hourlyWeatherDao().insertHourlyWeather(hourlyWeatherEntity)
         }
 
+        // Fetch and cache data
         _hourlyData.value = fetchAndCacheData(fetchBlock, cacheBlock)
     }
 
     suspend fun fetchForecastData(latitude: Double, longitude: Double) {
         _forecastData.value = Resource.Loading()
 
+        // Prune old database entries if needed.
+        DatabaseCleanupUtil.cleanupForecastWeatherDatabase(weatherDatabase)
+
+        // Check for existing cached data
+        val cachedData = weatherDatabase.forecastDao().getForecast(latitude, longitude)
+        if (cachedData != null) {
+            Log.i("WeatherApp", "Using cached data for daily weather.")
+            val forecastResponse = Gson().fromJson(cachedData.forecastJson, ForecastResponse::class.java)
+            val consolidatedData = ForecastDataConsolidator.consolidate(forecastResponse)
+            _forecastData.postValue(Resource.Success(consolidatedData))
+            return
+        }
+
+        // Prepare blocks for network fetch and cache operations
         val fetchBlock: suspend () -> Response<ForecastResponse> = {
+            Log.i("WeatherApp", "Making a new API call for daily weather data.")
             repository.getForecastData(ApiConfig.APP_ID, latitude, longitude)
         }
 
@@ -137,7 +154,11 @@ class WeatherViewModel @Inject constructor(
             weatherDatabase.forecastDao().insertForecast(forecastEntity)
         }
 
-        _forecastData.value = fetchAndCacheForecastData(fetchBlock, cacheBlock)
+        // Fetch and cache data
+        val fetchedData = fetchAndCacheForecastData(fetchBlock, cacheBlock)
+
+        // Update LiveData
+        _forecastData.value = fetchedData
     }
 
 
@@ -146,17 +167,19 @@ class WeatherViewModel @Inject constructor(
         cacheBlock: suspend (T) -> Unit
     ): Resource<T> {
         try {
+            Log.d("WeatherViewModel", "Attempting to fetch new data...")
             val response = fetchBlock()
-            if (response.isSuccessful) {
+            return if (response.isSuccessful) {
                 val responseBody = response.body()
                 if (responseBody != null) {
                     cacheBlock(responseBody)
-                    return Resource.Success(responseBody)
+                    Log.d("WeatherViewModel", "Data successfully fetched and cached.")
+                    Resource.Success(responseBody)
                 } else {
-                    return Resource.Error("Null response body")
+                    Resource.Error("Null response body")
                 }
             } else {
-                return Resource.Error("Error fetching data: ${response.code()}")
+                Resource.Error("Error fetching data: ${response.code()}")
             }
         } catch (e: Exception) {
             return Resource.Error("Error fetching data: ${e.message}")
@@ -168,12 +191,14 @@ class WeatherViewModel @Inject constructor(
         cacheBlock: suspend (ForecastResponse) -> Unit
     ): Resource<List<DailyForecast>> {
         try {
+            Log.d("WeatherViewModel", "Attempting to fetch new forecast data...")
             val response = fetchBlock()
             return if (response.isSuccessful) {
                 val responseBody = response.body()
                 if (responseBody != null) {
                     cacheBlock(responseBody)
-                    val consolidatedData = consolidateForecastData(responseBody)
+                    Log.d("WeatherViewModel", "Forecast data successfully fetched and cached.")
+                    val consolidatedData = ForecastDataConsolidator.consolidate(responseBody)
                     Resource.Success(consolidatedData)
                 } else {
                     Resource.Error("Null response body")

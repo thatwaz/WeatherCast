@@ -336,3 +336,155 @@ class WeatherViewModel @Inject constructor(
     }
 
 }
+
+
+
+//    suspend fun fetchWeatherData(latitude: Double, longitude: Double) {
+//        _weatherData.value = Resource.Loading()
+//
+//        DatabaseCleanupUtil.cleanupCurrentWeatherDatabase(weatherDatabase)
+//
+//        val fetchBlock: suspend () -> Response<WeatherResponse> = {
+//            repository.getWeatherData(ApiConfig.APP_ID, latitude, longitude)
+//        }
+//
+//        val cacheBlock: suspend (WeatherResponse) -> Unit = { weatherResponseBody ->
+//            val weatherDataEntity = WeatherDataEntity(
+//                latitude = latitude,
+//                longitude = longitude,
+//                weatherJson = Gson().toJson(weatherResponseBody)
+//            )
+//            weatherDatabase.weatherDataDao().insertWeatherData(weatherDataEntity)
+//        }
+//
+//        _weatherData.value = fetchAndCacheData(fetchBlock, cacheBlock)
+//    }
+
+
+
+
+
+    ///******************************************* &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+//    suspend fun fetchWeatherData(latitude: Double, longitude: Double) {
+//        Log.d("ThreadCheck", "Current thread: ${Thread.currentThread().name}")
+//        _weatherData.value = Resource.Loading()
+//
+//        // Prune old database entries if needed.
+//        DatabaseCleanupUtil.cleanupCurrentWeatherDatabase(weatherDatabase)
+//
+//        // Check for existing cached data
+//        val cachedData = weatherDatabase.weatherDataDao().getWeatherData(latitude, longitude)
+//        if (cachedData != null) {
+//            Log.i("WeatherApp", "Using cached data for weather.")
+//            val weatherResponse =
+//                Gson().fromJson(cachedData.weatherJson, WeatherResponse::class.java)
+//                _weatherData.postValue(Resource.Success(weatherResponse))
+//
+//            return
+//        }
+//
+//        // Prepare blocks for network fetch and cache operations
+//        val fetchBlock: suspend () -> Response<WeatherResponse> = {
+//            Log.i("WeatherApp", "Making a new API call for weather data.")
+//            repository.getWeatherData(ApiConfig.APP_ID, latitude, longitude)
+//        }
+//
+//        val cacheBlock: suspend (WeatherResponse) -> Unit = { weatherResponseBody ->
+//            val weatherDataEntity = WeatherDataEntity(
+//                latitude = latitude,
+//                longitude = longitude,
+//                weatherJson = Gson().toJson(weatherResponseBody)
+//            )
+//            weatherDatabase.weatherDataDao().insertWeatherData(weatherDataEntity)
+//        }
+//        // Update LiveData on the Main thread
+//
+//            _weatherData.value = fetchAndCacheData(fetchBlock, cacheBlock)
+//
+//    }
+
+
+//    suspend fun fetchWeatherData(latitude: Double, longitude: Double) {
+//        _weatherData.value = Resource.Loading()
+//
+//        DatabaseCleanupUtil.cleanupCurrentWeatherDatabase(weatherDatabase)
+//
+//        val fetchBlock: suspend () -> Response<WeatherResponse> = {
+//            repository.getWeatherData(ApiConfig.APP_ID, latitude, longitude)
+//        }
+//
+//        val cacheBlock: suspend (WeatherResponse) -> Unit = { weatherResponseBody ->
+//            val weatherDataEntity = WeatherDataEntity(
+//                latitude = latitude,
+//                longitude = longitude,
+//                weatherJson = Gson().toJson(weatherResponseBody)
+//            )
+//            weatherDatabase.weatherDataDao().insertWeatherData(weatherDataEntity)
+//        }
+//
+//        _weatherData.value = fetchAndCacheData(fetchBlock, cacheBlock)
+//    }
+
+//    suspend fun fetchHourlyData(latitude: Double, longitude: Double) {
+//
+//        _hourlyData.value = Resource.Loading()
+//
+//        DatabaseCleanupUtil.cleanupHourlyWeatherDatabase(weatherDatabase)
+//
+//        val fetchBlock: suspend () -> Response<ForecastResponse> = {
+//            repository.getForecastData(ApiConfig.APP_ID, latitude, longitude)
+//        }
+//
+//        val cacheBlock: suspend (ForecastResponse) -> Unit = { hourlyResponseBody ->
+//            val hourlyWeatherEntity = HourlyWeatherEntity(
+//                latitude = latitude,
+//                longitude = longitude,
+//                hourlyWeatherJson = Gson().toJson(hourlyResponseBody)
+//            )
+//            weatherDatabase.hourlyWeatherDao().insertHourlyWeather(hourlyWeatherEntity)
+//        }
+//
+//        _hourlyData.value = fetchAndCacheData(fetchBlock, cacheBlock)
+//    }
+
+
+   private fun consolidateForecastData(forecastResponse: ForecastResponse): List<DailyForecast> {
+        val dailyForecasts = mutableListOf<DailyForecast>()
+
+        // Group the forecast items by day
+        val groupedForecasts = forecastResponse.list.groupBy { forecastItem ->
+            forecastItem.dtTxt.substringBefore(" ") // Extract the date part
+        }
+
+        // Calculate high and low temperatures, weather description, and other properties for each day
+        for ((date, forecasts) in groupedForecasts) {
+            val highTemp = forecasts.maxByOrNull { it.main.tempMax }?.main?.tempMax ?: 0.0
+            val lowTemp = forecasts.minByOrNull { it.main.tempMin }?.main?.tempMin ?: 0.0
+            val weatherDescription =
+                forecasts.firstOrNull()?.weather?.getOrNull(0)?.description ?: ""
+            val weatherIcon = forecasts.firstOrNull()?.weather?.getOrNull(0)?.icon ?: ""
+            val rainForecast = forecasts.firstOrNull()?.rain
+            val chanceOfRain = convertRainToPercentage(rainForecast)
+            val humidity = forecasts.firstOrNull()?.main?.humidity ?: 0
+            val feelsLikeTemperature = forecasts.firstOrNull()?.main?.feelsLike ?: 0.0
+            val windSpeed = forecasts.firstOrNull()?.wind?.speed ?: 0.0
+            val windDeg = forecasts.firstOrNull()?.wind?.deg ?: 0
+
+            dailyForecasts.add(
+                DailyForecast(
+                    date = date,
+                    highTemperature = highTemp,
+                    lowTemperature = lowTemp,
+                    weatherDescription = weatherDescription,
+                    weatherIcon = weatherIcon,
+                    chanceOfRain = chanceOfRain.toDouble(),
+                    humidity = humidity,
+                    feelsLikeTemperature = feelsLikeTemperature,
+                    windSpeed = windSpeed,
+                    windDeg = windDeg,
+                    cityName = forecastResponse.city.name
+                )
+            )
+        }
+        return dailyForecasts
+    }

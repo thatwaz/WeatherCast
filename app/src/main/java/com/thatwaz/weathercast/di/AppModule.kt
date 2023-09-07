@@ -20,10 +20,10 @@ class AppModule(private val application: WeatherCastApplication) {
     @Provides
     fun provideContext(): Context = application.applicationContext
 
-    @Provides
-    fun provideWeatherDataHandler(context: Context, viewModel: WeatherViewModel): WeatherDataHandler {
-        return WeatherDataHandler(context, viewModel)
-    }
+//    @Provides
+//    fun provideWeatherDataHandler(context: Context, viewModel: WeatherViewModel): WeatherDataHandler {
+//        return WeatherDataHandler(context, viewModel)
+//    }
     @Provides
     fun provideFusedLocationProviderClient(context: Context): FusedLocationProviderClient {
         return LocationServices.getFusedLocationProviderClient(context)

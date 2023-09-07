@@ -1,6 +1,7 @@
-package com.thatwaz.weathercast.model.database
+package com.thatwaz.weathercast.model.database.dao
 
 import androidx.room.*
+import com.thatwaz.weathercast.model.database.entities.HourlyWeatherEntity
 
 @Dao
 interface HourlyWeatherDao {

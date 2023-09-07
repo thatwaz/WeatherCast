@@ -7,21 +7,17 @@ import android.os.Bundle
 import android.util.Log
 import android.view.*
 import android.widget.Toast
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.navigation.fragment.findNavController
 import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationCallback
-import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.thatwaz.weathercast.R
 import com.thatwaz.weathercast.databinding.FragmentCurrentWeatherBinding
 import com.thatwaz.weathercast.model.application.WeatherCastApplication
-import com.thatwaz.weathercast.model.data.LocationRepository
 import com.thatwaz.weathercast.model.data.WeatherDataHandler
 import com.thatwaz.weathercast.model.weatherresponse.WeatherResponse
 import com.thatwaz.weathercast.utils.BarometricPressureColorUtil.getPressureColor
@@ -235,13 +231,15 @@ import kotlin.math.ceil
 
 class CurrentWeatherFragment : Fragment() {
 
+
+
     private val TAG = "Performance"
 
     @Inject
     lateinit var viewModel: WeatherViewModel
 
-    @Inject
-    lateinit var locationRepository: LocationRepository
+//    @Inject
+//    lateinit var locationRepository: LocationRepository
 
     private lateinit var bottomNavView: BottomNavigationView
 
@@ -255,8 +253,8 @@ class CurrentWeatherFragment : Fragment() {
 //    private lateinit var locationRepository: LocationRepository
 //    private lateinit var weatherDataHandler: WeatherDataHandler
 
-    @Inject
-    lateinit var weatherDataHandler: WeatherDataHandler
+
+    private lateinit var weatherDataHandler: WeatherDataHandler
 
     private var isErrorOccurred = false
 
@@ -275,6 +273,7 @@ class CurrentWeatherFragment : Fragment() {
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+
         val startTime = System.currentTimeMillis()
         super.onViewCreated(view, savedInstanceState)
         val menuHost: MenuHost = requireActivity()
@@ -297,7 +296,7 @@ class CurrentWeatherFragment : Fragment() {
 
         setWeatherDataVisibility(false)
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext())
-        locationRepository = LocationRepository(fusedLocationClient)
+//        locationRepository = LocationRepository(fusedLocationClient)
         weatherDataHandler = WeatherDataHandler(requireContext(), viewModel)
 
         checkLocationPermissions()
@@ -351,14 +350,14 @@ class CurrentWeatherFragment : Fragment() {
         Log.d("WeatherDataHandler", "requestLocationData - Start")
         val start = System.currentTimeMillis()
         val startTime = System.currentTimeMillis()
-        locationRepository.getCurrentLocation { _, _ ->
+//        locationRepository.getCurrentLocation { _, _ ->
             val end = System.currentTimeMillis()
             Log.d("WeatherDataHandler", "Received location data in ${end - start} ms")
             weatherDataHandler.requestLocationData()
             Log.i("Current","Getting location")
             val endTime = System.currentTimeMillis()
             Log.d(TAG, "requestLocationData took ${endTime - startTime}ms")
-        }
+//        }
     }
 
         private fun updateWeatherUI(weatherData: WeatherResponse) {
@@ -456,7 +455,7 @@ class CurrentWeatherFragment : Fragment() {
         viewModel.weatherData.removeObservers(viewLifecycleOwner)
         weatherDataHandler.cleanUp()
         Log.i("MOH!", "CW removeLocationUpdates called")
-        locationRepository.removeLocationUpdates()
+//        locationRepository.removeLocationUpdates()
         _binding = null
     }
 }

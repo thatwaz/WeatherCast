@@ -1,9 +1,10 @@
-package com.thatwaz.weathercast.model.database
+package com.thatwaz.weathercast.model.database.dao
 
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import com.thatwaz.weathercast.model.database.entities.ForecastEntity
 
 @Dao
 interface ForecastDao {
