@@ -16,14 +16,16 @@ class LocationRepository @Inject constructor(private val fusedLocationClient: Fu
         Log.d("LocationRepository", "getCurrentLocation - Start")
         val start = System.currentTimeMillis()
         // Remove any existing location updates to ensure we're not creating multiple callbacks
-//        removeLocationUpdates()
-        val locationRequest = LocationRequest.Builder(Priority.PRIORITY_BALANCED_POWER_ACCURACY, 10000)
-            .apply {
-                setWaitForAccurateLocation(false)
-                setMinUpdateIntervalMillis(5 * 60 * 1000)  // 5 minutes in milliseconds
-                setMaxUpdateDelayMillis(5 * 60 * 1000)  // 5 minutes in milliseconds
-                setMinUpdateDistanceMeters(1000f) // Minimum distance for update in meters
-            }.build()
+        //(prevents memory leak)
+        removeLocationUpdates()
+        val locationRequest =
+            LocationRequest.Builder(Priority.PRIORITY_BALANCED_POWER_ACCURACY, 10000)
+                .apply {
+                    setWaitForAccurateLocation(false)
+                    setMinUpdateIntervalMillis(5 * 60 * 1000)  // 5 minutes in milliseconds
+                    setMaxUpdateDelayMillis(5 * 60 * 1000)  // 5 minutes in milliseconds
+                    setMinUpdateDistanceMeters(1000f) // Minimum distance for update in meters
+                }.build()
 
         locationCallback = object : LocationCallback() {
             override fun onLocationResult(locationResult: LocationResult) {
@@ -53,7 +55,6 @@ class LocationRepository @Inject constructor(private val fusedLocationClient: Fu
         }
     }
 }
-
 
 
 //        val locationRequest = LocationRequest.create().apply {

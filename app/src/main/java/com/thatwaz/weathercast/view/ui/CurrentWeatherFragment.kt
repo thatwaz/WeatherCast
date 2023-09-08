@@ -1,8 +1,6 @@
 package com.thatwaz.weathercast.view.ui
 
 
-
-
 import android.os.Bundle
 import android.util.Log
 import android.view.*
@@ -225,12 +223,7 @@ import kotlin.math.ceil
 //}
 
 
-
-
-
-
 class CurrentWeatherFragment : Fragment() {
-
 
 
     private val TAG = "Performance"
@@ -277,7 +270,7 @@ class CurrentWeatherFragment : Fragment() {
         val startTime = System.currentTimeMillis()
         super.onViewCreated(view, savedInstanceState)
         val menuHost: MenuHost = requireActivity()
-        Log.i("Current","Rendering Current Fragment")
+        Log.i("Current", "Rendering Current Fragment")
         menuHost.addMenuProvider(object : MenuProvider {
             override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
                 menuInflater.inflate(R.menu.menu_refresh, menu)
@@ -304,7 +297,6 @@ class CurrentWeatherFragment : Fragment() {
         val endTime = System.currentTimeMillis()
         Log.d(TAG, "onViewCreated took ${endTime - startTime}ms")
     }
-
 
 
     private fun showToast(message: String) {
@@ -351,17 +343,18 @@ class CurrentWeatherFragment : Fragment() {
         val start = System.currentTimeMillis()
         val startTime = System.currentTimeMillis()
 //        locationRepository.getCurrentLocation { _, _ ->
-            val end = System.currentTimeMillis()
-            Log.d("WeatherDataHandler", "Received location data in ${end - start} ms")
-            weatherDataHandler.requestLocationData()
-            Log.i("Current","Getting location")
-            val endTime = System.currentTimeMillis()
-            Log.d(TAG, "requestLocationData took ${endTime - startTime}ms")
+        val end = System.currentTimeMillis()
+        Log.d("WeatherDataHandler", "Received location data in ${end - start} ms")
+        weatherDataHandler.requestLocationData()
+        Log.i("Current", "Getting location")
+        val endTime = System.currentTimeMillis()
+        Log.d(TAG, "requestLocationData took ${endTime - startTime}ms")
 //        }
     }
 
-        private fun updateWeatherUI(weatherData: WeatherResponse) {
-            val startTime = System.currentTimeMillis()
+    private fun updateWeatherUI(weatherData: WeatherResponse) {
+
+        val startTime = System.currentTimeMillis()
         val pressureInhPa = weatherData.main.pressure
         val pressureInInHg = hPaToInHg(pressureInhPa)
         val pressureColor = getPressureColor(pressureInhPa)
@@ -377,8 +370,19 @@ class CurrentWeatherFragment : Fragment() {
         val formattedWindDirection = getWindDirection(windDirectionDegrees)
         val visibilityInMeters = weatherData.visibility
         val visibilityInMiles = convertMetersToMiles(visibilityInMeters)
-        val sunriseTime = convertUnixTimestampToTimeWithAMPM(weatherData.sys.sunrise.toLong())
-        val sunsetTime = convertUnixTimestampToTimeWithAMPM(weatherData.sys.sunset.toLong())
+        //uses device location (cannot use mock GPS for accurate sunrise time)
+//        val sunriseTime = convertUnixTimestampToTimeWithAMPM(weatherData.sys.sunrise.toLong())
+        val sunriseTime = convertUnixTimestampToTimeWithAMPM(
+            weatherData.sys.sunrise.toLong(),
+//            weatherData.timezone
+        )
+
+        //uses device location (cannot use mock GPS for accurate sunset time)
+//        val sunsetTime = convertUnixTimestampToTimeWithAMPM(weatherData.sys.sunset.toLong())
+        val sunsetTime = convertUnixTimestampToTimeWithAMPM(
+            weatherData.sys.sunset.toLong(),
+//            weatherData.timezone
+        )
         val imageIcon = weatherData.weather[0].icon
 
         setCurrentWeatherImage(imageIcon)
@@ -411,8 +415,8 @@ class CurrentWeatherFragment : Fragment() {
             tvSunrise.text = sunriseTime
             tvSunset.text = sunsetTime
         }
-            val endTime = System.currentTimeMillis()
-            Log.d(TAG, "updateWeatherUI took ${endTime - startTime}ms")
+        val endTime = System.currentTimeMillis()
+        Log.d(TAG, "updateWeatherUI took ${endTime - startTime}ms")
     }
 
 
@@ -451,7 +455,7 @@ class CurrentWeatherFragment : Fragment() {
 
 
     override fun onDestroyView() {
-                super.onDestroyView()
+        super.onDestroyView()
         viewModel.weatherData.removeObservers(viewLifecycleOwner)
         weatherDataHandler.cleanUp()
         Log.i("MOH!", "CW removeLocationUpdates called")

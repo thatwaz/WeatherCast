@@ -43,34 +43,24 @@ class WeatherViewModel @Inject constructor(
 
 
     suspend fun fetchWeatherData(latitude: Double, longitude: Double) {
-        showLoading()
-
-        if (loadFromCache(latitude, longitude)) {
-            return
-        }
-
-        fetchDataFromApiAndCache(latitude, longitude)
-    }
-
-    private fun showLoading() {
         _weatherData.value = Resource.Loading()
-    }
 
-    private suspend fun loadFromCache(latitude: Double, longitude: Double): Boolean {
+        DatabaseCleanupUtil.cleanupCurrentWeatherDatabase(weatherDatabase)
+
         val cachedData = weatherDatabase.weatherDataDao().getWeatherData(latitude, longitude)
         if (cachedData != null) {
             Log.i("WeatherApp", "Using cached data for weather.")
             val weatherResponse = Gson().fromJson(cachedData.weatherJson, WeatherResponse::class.java)
-            _weatherData.postValue(Resource.Success(weatherResponse))
-            return true
-        }
-        return false
-    }
 
-    private suspend fun fetchDataFromApiAndCache(latitude: Double, longitude: Double) {
-        // Prepare blocks for network fetch and cache operations
+
+            _weatherData.postValue(Resource.Success(weatherResponse))
+            return
+        }
+
         val fetchBlock: suspend () -> Response<WeatherResponse> = {
             Log.i("WeatherApp", "Making a new API call for weather data.")
+//            val response = repository.getWeatherData(ApiConfig.APP_ID, latitude, longitude)
+//            Log.i("WeatherApp", "API Response: ${response.body()?.toString() ?: "No response body"}")
             repository.getWeatherData(ApiConfig.APP_ID, latitude, longitude)
         }
 
@@ -83,10 +73,9 @@ class WeatherViewModel @Inject constructor(
             weatherDatabase.weatherDataDao().insertWeatherData(weatherDataEntity)
         }
 
-        // Update LiveData on the Main thread
+        // Use the general method to fetch and cache
         _weatherData.value = fetchAndCacheData(fetchBlock, cacheBlock)
     }
-
 
 
     suspend fun fetchHourlyData(latitude: Double, longitude: Double) {

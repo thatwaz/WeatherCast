@@ -2,6 +2,7 @@ package com.thatwaz.weathercast.utils
 
 import android.icu.text.SimpleDateFormat
 import android.icu.util.Calendar
+import android.icu.util.TimeZone.getTimeZone
 import com.thatwaz.weathercast.model.forecastresponse.RainForecast
 import java.util.*
 import kotlin.math.round
@@ -26,12 +27,28 @@ object ConversionUtil {
         }
     }
 
-
+    // Converts a Unix timestamp to time using the device's default timezone.
+// This older method has been replaced by the method below that allows for adjustable timezones.
     fun convertUnixTimestampToTimeWithAMPM(unixTimestamp: Long): String {
         val dateFormat = SimpleDateFormat("h:mm a", Locale.getDefault())
         val date = Date(unixTimestamp * 1000)
         return dateFormat.format(date)
     }
+
+    // Converts a Unix timestamp to time adjusted by the provided timezone offset (in seconds).
+// Use this when needing timezone adjustments different from the device's default.
+// Make sure to update sunrise and sunset time in Current Weather Fragment accordingly.
+//    fun convertUnixTimestampToTimeWithAMPM(
+//        unixTimestamp: Long,
+//        timezoneOffsetInSeconds: Int
+//    ): String {
+//        val dateFormat = SimpleDateFormat("h:mm a", Locale.getDefault())
+//        dateFormat.timeZone = getTimeZone("GMT")  // Initially set to GMT
+//
+//        // Adjusting for the provided timezone offset
+//        val adjustedDate = Date((unixTimestamp + timezoneOffsetInSeconds) * 1000)
+//        return dateFormat.format(adjustedDate)
+//    }
 
     fun convertUnixTimestampToTimeRange(unixTimestamp: Long): String {
         val dateFormat = SimpleDateFormat("h a", Locale.getDefault())
