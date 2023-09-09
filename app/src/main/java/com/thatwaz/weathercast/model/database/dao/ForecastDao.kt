@@ -20,4 +20,7 @@ interface ForecastDao {
 
     @Query("SELECT COUNT(*) FROM forecast_data")
     suspend fun getCount(): Int
+
+    @Query("DELETE FROM forecast_data")
+    suspend fun deleteAllForecastWeatherEntries()
 }

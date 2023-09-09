@@ -2,7 +2,6 @@ package com.thatwaz.weathercast.utils
 
 import android.icu.text.SimpleDateFormat
 import android.icu.util.Calendar
-import android.icu.util.TimeZone.getTimeZone
 import com.thatwaz.weathercast.model.forecastresponse.RainForecast
 import java.util.*
 import kotlin.math.round

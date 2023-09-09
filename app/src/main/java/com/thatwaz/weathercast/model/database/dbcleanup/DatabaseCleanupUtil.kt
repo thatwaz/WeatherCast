@@ -11,7 +11,7 @@ object DatabaseCleanupUtil {
 
     suspend fun cleanupCurrentWeatherDatabase(
         weatherDatabase: WeatherDatabase,
-        maxEntries: Int = 10
+        maxEntries: Int = 1
     ) {
         val initialCount = weatherDatabase.weatherDataDao().getCount()
         Log.i("MOH!", "Before: Total number of entries: $initialCount")
@@ -29,7 +29,7 @@ object DatabaseCleanupUtil {
 
     suspend fun cleanupHourlyWeatherDatabase(
         weatherDatabase: WeatherDatabase,
-        maxEntries: Int = 10
+        maxEntries: Int = 1
     ) {
         val initialCount = weatherDatabase.hourlyWeatherDao().getCount()
         Log.i("MOH!", "Before: Total number of entries: $initialCount")
@@ -46,7 +46,7 @@ object DatabaseCleanupUtil {
 
     suspend fun cleanupForecastWeatherDatabase(
         weatherDatabase: WeatherDatabase,
-        maxEntries: Int = 10
+        maxEntries: Int = 1
     ) {
         val initialCount = weatherDatabase.forecastDao().getCount()
         Log.i("MOH!", "Before: Total number of entries: $initialCount")

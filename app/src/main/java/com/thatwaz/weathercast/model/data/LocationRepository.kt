@@ -9,7 +9,7 @@ import javax.inject.Inject
 
 class LocationRepository @Inject constructor(private val fusedLocationClient: FusedLocationProviderClient) {
 
-    private var locationCallback: LocationCallback? = null  // make it an instance variable
+    private var locationCallback: LocationCallback? = null
 
     @SuppressLint("MissingPermission")
     fun getCurrentLocation(callback: (latitude: Double, longitude: Double) -> Unit) {
@@ -56,34 +56,3 @@ class LocationRepository @Inject constructor(private val fusedLocationClient: Fu
     }
 }
 
-
-//        val locationRequest = LocationRequest.create().apply {
-//            priority = LocationRequest.PRIORITY_HIGH_ACCURACY
-//            smallestDisplacement = 1000f // Set the minimum displacement (in meters) for updates
-//        }
-
-//class LocationRepository(private val fusedLocationClient: FusedLocationProviderClient) {
-//
-//    @SuppressLint("MissingPermission")
-//    fun getCurrentLocation(callback: (latitude: Double, longitude: Double) -> Unit) {
-//        val locationRequest = LocationRequest.create().apply {
-//            priority = LocationRequest.PRIORITY_HIGH_ACCURACY
-//            smallestDisplacement = 1000f // Set the minimum displacement (in meters) for updates
-//        }
-//
-//        val locationCallback = object : LocationCallback() {
-//            override fun onLocationResult(locationResult: LocationResult) {
-//                val lastLocation: Location? = locationResult.lastLocation
-//                if (lastLocation != null) {
-//                    callback(lastLocation.latitude, lastLocation.longitude)
-//                }
-//            }
-//        }
-//
-//        fusedLocationClient.requestLocationUpdates(
-//            locationRequest,
-//            locationCallback,
-//            null
-//        )
-//    }
-//}

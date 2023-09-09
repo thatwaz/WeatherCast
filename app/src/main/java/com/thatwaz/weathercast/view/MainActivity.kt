@@ -106,7 +106,6 @@ class MainActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-//        weatherDataHandler.cleanUp()
         menuProviders.clear()
     }
 

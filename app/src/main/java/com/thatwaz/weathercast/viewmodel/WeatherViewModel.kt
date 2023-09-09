@@ -5,10 +5,10 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 import com.thatwaz.weathercast.config.ApiConfig
-import com.thatwaz.weathercast.model.database.WeatherDataEntity
+import com.thatwaz.weathercast.model.database.entities.WeatherDataEntity
 import com.thatwaz.weathercast.model.database.WeatherDatabase
 import com.thatwaz.weathercast.model.database.dbcleanup.DatabaseCleanupUtil
 import com.thatwaz.weathercast.model.database.entities.ForecastEntity
@@ -17,11 +17,9 @@ import com.thatwaz.weathercast.model.forecastresponse.DailyForecast
 import com.thatwaz.weathercast.model.forecastresponse.ForecastResponse
 import com.thatwaz.weathercast.model.weatherresponse.WeatherResponse
 import com.thatwaz.weathercast.repository.WeatherRepository
-import com.thatwaz.weathercast.utils.ConversionUtil.convertRainToPercentage
 import com.thatwaz.weathercast.utils.ForecastDataConsolidator
 import com.thatwaz.weathercast.utils.error.Resource
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.launch
 import retrofit2.Response
 import javax.inject.Inject
 
@@ -77,6 +75,11 @@ class WeatherViewModel @Inject constructor(
         _weatherData.value = fetchAndCacheData(fetchBlock, cacheBlock)
     }
 
+    fun refreshCurrentWeatherData() {
+        viewModelScope.launch {
+            weatherDatabase.weatherDataDao().deleteAllCurrentWeatherEntries()
+        }
+    }
 
     suspend fun fetchHourlyData(latitude: Double, longitude: Double) {
         _hourlyData.value = Resource.Loading()
@@ -110,6 +113,12 @@ class WeatherViewModel @Inject constructor(
 
         // Fetch and cache data
         _hourlyData.value = fetchAndCacheData(fetchBlock, cacheBlock)
+    }
+
+    fun refreshHourlyWeatherData() {
+        viewModelScope.launch {
+            weatherDatabase.hourlyWeatherDao().deleteAllHourlyWeatherEntries()
+        }
     }
 
     suspend fun fetchForecastData(latitude: Double, longitude: Double) {
@@ -148,6 +157,12 @@ class WeatherViewModel @Inject constructor(
 
         // Update LiveData
         _forecastData.value = fetchedData
+    }
+
+    fun refreshForecastWeatherData() {
+        viewModelScope.launch {
+            weatherDatabase.forecastDao().deleteAllForecastWeatherEntries()
+        }
     }
 
 

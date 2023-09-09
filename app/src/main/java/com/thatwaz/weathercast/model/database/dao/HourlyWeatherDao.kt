@@ -18,4 +18,7 @@ interface HourlyWeatherDao {
     @Query("SELECT COUNT(*) FROM hourly_weather_data")
     suspend fun getCount(): Int
 
+    @Query("DELETE FROM hourly_weather_data")
+    suspend fun deleteAllHourlyWeatherEntries()
+
 }

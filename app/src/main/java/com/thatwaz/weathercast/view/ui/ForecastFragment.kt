@@ -23,11 +23,8 @@ import javax.inject.Inject
 
 class ForecastFragment : Fragment() {
 
-
     @Inject
     lateinit var viewModel: WeatherViewModel
-
-
 
     private lateinit var bottomNavView: BottomNavigationView
     private lateinit var weatherDataHandler: WeatherDataHandler
@@ -131,6 +128,7 @@ class ForecastFragment : Fragment() {
     }
     private fun refreshForecastWeatherData() {
         setWeatherDataVisibility(false)
+        viewModel.refreshForecastWeatherData()
         fetchForecastData()
     }
 

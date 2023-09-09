@@ -27,8 +27,6 @@ class HourlyFragment : Fragment() {
     @Inject
     lateinit var viewModel: WeatherViewModel
 
-
-
     private lateinit var bottomNavView: BottomNavigationView
     private lateinit var weatherDataHandler: WeatherDataHandler
     private var _binding: FragmentHourlyBinding? = null
@@ -123,6 +121,7 @@ class HourlyFragment : Fragment() {
     }
     private fun refreshHourlyWeatherData() {
         setWeatherDataVisibility(false)
+        viewModel.refreshHourlyWeatherData()
         fetchHourlyForecastData()
     }
 

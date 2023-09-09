@@ -103,10 +103,10 @@ data class CityForecast(
     val name: String,
     @SerializedName("coord")
     val coord: CoordForecast,
-    @SerializedName("country")
-    val country: String,
-    @SerializedName("population")
-    val population: Int,
+//    @SerializedName("country")
+//    val country: String,
+//    @SerializedName("population")
+//    val population: Int,
     @SerializedName("timezone")
     val timezone: Int,
     @SerializedName("sunrise")
