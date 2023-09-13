@@ -45,7 +45,7 @@ class LocationRepository @Inject constructor(private val fusedLocationClient: Fu
     fun removeLocationUpdates() {
         locationCallback?.let {
             fusedLocationClient.removeLocationUpdates(it)
-            locationCallback = null // This may help in releasing the memory
+            locationCallback = null
         }
     }
 }

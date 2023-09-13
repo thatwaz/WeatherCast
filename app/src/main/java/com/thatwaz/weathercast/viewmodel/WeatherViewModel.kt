@@ -1,7 +1,6 @@
 package com.thatwaz.weathercast.viewmodel
 
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -112,7 +111,6 @@ class WeatherViewModel @Inject constructor(
 
         val cachedData = weatherDatabase.forecastDao().getForecast(latitude, longitude)
         if (cachedData != null) {
-            Log.i("WeatherApp", "Using cached data for daily weather.")
             val forecastResponse = Gson().fromJson(cachedData.forecastJson, ForecastResponse::class.java)
             val consolidatedData = ForecastDataConsolidator.consolidate(forecastResponse)
             _forecastData.postValue(Resource.Success(consolidatedData))

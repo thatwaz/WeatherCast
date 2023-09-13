@@ -17,12 +17,6 @@ import com.thatwaz.weathercast.model.application.WeatherCastApplication
 import com.thatwaz.weathercast.model.data.WeatherDataHandler
 import javax.inject.Inject
 
-
-// start date 07/10/2023
-// Base completion date 08/14/2023
-// Code clean-up and refactor 08/27/2023
-// Final clean-up/project completion 09/13/2023
-
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
