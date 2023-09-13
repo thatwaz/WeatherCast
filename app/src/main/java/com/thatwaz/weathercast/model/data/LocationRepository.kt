@@ -12,7 +12,6 @@ class LocationRepository @Inject constructor(private val fusedLocationClient: Fu
 
     @SuppressLint("MissingPermission")
     fun getCurrentLocation(callback: (latitude: Double, longitude: Double) -> Unit) {
-        val start = System.currentTimeMillis()
         // Remove any existing location updates to ensure we're not creating multiple callbacks
         //(prevents memory leak)
         removeLocationUpdates()
@@ -27,7 +26,6 @@ class LocationRepository @Inject constructor(private val fusedLocationClient: Fu
 
         locationCallback = object : LocationCallback() {
             override fun onLocationResult(locationResult: LocationResult) {
-                val end = System.currentTimeMillis()
                 val lastLocation: Location? = locationResult.lastLocation
                 if (lastLocation != null) {
                     callback(lastLocation.latitude, lastLocation.longitude)
