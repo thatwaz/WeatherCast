@@ -22,7 +22,7 @@ object ForecastDataConsolidator {
                 forecasts.firstOrNull()?.weather?.getOrNull(0)?.description ?: ""
             val weatherIcon = forecasts.firstOrNull()?.weather?.getOrNull(0)?.icon ?: ""
             val rainForecast = forecasts.firstOrNull()?.rain
-            val chanceOfRain = convertRainToPercentage(rainForecast) // You'll need to move the convertRainToPercentage method or pass a lambda for it
+            val chanceOfRain = convertRainToPercentage(rainForecast)
             val humidity = forecasts.firstOrNull()?.main?.humidity ?: 0
             val feelsLikeTemperature = forecasts.firstOrNull()?.main?.feelsLike ?: 0.0
             val windSpeed = forecasts.firstOrNull()?.wind?.speed ?: 0.0

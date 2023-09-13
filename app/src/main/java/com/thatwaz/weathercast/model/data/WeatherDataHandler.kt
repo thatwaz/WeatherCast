@@ -2,7 +2,6 @@ package com.thatwaz.weathercast.model.data
 
 import android.content.Context
 import android.net.ConnectivityManager
-import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.location.LocationServices
@@ -17,7 +16,8 @@ class WeatherDataHandler @Inject constructor(
     private val applicationContext: Context,
     private val viewModel: WeatherViewModel
 ) {
-    private val fusedLocationClient = LocationServices.getFusedLocationProviderClient(applicationContext)
+    private val fusedLocationClient =
+        LocationServices.getFusedLocationProviderClient(applicationContext)
     private val locationRepository = LocationRepository(fusedLocationClient)
     private val connectivityManager =
         applicationContext.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
@@ -28,17 +28,15 @@ class WeatherDataHandler @Inject constructor(
         }
     }
 
-
     private fun fetchWeatherData(latitude: Double, longitude: Double) {
-        Log.d("WeatherDataHandler", "fetchWeatherData - Start")
-        val start = System.currentTimeMillis()
-        val isConnected = isNetworkConnected(connectivityManager) && NetworkUtil.isInternetAvailable(connectivityManager)
+        val isConnected =
+            isNetworkConnected(connectivityManager) && NetworkUtil.isInternetAvailable(
+                connectivityManager
+            )
 
         if (isConnected) {
             viewModel.viewModelScope.launch {
                 viewModel.fetchWeatherData(latitude, longitude)
-                val end = System.currentTimeMillis()
-                Log.d("WeatherDataHandler", "Weather data fetched in ${end - start} ms")
             }
         } else {
             Toast.makeText(applicationContext, "No internet connection", Toast.LENGTH_SHORT).show()
@@ -50,7 +48,10 @@ class WeatherDataHandler @Inject constructor(
     }
 
     fun fetchWeatherForecast(forecastType: ForecastType) {
-        val isConnected = isNetworkConnected(connectivityManager) && NetworkUtil.isInternetAvailable(connectivityManager)
+        val isConnected =
+            isNetworkConnected(connectivityManager) && NetworkUtil.isInternetAvailable(
+                connectivityManager
+            )
 
         if (isConnected) {
             locationRepository.getCurrentLocation { lat, lon ->
@@ -71,7 +72,6 @@ class WeatherDataHandler @Inject constructor(
     }
 
     fun cleanUp() {
-        Log.i("MOH!","Data handler loc cleaned up")
         locationRepository.removeLocationUpdates()
     }
 }

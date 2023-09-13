@@ -27,16 +27,17 @@ object ConversionUtil {
     }
 
     // Converts a Unix timestamp to time using the device's default timezone.
-// This older method has been replaced by the method below that allows for adjustable timezones.
     fun convertUnixTimestampToTimeWithAMPM(unixTimestamp: Long): String {
         val dateFormat = SimpleDateFormat("h:mm a", Locale.getDefault())
         val date = Date(unixTimestamp * 1000)
         return dateFormat.format(date)
     }
 
-    // Converts a Unix timestamp to time adjusted by the provided timezone offset (in seconds).
-// Use this when needing timezone adjustments different from the device's default.
-// Make sure to update sunrise and sunset time in Current Weather Fragment accordingly.
+   /*  Converts a Unix timestamp to time adjusted by the provided timezone offset (in seconds).
+ Use this when needing timezone adjustments different from the device's default. It was especially
+ helpful when mocking the location to get correct sunrise/sunset times.
+ Make sure to update sunrise and sunset time in Current Weather Fragment accordingly. */
+
 //    fun convertUnixTimestampToTimeWithAMPM(
 //        unixTimestamp: Long,
 //        timezoneOffsetInSeconds: Int
@@ -130,9 +131,7 @@ object ConversionUtil {
         if (roundedPercentage < minThreshold) {
             return 10
         }
-
         // Calculate the nearest multiple of 10
-
         return ((roundedPercentage + 9) / 10) * 10
     }
 
@@ -176,5 +175,4 @@ object ConversionUtil {
                 if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString()
             }
         }
-
 }

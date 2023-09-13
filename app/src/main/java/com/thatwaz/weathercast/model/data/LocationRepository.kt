@@ -2,7 +2,6 @@ package com.thatwaz.weathercast.model.data
 
 import android.annotation.SuppressLint
 import android.location.Location
-import android.util.Log
 import com.google.android.gms.location.*
 import javax.inject.Inject
 
@@ -13,7 +12,6 @@ class LocationRepository @Inject constructor(private val fusedLocationClient: Fu
 
     @SuppressLint("MissingPermission")
     fun getCurrentLocation(callback: (latitude: Double, longitude: Double) -> Unit) {
-        Log.d("LocationRepository", "getCurrentLocation - Start")
         val start = System.currentTimeMillis()
         // Remove any existing location updates to ensure we're not creating multiple callbacks
         //(prevents memory leak)
@@ -30,7 +28,6 @@ class LocationRepository @Inject constructor(private val fusedLocationClient: Fu
         locationCallback = object : LocationCallback() {
             override fun onLocationResult(locationResult: LocationResult) {
                 val end = System.currentTimeMillis()
-                Log.d("LocationRepository", "onLocationResult received in ${end - start} ms")
                 val lastLocation: Location? = locationResult.lastLocation
                 if (lastLocation != null) {
                     callback(lastLocation.latitude, lastLocation.longitude)
@@ -48,7 +45,6 @@ class LocationRepository @Inject constructor(private val fusedLocationClient: Fu
     }
 
     fun removeLocationUpdates() {
-        Log.i("MOH!", "Repository removeLocationUpdates called")
         locationCallback?.let {
             fusedLocationClient.removeLocationUpdates(it)
             locationCallback = null // This may help in releasing the memory

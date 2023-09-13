@@ -21,6 +21,7 @@ import javax.inject.Inject
 // start date 07/10/2023
 // Base completion date 08/14/2023
 // Code clean-up and refactor 08/27/2023
+// Final clean-up/project completion 09/13/2023
 
 class MainActivity : AppCompatActivity() {
 
@@ -49,7 +50,6 @@ class MainActivity : AppCompatActivity() {
         (application as WeatherCastApplication).appComponent.inject(this)
 
         supportActionBar?.setDisplayHomeAsUpEnabled(false)
-
 
         binding.bnvWeatherCast.setOnItemSelectedListener { item ->
             val destinationId = item.itemId

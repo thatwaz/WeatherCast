@@ -62,7 +62,7 @@ class ForecastAdapter :
 
 
                 val lowTemperatureFahrenheit = kelvinToFahrenheit(dailyForecast.lowTemperature)
-                val windDirectionDegrees = dailyForecast.windDeg // Use windDeg property
+                val windDirectionDegrees = dailyForecast.windDeg
                 val formattedWindDirection = ConversionUtil.getWindDirection(windDirectionDegrees)
                 val windSpeed = dailyForecast.windSpeed.toInt()
                 val feelsLikeTemperature = kelvinToFahrenheit(dailyForecast.feelsLikeTemperature)
