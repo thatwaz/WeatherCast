@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="weather_details_text_size">20sp</dimen>
+    <dimen name="shadow_dx">4</dimen>
+    <dimen name="shadow_dy">4</dimen>
+    <dimen name="shadow_radius">8</dimen>
+</resources>

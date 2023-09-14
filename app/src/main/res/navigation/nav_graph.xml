@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/currentWeatherFragment">
+
+    <action
+        android:id="@+id/action_shared_to_hourlyFragment"
+        app:destination="@id/hourlyFragment" />
+    <action
+        android:id="@+id/action_shared_to_forecastFragment"
+        app:destination="@id/forecastFragment" />
+    <action
+        android:id="@+id/action_shared_to_currentWeatherFragment"
+        app:destination="@id/currentWeatherFragment" />
+
+    <fragment
+        android:id="@+id/currentWeatherFragment"
+        android:name="com.thatwaz.weathercast.view.ui.CurrentWeatherFragment"
+        android:label="@string/app_name"
+        tools:layout="@layout/fragment_current_weather" >
+        <action
+            android:id="@+id/action_currentWeatherFragment_to_hourlyFragment"
+            app:destination="@id/hourlyFragment" />
+        <action
+            android:id="@+id/action_currentWeatherFragment_to_barometricPressureDialogFragment"
+            app:destination="@id/barometricPressureDialogFragment" />
+        <action
+            android:id="@+id/action_currentWeatherFragment_to_forecastFragment"
+            app:destination="@id/forecastFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/hourlyFragment"
+        android:name="com.thatwaz.weathercast.view.ui.HourlyFragment"
+        android:label="@string/periodic_outlook"
+        tools:layout="@layout/fragment_hourly" >
+        <action
+            android:id="@+id/action_hourlyFragment_to_currentWeatherFragment"
+            app:destination="@id/currentWeatherFragment" />
+        <action
+            android:id="@+id/action_hourlyFragment_to_forecastFragment"
+            app:destination="@id/forecastFragment" />
+    </fragment>
+    <dialog
+        android:id="@+id/barometricPressureDialogFragment"
+        android:name="com.thatwaz.weathercast.view.ui.BarometricPressureDialogFragment"
+        android:label="fragment_barometric_pressure_dialog"
+        tools:layout="@layout/fragment_barometric_pressure_dialog" >
+        <action
+            android:id="@+id/action_barometricPressureDialogFragment_to_currentWeatherFragment"
+            app:destination="@id/currentWeatherFragment" />
+    </dialog>
+
+    <fragment
+        android:id="@+id/forecastFragment"
+        android:name="com.thatwaz.weathercast.view.ui.ForecastFragment"
+        android:label="@string/five_day_forecast"
+        tools:layout="@layout/fragment_forecast" >
+        <action
+            android:id="@+id/action_forecastFragment_to_hourlyFragment"
+            app:destination="@id/hourlyFragment" />
+        <action
+            android:id="@+id/action_forecastFragment_to_currentWeatherFragment"
+            app:destination="@id/currentWeatherFragment" />
+    </fragment>
+
+</navigation>
+

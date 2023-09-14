@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="36dp"
+    android:layout_marginTop="50dp"
+    tools:context=".view.ui.BarometricPressureDialogFragment">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingStart="25dp"
+        android:paddingEnd="25dp"
+        android:paddingBottom="50dp"
+        android:paddingTop="24dp"
+        android:background="@color/white">
+
+
+    <TextView
+        android:id="@+id/lbl_barometric_pressure"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="20sp"
+        android:textColor="@color/blue_500"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:textStyle="bold"
+        android:text="Barometric Pressure"/>
+
+        <TextView
+            android:id="@+id/lbl_possible_outcomes"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            android:textColor="@color/black"
+            android:text="Possible Outcomes"
+            app:layout_constraintTop_toBottomOf="@+id/lbl_barometric_pressure"
+            app:layout_constraintStart_toStartOf="@id/lbl_barometric_pressure"
+            app:layout_constraintEnd_toEndOf="@id/lbl_barometric_pressure"/>
+
+        <TextView
+            android:id="@+id/lbl_at_sea_level"
+            android:layout_marginTop="6dp"
+            android:layout_below="@id/lbl_barometric_pressure"
+            android:textSize="14sp"
+            app:layout_constraintTop_toBottomOf="@+id/lbl_possible_outcomes"
+            app:layout_constraintStart_toStartOf="@id/lbl_possible_outcomes"
+            app:layout_constraintEnd_toEndOf="@id/lbl_possible_outcomes"
+            android:textColor="@color/black"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="(at sea level)"/>
+
+    <TextView
+        android:id="@+id/lbl_typical"
+        android:layout_marginTop="6dp"
+        app:layout_constraintTop_toBottomOf="@id/lbl_at_sea_level"
+        app:layout_constraintStart_toStartOf="@id/lbl_at_sea_level"
+        app:layout_constraintEnd_toEndOf="@id/lbl_at_sea_level"
+        android:textSize="14sp"
+        android:textColor="@color/black"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="28.55 - 30.21 = TYPICAL - Fair Weather, Moderate Winds"/>
+
+    <TextView
+        android:id="@+id/lbl_low_pressure"
+        android:layout_marginTop="6dp"
+        app:layout_constraintTop_toBottomOf="@id/lbl_typical"
+        app:layout_constraintStart_toStartOf="@id/lbl_typical"
+        app:layout_constraintEnd_toEndOf="@id/lbl_typical"
+        android:textSize="14sp"
+        android:textColor="@color/black"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="28.50 - 28.54 = LOW PRESSURE - Cloudy Skies, Possible Rain"/>
+
+    <TextView
+        android:id="@+id/lbl_high_pressure"
+        android:layout_marginTop="6dp"
+        app:layout_constraintTop_toBottomOf="@id/lbl_low_pressure"
+        app:layout_constraintStart_toStartOf="@id/lbl_low_pressure"
+        app:layout_constraintEnd_toEndOf="@id/lbl_low_pressure"
+        android:textSize="14sp"
+        android:textColor="@color/black"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="30.10 - 30.50 = HIGH PRESSURE - Clear Skies, Stable Conditions"/>
+
+    <TextView
+        android:id="@+id/lbl_very_low_pressure"
+        android:layout_marginTop="6dp"
+        app:layout_constraintTop_toBottomOf="@id/lbl_high_pressure"
+        app:layout_constraintStart_toStartOf="@id/lbl_high_pressure"
+        app:layout_constraintEnd_toEndOf="@id/lbl_high_pressure"
+        android:textSize="14sp"
+        android:textColor="@color/black"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="27.00 - 28.49 = VERY LOW PRESSURE - Stormy Weather, Strong Winds"/>
+
+    <TextView
+        android:id="@+id/lbl_very_high_pressure"
+        android:layout_marginTop="6dp"
+        app:layout_constraintTop_toBottomOf="@id/lbl_very_low_pressure"
+        app:layout_constraintStart_toStartOf="@id/lbl_very_low_pressure"
+        app:layout_constraintEnd_toEndOf="@id/lbl_very_low_pressure"
+        android:textSize="14sp"
+        android:textColor="@color/black"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="31.00 and above = VERY HIGH PRESSURE - Dry Weather, Light Winds"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.cardview.widget.CardView>

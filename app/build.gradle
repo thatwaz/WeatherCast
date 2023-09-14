@@ -1,0 +1,97 @@
+plugins {
+    id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'
+    id 'kotlin-kapt'
+    id 'androidx.navigation.safeargs.kotlin'
+}
+
+android {
+    compileSdk 32
+
+    defaultConfig {
+        applicationId "com.thatwaz.weathercast"
+        minSdk 28
+        targetSdk 32
+        versionCode 1
+        versionName "1.0"
+
+        // Load API key from local.properties
+        Properties properties = new Properties()
+        properties.load(project.rootProject.file("local.properties").newDataInputStream())
+        buildConfigField "String", "API_KEY", "\"${properties.getProperty("API_KEY")}\""
+    }
+    buildFeatures {
+        viewBinding true
+    }
+
+    lintOptions {
+        warning 'HardcodedText'
+        error 'UnusedResources'
+    }
+
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+}
+
+dependencies {
+
+    implementation 'androidx.core:core-ktx:1.7.0'
+    implementation 'androidx.appcompat:appcompat:1.5.0'
+    implementation 'com.google.android.material:material:1.9.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+
+    // Location and Permissions
+    implementation 'com.google.android.gms:play-services-location:21.0.1'
+    implementation 'com.karumi:dexter:6.2.3'
+
+    // Retrofit
+    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
+
+    //LeakCanary
+    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.12'
+
+    // ViewModel
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version")
+
+    // LiveData
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version")
+
+    // Navigation libraries
+    implementation "androidx.navigation:navigation-fragment-ktx:$nav_version"
+    implementation "androidx.navigation:navigation-ui-ktx:$nav_version"
+
+    implementation "androidx.room:room-runtime:$room_version"
+    kapt "androidx.room:room-compiler:$room_version"
+    implementation "androidx.room:room-ktx:$room_version"
+
+    implementation 'androidx.activity:activity:1.4.0-alpha02'
+    implementation 'androidx.activity:activity-ktx:1.4.0-alpha02'
+
+    // Dagger
+    implementation 'com.google.dagger:dagger:2.39.1'
+    kapt 'com.google.dagger:dagger-compiler:2.39.1'
+    kapt 'com.google.dagger:dagger-android-processor:2.39.1'
+
+    // Testing dependencies
+    testImplementation 'junit:junit:4.13.2'
+    testImplementation 'org.mockito:mockito-core:4.2.0'
+    testImplementation 'org.mockito.kotlin:mockito-kotlin:4.2.0'
+    testImplementation 'org.mockito:mockito-inline:4.2.0'
+    testImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.5.2'
+
+    testImplementation 'androidx.arch.core:core-testing:2.1.0'
+
+}

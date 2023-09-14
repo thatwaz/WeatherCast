@@ -1,0 +1,36 @@
+<resources>
+    <string name="app_name">WeatherCast</string>
+    <string name="u00b0">°</string>
+    <string name="fahrenheit">F</string>
+    <string name="feels_like">Feels Like\u00A0</string>
+    <string name="humidity">Humidity\u00A0</string>
+    <string name="wind">Wind\u00A0</string>
+    <string name="air_pressure_inhg">Air Pressure\u00A0</string>
+    <string name="visibility">Visibility\u00A0</string>
+    <string name="sunrise">Sunrise</string>
+    <string name="sunset">Sunset</string>
+    <string name="currently">CURRENTLY</string>
+    <string name="temperature_high">%s°F</string>
+    <string name="temperature_low">Low: %1$s°F</string>
+    <string name="chance_of_rain">Chance of Rain: %1$d%%</string>
+    <string name="five_day_forecast">Five Day Forecast</string>
+    <string name="periodic_outlook">Periodic Outlook</string>
+
+    //Current Weather Frag Content Desc
+    <string name="current_weather_image_description">current weather image description</string>
+    <string name="current_weather_icon_description">current_weather_icon_description</string>
+    <string name="humidity_icon_description">humidity_icon_description</string>
+    <string name="wind_icon_description">wind_icon_description</string>
+    <string name="air_pressure_icon_description">air_pressure_icon_description</string>
+    <string name="visibility_icon_description">visibility_icon_description</string>
+    <string name="sunrise_icon_description">sunrise_icon_description</string>
+    <string name="sunset_icon_description">sunset_icon_description</string>
+    <string name="lbl_temperature_high">High</string>
+    <string name="lbl_temperature_low">Low</string>
+    <string name="lbl_humidity">Humidity\u00A0</string>
+    <string name="lbl_wind">Wind\u00A0</string>
+    <string name="lbl_average_feel">Average Feel\u00A0</string>
+    <string name="inhg">inHg</string>
+
+
+</resources>
