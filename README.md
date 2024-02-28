@@ -50,7 +50,8 @@ Replace `your_api_key_goes_here` with your actual API key.
 ## Credits
 
 - **Cloud Images**: Captured and owned by me.
-- **Weather Icons**: Sourced from Iconfinder. For more details on the licensing and usage terms, please visit [Iconfinder's License Overview](https://support.iconfinder.com/en/articles/18233-license-overview).
+- **Weather Icons**: Sourced from [Iconfinder](https://www.iconfinder.com). For more details on the licensing and usage terms, please visit [Iconfinder's License Overview](https://support.iconfinder.com/en/articles/18233-license-overview).
+
 
 - **Weather API**: Data obtained from [OpenWeatherMap](https://openweathermap.org/).
 
