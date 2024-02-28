@@ -19,6 +19,12 @@ WeatherCast is a comprehensive weather app for Android devices, built using the 
 - **Location-Based Results**: Displays weather data based on the user's location with an option to refresh.
 - **Data Caching**: Uses Room for efficient data caching.
 
+- ## Screenshots
+
+Here are some highlights of WeatherCast in action:
+
+
+
 ## Technologies Used
 
 - Kotlin
