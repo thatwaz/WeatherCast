@@ -48,9 +48,8 @@ Here are some highlights of WeatherCast in action:
 1. Clone the repository: 
 2. Open the project in Android Studio.
 3. Obtain an API key from [OpenWeatherMap](https://openweathermap.org/).
-4. Add your API key to the `local.properties` file:
-
-Replace `your_api_key_goes_here` with your actual API key.
+4. Insert your API key into the local.properties file as follows
+API_KEY="Your Api Key"
 
 5. Sync the Gradle files and run the app.
 
