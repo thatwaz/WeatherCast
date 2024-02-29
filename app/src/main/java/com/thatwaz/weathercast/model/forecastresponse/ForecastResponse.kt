@@ -27,10 +27,6 @@ data class WeatherItem(
     val clouds: CloudsForecast,
     @SerializedName("wind")
     val wind: WindForecast,
-//    @SerializedName("visibility")
-//    val visibility: Int,
-//    @SerializedName("pop")
-//    val pop: Double,
     @SerializedName("rain")
     val rain: RainForecast?,
     @SerializedName("sys")
@@ -53,8 +49,6 @@ data class MainWeatherData(
     val pressure: Int,
     @SerializedName("sea_level")
     val seaLevel: Int,
-//    @SerializedName("grnd_level")
-//    val grndLevel: Int,
     @SerializedName("humidity")
     val humidity: Int,
     @SerializedName("temp_kf")
