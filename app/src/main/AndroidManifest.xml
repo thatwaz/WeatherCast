@@ -1,11 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-<<<<<<< HEAD
     xmlns:tools="http://schemas.android.com/tools"
     package="com.thatwaz.weathercast">
-=======
-    xmlns:tools="http://schemas.android.com/tools">
->>>>>>> 16980113314de8d6322b17ddd6cc13c88a185b17
 
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
