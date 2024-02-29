@@ -22,7 +22,8 @@ WeatherCast is a comprehensive weather app for Android devices, built using the 
 - ## Screenshots
 
 Here are some highlights of WeatherCast in action:
-<img src="/currentWeather.png" alt="Current Weather Screenshot" width="600"/>
+
+<img src="/currentWeather.png" alt="Current Weather Screenshot" width="300"/>
 
 
 
