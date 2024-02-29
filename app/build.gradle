@@ -6,12 +6,12 @@ plugins {
 }
 
 android {
-    compileSdk 32
+    compileSdk 34
 
     defaultConfig {
         applicationId "com.thatwaz.weathercast"
         minSdk 28
-        targetSdk 32
+        targetSdk 34
         versionCode 1
         versionName "1.0"
 
@@ -22,11 +22,6 @@ android {
     }
     buildFeatures {
         viewBinding true
-    }
-
-    lintOptions {
-        warning 'HardcodedText'
-        error 'UnusedResources'
     }
 
 
@@ -43,24 +38,29 @@ android {
     kotlinOptions {
         jvmTarget = '1.8'
     }
+    namespace 'com.thatwaz.weathercast'
+    lint {
+        error 'UnusedResources'
+        warning 'HardcodedText'
+    }
 }
 
 dependencies {
 
-    implementation 'androidx.core:core-ktx:1.7.0'
-    implementation 'androidx.appcompat:appcompat:1.5.0'
-    implementation 'com.google.android.material:material:1.9.0'
+    implementation 'androidx.core:core-ktx:1.12.0'
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'com.google.android.material:material:1.11.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
 
     // Location and Permissions
-    implementation 'com.google.android.gms:play-services-location:21.0.1'
+    implementation 'com.google.android.gms:play-services-location:21.1.0'
     implementation 'com.karumi:dexter:6.2.3'
 
     // Retrofit
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
 
-    //LeakCanary
+    // LeakCanary
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.12'
 
     // ViewModel
@@ -77,12 +77,12 @@ dependencies {
     kapt "androidx.room:room-compiler:$room_version"
     implementation "androidx.room:room-ktx:$room_version"
 
-    implementation 'androidx.activity:activity:1.4.0-alpha02'
-    implementation 'androidx.activity:activity-ktx:1.4.0-alpha02'
+    implementation 'androidx.activity:activity:1.9.0-alpha03'
+    implementation 'androidx.activity:activity-ktx:1.9.0-alpha03'
 
     // Dagger
-    implementation 'com.google.dagger:dagger:2.39.1'
-    kapt 'com.google.dagger:dagger-compiler:2.39.1'
+    implementation 'com.google.dagger:dagger:2.50'
+    kapt 'com.google.dagger:dagger-compiler:2.50'
     kapt 'com.google.dagger:dagger-android-processor:2.39.1'
 
     // Testing dependencies
@@ -90,8 +90,8 @@ dependencies {
     testImplementation 'org.mockito:mockito-core:4.2.0'
     testImplementation 'org.mockito.kotlin:mockito-kotlin:4.2.0'
     testImplementation 'org.mockito:mockito-inline:4.2.0'
-    testImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.5.2'
+    testImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3'
 
-    testImplementation 'androidx.arch.core:core-testing:2.1.0'
+    testImplementation 'androidx.arch.core:core-testing:2.2.0'
 
 }
