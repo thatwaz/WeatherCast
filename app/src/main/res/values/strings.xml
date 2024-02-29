@@ -31,6 +31,7 @@
     <string name="lbl_wind">Wind\u00A0</string>
     <string name="lbl_average_feel">Average Feel\u00A0</string>
     <string name="inhg">inHg</string>
+    <string name="barometric_pressure">Barometric Pressure</string>
 
 
 </resources>

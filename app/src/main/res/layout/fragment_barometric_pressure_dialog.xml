@@ -28,7 +28,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:textStyle="bold"
-        android:text="Barometric Pressure"/>
+        android:text="@string/barometric_pressure"/>
 
         <TextView
             android:id="@+id/lbl_possible_outcomes"
