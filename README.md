@@ -75,6 +75,11 @@ The app integrates LeakCanary for memory leak detection during development. This
 
 Feel free to open issues or pull requests if you find bugs or want to contribute.
 
+## License
+
+WeatherCast is open-sourced under the MIT License. See the [LICENSE](LICENSE) file for more details.
+
+
 
 
 
