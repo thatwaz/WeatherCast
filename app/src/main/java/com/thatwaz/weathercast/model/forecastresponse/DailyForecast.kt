@@ -15,7 +15,7 @@ data class DailyForecast(
     val weatherIcon: String,
     @SerializedName("chanceOfRain")
     val chanceOfRain: Double,
-    @SerializedName("cityName")
+    @SerializedName("city")
     val cityName: String,
     @SerializedName("humidity")
     val humidity: Int,
